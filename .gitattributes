@@ -1,0 +1,11 @@
+*.sh text eol=lf
+*.conf text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text
+*.java text
+*.js text
+*.vue text
+*.scss text
+*.xml text
+*.sql text

@@ -1,0 +1,53 @@
+server:
+  port: ${SERVER_PORT:8081}
+  servlet:
+    context-path: ${SERVER_CONTEXT_PATH:/api}
+
+spring:
+  application:
+    name: campus-recruitment
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_NAME:campus_recruitment}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:campus_user}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:10}
+      minimum-idle: ${DB_POOL_MIN_IDLE:2}
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:20MB}
+      max-request-size: ${MAX_REQUEST_SIZE:50MB}
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.campus.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+campus:
+  jwt:
+    secret: ${JWT_SECRET}
+    expire: ${JWT_EXPIRE:604800000}
+    header: ${JWT_HEADER:Authorization}
+  upload:
+    path: ${CAMPUS_UPLOAD_PATH:/opt/campus-recruitment/upload/}
+    prefix: ${CAMPUS_UPLOAD_PREFIX:/upload/}
+
+logging:
+  file:
+    name: ${LOG_FILE:/opt/campus-recruitment/logs/campus-recruitment.log}
+  level:
+    root: ${LOG_LEVEL_ROOT:info}
+    com.campus: ${LOG_LEVEL_CAMPUS:info}
