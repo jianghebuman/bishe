@@ -1,15 +1,17 @@
 package com.campus.common;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.IdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 /**
  * 文件上传工具
@@ -53,15 +55,15 @@ public class FileUploadUtil {
             throw new BusinessException("文件大小不能超过20MB");
         }
         String originName = file.getOriginalFilename();
-        String suffix = FileUtil.extName(originName);
-        if (suffix == null || !allowTypes.contains(suffix.toLowerCase())) {
+        String suffix = StringUtils.getFilenameExtension(originName);
+        if (suffix == null || !allowTypes.contains(suffix.toLowerCase(Locale.ROOT))) {
             throw new BusinessException("不支持的文件类型，仅支持：" + allowTypes);
         }
         // 新文件名
-        String fileName = IdUtil.simpleUUID() + "." + suffix;
+        String fileName = UUID.randomUUID().toString().replace("-", "") + "." + suffix;
         File dest = new File(uploadPath + subDir + File.separator + fileName);
         try {
-            FileUtil.mkParentDirs(dest);
+            Files.createDirectories(dest.getParentFile().toPath());
             file.transferTo(dest);
         } catch (Exception e) {
             log.error("文件上传失败", e);

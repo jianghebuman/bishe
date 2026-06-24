@@ -7,8 +7,8 @@ import com.campus.common.RequireRole;
 import com.campus.common.Result;
 import com.campus.entity.CampusTalk;
 import com.campus.entity.JobFair;
-import com.campus.service.CampusTalkService;
-import com.campus.service.JobFairService;
+import com.campus.service.impl.CampusTalkServiceImpl;
+import com.campus.service.impl.JobFairServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.*;
 public class ActivityController {
 
     @Autowired
-    private CampusTalkService campusTalkService;
+    private CampusTalkServiceImpl campusTalkService;
     @Autowired
-    private JobFairService jobFairService;
+    private JobFairServiceImpl jobFairService;
 
     // ==================== 宣讲会 ====================
 

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.campus.common.RequireRole;
 import com.campus.common.Result;
 import com.campus.entity.JobCategory;
-import com.campus.service.JobCategoryService;
+import com.campus.service.impl.JobCategoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ import java.util.List;
 public class CategoryController {
 
     @Autowired
-    private JobCategoryService jobCategoryService;
+    private JobCategoryServiceImpl jobCategoryService;
 
     @GetMapping
     public Result<List<JobCategory>> list() {
