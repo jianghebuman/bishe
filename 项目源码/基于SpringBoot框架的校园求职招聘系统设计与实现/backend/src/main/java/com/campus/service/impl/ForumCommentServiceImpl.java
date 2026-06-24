@@ -3,7 +3,6 @@ package com.campus.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.campus.entity.ForumComment;
 import com.campus.mapper.ForumCommentMapper;
-import com.campus.service.ForumCommentService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,5 +11,5 @@ import org.springframework.stereotype.Service;
  * @author campus
  */
 @Service
-public class ForumCommentServiceImpl extends ServiceImpl<ForumCommentMapper, ForumComment> implements ForumCommentService {
+public class ForumCommentServiceImpl extends ServiceImpl<ForumCommentMapper, ForumComment> {
 }

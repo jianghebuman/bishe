@@ -3,7 +3,6 @@ package com.campus.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.campus.entity.JobCategory;
 import com.campus.mapper.JobCategoryMapper;
-import com.campus.service.JobCategoryService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,5 +11,5 @@ import org.springframework.stereotype.Service;
  * @author campus
  */
 @Service
-public class JobCategoryServiceImpl extends ServiceImpl<JobCategoryMapper, JobCategory> implements JobCategoryService {
+public class JobCategoryServiceImpl extends ServiceImpl<JobCategoryMapper, JobCategory> {
 }

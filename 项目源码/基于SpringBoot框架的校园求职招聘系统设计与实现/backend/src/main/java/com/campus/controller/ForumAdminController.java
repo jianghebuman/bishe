@@ -7,8 +7,8 @@ import com.campus.common.RequireRole;
 import com.campus.common.Result;
 import com.campus.entity.ForumComment;
 import com.campus.entity.ForumPost;
-import com.campus.service.ForumCommentService;
 import com.campus.service.ForumPostService;
+import com.campus.service.impl.ForumCommentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +27,7 @@ public class ForumAdminController {
     @Autowired
     private ForumPostService forumPostService;
     @Autowired
-    private ForumCommentService forumCommentService;
+    private ForumCommentServiceImpl forumCommentService;
 
     @GetMapping("/posts")
     public Result<PageResult<ForumPost>> postPage(@RequestParam(defaultValue = "1") Integer pageNum,
