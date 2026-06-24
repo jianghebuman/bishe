@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3732" height="830" viewBox="0 0 3732 830">
+<rect width="100%" height="100%" fill="#fff"/>
+<style>text{font-family:SimSun,"Microsoft YaHei",serif;fill:#2d2d2d}.box{fill:#fff;stroke:#464646;stroke-width:3}.line{stroke:#464646;stroke-width:3;fill:none;stroke-linecap:square;stroke-linejoin:miter}</style>
+<rect class="box" x="1636" y="42" width="460" height="76"/>
+<text x="1866.0" y="72.2" font-size="29" text-anchor="middle">基于SpringBoot框架的</text>
+<text x="1866.0" y="108.7" font-size="29" text-anchor="middle">校园求职招聘系统设计与实现</text>
+<polyline class="line" points="1866.0,118.0 1866.0,155.0"/>
+<polyline class="line" points="378.0,155.0 3408.0,155.0"/>
+<polyline class="line" points="378.0,155.0 378.0,230.0"/>
+<rect class="box" x="248" y="230" width="260" height="70"/>
+<text x="378.0" y="274.8" font-size="28" text-anchor="middle">门户展示</text>
+<polyline class="line" points="378.0,300.0 378.0,365.0"/>
+<polyline class="line" points="162.0,365.0 594.0,365.0"/>
+<polyline class="line" points="162.0,365.0 162.0,425.0"/>
+<rect class="box" x="130" y="425" width="64" height="250"/>
+<text x="162.0" y="511.5" font-size="25" text-anchor="middle">职</text>
+<text x="162.0" y="545.5" font-size="25" text-anchor="middle">位</text>
+<text x="162.0" y="579.5" font-size="25" text-anchor="middle">搜</text>
+<text x="162.0" y="613.5" font-size="25" text-anchor="middle">索</text>
+<polyline class="line" points="270.0,365.0 270.0,425.0"/>
+<rect class="box" x="238" y="425" width="64" height="250"/>
+<text x="270.0" y="511.5" font-size="25" text-anchor="middle">企</text>
+<text x="270.0" y="545.5" font-size="25" text-anchor="middle">业</text>
+<text x="270.0" y="579.5" font-size="25" text-anchor="middle">详</text>
+<text x="270.0" y="613.5" font-size="25" text-anchor="middle">情</text>
+<polyline class="line" points="378.0,365.0 378.0,425.0"/>
+<rect class="box" x="346" y="425" width="64" height="250"/>
+<text x="378.0" y="494.5" font-size="25" text-anchor="middle">宣</text>
+<text x="378.0" y="528.5" font-size="25" text-anchor="middle">讲</text>
+<text x="378.0" y="562.5" font-size="25" text-anchor="middle">招</text>
+<text x="378.0" y="596.5" font-size="25" text-anchor="middle">聘</text>
+<text x="378.0" y="630.5" font-size="25" text-anchor="middle">会</text>
+<polyline class="line" points="486.0,365.0 486.0,425.0"/>
+<rect class="box" x="454" y="425" width="64" height="250"/>
+<text x="486.0" y="511.5" font-size="25" text-anchor="middle">就</text>
+<text x="486.0" y="545.5" font-size="25" text-anchor="middle">业</text>
+<text x="486.0" y="579.5" font-size="25" text-anchor="middle">资</text>
+<text x="486.0" y="613.5" font-size="25" text-anchor="middle">讯</text>
+<polyline class="line" points="594.0,365.0 594.0,425.0"/>
+<rect class="box" x="562" y="425" width="64" height="250"/>
+<text x="594.0" y="511.5" font-size="25" text-anchor="middle">求</text>
+<text x="594.0" y="545.5" font-size="25" text-anchor="middle">职</text>
+<text x="594.0" y="579.5" font-size="25" text-anchor="middle">社</text>
+<text x="594.0" y="613.5" font-size="25" text-anchor="middle">区</text>
+<polyline class="line" points="964.0,155.0 964.0,230.0"/>
+<rect class="box" x="834" y="230" width="260" height="70"/>
+<text x="964.0" y="274.8" font-size="28" text-anchor="middle">学生求职管理</text>
+<polyline class="line" points="964.0,300.0 964.0,365.0"/>
+<polyline class="line" points="748.0,365.0 1180.0,365.0"/>
+<polyline class="line" points="748.0,365.0 748.0,425.0"/>
+<rect class="box" x="716" y="425" width="64" height="250"/>
+<text x="748.0" y="511.5" font-size="25" text-anchor="middle">个</text>
+<text x="748.0" y="545.5" font-size="25" text-anchor="middle">人</text>
+<text x="748.0" y="579.5" font-size="25" text-anchor="middle">信</text>
+<text x="748.0" y="613.5" font-size="25" text-anchor="middle">息</text>
+<polyline class="line" points="856.0,365.0 856.0,425.0"/>
+<rect class="box" x="824" y="425" width="64" height="250"/>
+<text x="856.0" y="511.5" font-size="25" text-anchor="middle">求</text>
+<text x="856.0" y="545.5" font-size="25" text-anchor="middle">职</text>
+<text x="856.0" y="579.5" font-size="25" text-anchor="middle">意</text>
+<text x="856.0" y="613.5" font-size="25" text-anchor="middle">向</text>
+<polyline class="line" points="964.0,365.0 964.0,425.0"/>
+<rect class="box" x="932" y="425" width="64" height="250"/>
+<text x="964.0" y="511.5" font-size="25" text-anchor="middle">在</text>
+<text x="964.0" y="545.5" font-size="25" text-anchor="middle">线</text>
+<text x="964.0" y="579.5" font-size="25" text-anchor="middle">简</text>
+<text x="964.0" y="613.5" font-size="25" text-anchor="middle">历</text>
+<polyline class="line" points="1072.0,365.0 1072.0,425.0"/>
+<rect class="box" x="1040" y="425" width="64" height="250"/>
+<text x="1072.0" y="511.5" font-size="25" text-anchor="middle">附</text>
+<text x="1072.0" y="545.5" font-size="25" text-anchor="middle">件</text>
+<text x="1072.0" y="579.5" font-size="25" text-anchor="middle">简</text>
+<text x="1072.0" y="613.5" font-size="25" text-anchor="middle">历</text>
+<polyline class="line" points="1180.0,365.0 1180.0,425.0"/>
+<rect class="box" x="1148" y="425" width="64" height="250"/>
+<text x="1180.0" y="511.5" font-size="25" text-anchor="middle">投</text>
+<text x="1180.0" y="545.5" font-size="25" text-anchor="middle">递</text>
+<text x="1180.0" y="579.5" font-size="25" text-anchor="middle">记</text>
+<text x="1180.0" y="613.5" font-size="25" text-anchor="middle">录</text>
+<polyline class="line" points="1550.0,155.0 1550.0,230.0"/>
+<rect class="box" x="1420" y="230" width="260" height="70"/>
+<text x="1550.0" y="274.8" font-size="28" text-anchor="middle">企业招聘管理</text>
+<polyline class="line" points="1550.0,300.0 1550.0,365.0"/>
+<polyline class="line" points="1334.0,365.0 1766.0,365.0"/>
+<polyline class="line" points="1334.0,365.0 1334.0,425.0"/>
+<rect class="box" x="1302" y="425" width="64" height="250"/>
+<text x="1334.0" y="511.5" font-size="25" text-anchor="middle">企</text>
+<text x="1334.0" y="545.5" font-size="25" text-anchor="middle">业</text>
+<text x="1334.0" y="579.5" font-size="25" text-anchor="middle">认</text>
+<text x="1334.0" y="613.5" font-size="25" text-anchor="middle">证</text>
+<polyline class="line" points="1442.0,365.0 1442.0,425.0"/>
+<rect class="box" x="1410" y="425" width="64" height="250"/>
+<text x="1442.0" y="511.5" font-size="25" text-anchor="middle">职</text>
+<text x="1442.0" y="545.5" font-size="25" text-anchor="middle">位</text>
+<text x="1442.0" y="579.5" font-size="25" text-anchor="middle">发</text>
+<text x="1442.0" y="613.5" font-size="25" text-anchor="middle">布</text>
+<polyline class="line" points="1550.0,365.0 1550.0,425.0"/>
+<rect class="box" x="1518" y="425" width="64" height="250"/>
+<text x="1550.0" y="511.5" font-size="25" text-anchor="middle">简</text>
+<text x="1550.0" y="545.5" font-size="25" text-anchor="middle">历</text>
+<text x="1550.0" y="579.5" font-size="25" text-anchor="middle">筛</text>
+<text x="1550.0" y="613.5" font-size="25" text-anchor="middle">选</text>
+<polyline class="line" points="1658.0,365.0 1658.0,425.0"/>
+<rect class="box" x="1626" y="425" width="64" height="250"/>
+<text x="1658.0" y="511.5" font-size="25" text-anchor="middle">面</text>
+<text x="1658.0" y="545.5" font-size="25" text-anchor="middle">试</text>
+<text x="1658.0" y="579.5" font-size="25" text-anchor="middle">管</text>
+<text x="1658.0" y="613.5" font-size="25" text-anchor="middle">理</text>
+<polyline class="line" points="1766.0,365.0 1766.0,425.0"/>
+<rect class="box" x="1734" y="425" width="64" height="250"/>
+<text x="1766.0" y="511.5" font-size="25" text-anchor="middle">录</text>
+<text x="1766.0" y="545.5" font-size="25" text-anchor="middle">用</text>
+<text x="1766.0" y="579.5" font-size="25" text-anchor="middle">管</text>
+<text x="1766.0" y="613.5" font-size="25" text-anchor="middle">理</text>
+<polyline class="line" points="2028.0,155.0 2028.0,230.0"/>
+<rect class="box" x="1898" y="230" width="260" height="70"/>
+<text x="2028.0" y="274.8" font-size="28" text-anchor="middle">招聘活动管理</text>
+<polyline class="line" points="2028.0,300.0 2028.0,365.0"/>
+<polyline class="line" points="1920.0,365.0 2136.0,365.0"/>
+<polyline class="line" points="1920.0,365.0 1920.0,425.0"/>
+<rect class="box" x="1888" y="425" width="64" height="250"/>
+<text x="1920.0" y="494.5" font-size="25" text-anchor="middle">宣</text>
+<text x="1920.0" y="528.5" font-size="25" text-anchor="middle">讲</text>
+<text x="1920.0" y="562.5" font-size="25" text-anchor="middle">会</text>
+<text x="1920.0" y="596.5" font-size="25" text-anchor="middle">管</text>
+<text x="1920.0" y="630.5" font-size="25" text-anchor="middle">理</text>
+<polyline class="line" points="2028.0,365.0 2028.0,425.0"/>
+<rect class="box" x="1996" y="425" width="64" height="250"/>
+<text x="2028.0" y="494.5" font-size="25" text-anchor="middle">招</text>
+<text x="2028.0" y="528.5" font-size="25" text-anchor="middle">聘</text>
+<text x="2028.0" y="562.5" font-size="25" text-anchor="middle">会</text>
+<text x="2028.0" y="596.5" font-size="25" text-anchor="middle">管</text>
+<text x="2028.0" y="630.5" font-size="25" text-anchor="middle">理</text>
+<polyline class="line" points="2136.0,365.0 2136.0,425.0"/>
+<rect class="box" x="2104" y="425" width="64" height="250"/>
+<text x="2136.0" y="511.5" font-size="25" text-anchor="middle">活</text>
+<text x="2136.0" y="545.5" font-size="25" text-anchor="middle">动</text>
+<text x="2136.0" y="579.5" font-size="25" text-anchor="middle">报</text>
+<text x="2136.0" y="613.5" font-size="25" text-anchor="middle">名</text>
+<polyline class="line" points="2452.0,155.0 2452.0,230.0"/>
+<rect class="box" x="2322" y="230" width="260" height="70"/>
+<text x="2452.0" y="274.8" font-size="28" text-anchor="middle">审核管理</text>
+<polyline class="line" points="2452.0,300.0 2452.0,365.0"/>
+<polyline class="line" points="2290.0,365.0 2614.0,365.0"/>
+<polyline class="line" points="2290.0,365.0 2290.0,425.0"/>
+<rect class="box" x="2258" y="425" width="64" height="250"/>
+<text x="2290.0" y="511.5" font-size="25" text-anchor="middle">企</text>
+<text x="2290.0" y="545.5" font-size="25" text-anchor="middle">业</text>
+<text x="2290.0" y="579.5" font-size="25" text-anchor="middle">审</text>
+<text x="2290.0" y="613.5" font-size="25" text-anchor="middle">核</text>
+<polyline class="line" points="2398.0,365.0 2398.0,425.0"/>
+<rect class="box" x="2366" y="425" width="64" height="250"/>
+<text x="2398.0" y="511.5" font-size="25" text-anchor="middle">岗</text>
+<text x="2398.0" y="545.5" font-size="25" text-anchor="middle">位</text>
+<text x="2398.0" y="579.5" font-size="25" text-anchor="middle">审</text>
+<text x="2398.0" y="613.5" font-size="25" text-anchor="middle">核</text>
+<polyline class="line" points="2506.0,365.0 2506.0,425.0"/>
+<rect class="box" x="2474" y="425" width="64" height="250"/>
+<text x="2506.0" y="511.5" font-size="25" text-anchor="middle">论</text>
+<text x="2506.0" y="545.5" font-size="25" text-anchor="middle">坛</text>
+<text x="2506.0" y="579.5" font-size="25" text-anchor="middle">审</text>
+<text x="2506.0" y="613.5" font-size="25" text-anchor="middle">核</text>
+<polyline class="line" points="2614.0,365.0 2614.0,425.0"/>
+<rect class="box" x="2582" y="425" width="64" height="250"/>
+<text x="2614.0" y="511.5" font-size="25" text-anchor="middle">留</text>
+<text x="2614.0" y="545.5" font-size="25" text-anchor="middle">言</text>
+<text x="2614.0" y="579.5" font-size="25" text-anchor="middle">回</text>
+<text x="2614.0" y="613.5" font-size="25" text-anchor="middle">复</text>
+<polyline class="line" points="2930.0,155.0 2930.0,230.0"/>
+<rect class="box" x="2800" y="230" width="260" height="70"/>
+<text x="2930.0" y="274.8" font-size="28" text-anchor="middle">系统运营管理</text>
+<polyline class="line" points="2930.0,300.0 2930.0,365.0"/>
+<polyline class="line" points="2768.0,365.0 3092.0,365.0"/>
+<polyline class="line" points="2768.0,365.0 2768.0,425.0"/>
+<rect class="box" x="2736" y="425" width="64" height="250"/>
+<text x="2768.0" y="511.5" font-size="25" text-anchor="middle">用</text>
+<text x="2768.0" y="545.5" font-size="25" text-anchor="middle">户</text>
+<text x="2768.0" y="579.5" font-size="25" text-anchor="middle">管</text>
+<text x="2768.0" y="613.5" font-size="25" text-anchor="middle">理</text>
+<polyline class="line" points="2876.0,365.0 2876.0,425.0"/>
+<rect class="box" x="2844" y="425" width="64" height="250"/>
+<text x="2876.0" y="511.5" font-size="25" text-anchor="middle">分</text>
+<text x="2876.0" y="545.5" font-size="25" text-anchor="middle">类</text>
+<text x="2876.0" y="579.5" font-size="25" text-anchor="middle">字</text>
+<text x="2876.0" y="613.5" font-size="25" text-anchor="middle">典</text>
+<polyline class="line" points="2984.0,365.0 2984.0,425.0"/>
+<rect class="box" x="2952" y="425" width="64" height="250"/>
+<text x="2984.0" y="511.5" font-size="25" text-anchor="middle">公</text>
+<text x="2984.0" y="545.5" font-size="25" text-anchor="middle">告</text>
+<text x="2984.0" y="579.5" font-size="25" text-anchor="middle">轮</text>
+<text x="2984.0" y="613.5" font-size="25" text-anchor="middle">播</text>
+<polyline class="line" points="3092.0,365.0 3092.0,425.0"/>
+<rect class="box" x="3060" y="425" width="64" height="250"/>
+<text x="3092.0" y="511.5" font-size="25" text-anchor="middle">消</text>
+<text x="3092.0" y="545.5" font-size="25" text-anchor="middle">息</text>
+<text x="3092.0" y="579.5" font-size="25" text-anchor="middle">通</text>
+<text x="3092.0" y="613.5" font-size="25" text-anchor="middle">知</text>
+<polyline class="line" points="3408.0,155.0 3408.0,230.0"/>
+<rect class="box" x="3278" y="230" width="260" height="70"/>
+<text x="3408.0" y="274.8" font-size="28" text-anchor="middle">数据统计管理</text>
+<polyline class="line" points="3408.0,300.0 3408.0,365.0"/>
+<polyline class="line" points="3246.0,365.0 3570.0,365.0"/>
+<polyline class="line" points="3246.0,365.0 3246.0,425.0"/>
+<rect class="box" x="3214" y="425" width="64" height="250"/>
+<text x="3246.0" y="511.5" font-size="25" text-anchor="middle">数</text>
+<text x="3246.0" y="545.5" font-size="25" text-anchor="middle">据</text>
+<text x="3246.0" y="579.5" font-size="25" text-anchor="middle">看</text>
+<text x="3246.0" y="613.5" font-size="25" text-anchor="middle">板</text>
+<polyline class="line" points="3354.0,365.0 3354.0,425.0"/>
+<rect class="box" x="3322" y="425" width="64" height="250"/>
+<text x="3354.0" y="511.5" font-size="25" text-anchor="middle">统</text>
+<text x="3354.0" y="545.5" font-size="25" text-anchor="middle">计</text>
+<text x="3354.0" y="579.5" font-size="25" text-anchor="middle">报</text>
+<text x="3354.0" y="613.5" font-size="25" text-anchor="middle">表</text>
+<polyline class="line" points="3462.0,365.0 3462.0,425.0"/>
+<rect class="box" x="3430" y="425" width="64" height="250"/>
+<text x="3462.0" y="511.5" font-size="25" text-anchor="middle">数</text>
+<text x="3462.0" y="545.5" font-size="25" text-anchor="middle">据</text>
+<text x="3462.0" y="579.5" font-size="25" text-anchor="middle">导</text>
+<text x="3462.0" y="613.5" font-size="25" text-anchor="middle">出</text>
+<polyline class="line" points="3570.0,365.0 3570.0,425.0"/>
+<rect class="box" x="3538" y="425" width="64" height="250"/>
+<text x="3570.0" y="511.5" font-size="25" text-anchor="middle">系</text>
+<text x="3570.0" y="545.5" font-size="25" text-anchor="middle">统</text>
+<text x="3570.0" y="579.5" font-size="25" text-anchor="middle">日</text>
+<text x="3570.0" y="613.5" font-size="25" text-anchor="middle">志</text>
+</svg>

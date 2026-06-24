@@ -1,0 +1,54 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: campus-recruitment
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/campus_recruitment?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: "12345678"
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+
+# MyBatis-Plus 配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.campus.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# 自定义配置
+campus:
+  jwt:
+    # JWT 签名密钥
+    secret: campus_recruitment_jwt_secret_key_2026_graduation_project
+    # 过期时间（毫秒），默认 7 天
+    expire: 604800000
+    # 请求头名称
+    header: Authorization
+  upload:
+    # 文件上传根目录。后端通过 backend 模块启动，上传文件统一放到项目根目录 upload。
+    path: ${user.dir}/../upload/
+    # 访问前缀
+    prefix: /upload/
+
+logging:
+  level:
+    com.campus: debug

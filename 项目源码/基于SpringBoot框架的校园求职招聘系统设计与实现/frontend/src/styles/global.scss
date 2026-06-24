@@ -1,0 +1,77 @@
+/* 全局样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  background-color: #f5f7fa;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+/* 通用布局工具类 */
+.flex {
+  display: flex;
+}
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.page-container {
+  padding: 20px;
+}
+.page-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+.mb-10 { margin-bottom: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.mt-20 { margin-top: 20px; }
+.text-primary { color: #409eff; }
+.text-success { color: #67c23a; }
+.text-danger { color: #f56c6c; }
+.text-warning { color: #e6a23c; }
+.text-info { color: #909399; }
+
+/* 门户内容容器 */
+.portal-content {
+  width: min(1680px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .portal-content {
+    width: min(100% - 28px, 1680px);
+  }
+
+  .page-card {
+    padding: 16px;
+  }
+}
+
+/* 搜索结果分页居中 */
+.pagination-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}

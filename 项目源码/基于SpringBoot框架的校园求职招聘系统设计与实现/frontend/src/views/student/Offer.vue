@@ -1,0 +1,24 @@
+<template>
+  <div class="page-container"><div class="page-card">
+    <div class="header"><h2>Offer 管理</h2><p>查看企业发放的录用 Offer，并及时做出确认。</p></div><el-divider/>
+    <el-table :data="list" stripe v-loading="loading">
+      <el-table-column prop="position" label="岗位" min-width="160"/>
+      <el-table-column prop="salary" label="薪资" width="120"><template #default="{row}"><span class="salary">{{ row.salary }}</span></template></el-table-column>
+      <el-table-column prop="workCity" label="城市" width="100"/>
+      <el-table-column prop="reportTime" label="报到时间" width="150"/>
+      <el-table-column prop="content" label="Offer内容" min-width="220" show-overflow-tooltip/>
+      <el-table-column label="状态" width="110"><template #default="{row}"><el-tag :type="type(row.offerStatus)">{{ ['待确认','已接受','已拒绝','已撤回'][row.offerStatus] }}</el-tag></template></el-table-column>
+      <el-table-column label="操作" width="180"><template #default="{row}"><el-button v-if="row.offerStatus===0" text type="success" @click="handle(row,1)">接受</el-button><el-button v-if="row.offerStatus===0" text type="danger" @click="handle(row,2)">拒绝</el-button></template></el-table-column>
+    </el-table>
+    <div class="pagination-wrap"><el-pagination v-model:current-page="query.pageNum" :total="total" background layout="total,prev,pager,next" @current-change="load"/></div>
+  </div></div>
+</template>
+<script setup>
+import { reactive,ref,onMounted } from 'vue';import { ElMessageBox,ElMessage } from 'element-plus';import { studentApi } from '@/api'
+const query=reactive({pageNum:1,pageSize:10});const list=ref([]);const total=ref(0);const loading=ref(false)
+const type=s=>s===1?'success':s===2?'danger':s===3?'info':'warning'
+const load=async()=>{loading.value=true;try{const r=await studentApi.offers(query);list.value=r.data.records;total.value=Number(r.data.total)}finally{loading.value=false}}
+const handle=(row,status)=>ElMessageBox.confirm(status===1?'确认接受该 Offer？':'确认拒绝该 Offer？').then(async()=>{await studentApi.handleOffer(row.id,status);ElMessage.success('处理成功');load()})
+onMounted(load)
+</script>
+<style scoped>.header h2{margin-bottom:6px}.header p{color:#909399}.salary{color:#f56c6c;font-weight:600}</style>

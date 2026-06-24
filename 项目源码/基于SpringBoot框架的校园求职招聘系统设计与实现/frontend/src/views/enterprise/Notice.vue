@@ -1,0 +1,1 @@
+<template><NoticeList title="企业消息中心" subtitle="学生投递提醒、面试确认提醒、企业认证审核通知集中展示" /></template><script setup>import NoticeList from '@/components/NoticeList.vue'</script>
