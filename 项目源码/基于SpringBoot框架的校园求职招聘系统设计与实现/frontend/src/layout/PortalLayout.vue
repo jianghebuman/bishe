@@ -16,10 +16,16 @@
           <el-menu-item index="/news">资讯</el-menu-item>
           <el-menu-item index="/forum">社区</el-menu-item>
           <el-menu-item :index="noticePath">
-            <el-badge :value="unreadCount" :hidden="!unreadCount" class="nav-badge">通知</el-badge>
+            <span class="nav-label">
+              通知
+              <span v-if="unreadCount" class="nav-unread">{{ formatBadge(unreadCount) }}</span>
+            </span>
           </el-menu-item>
           <el-menu-item :index="chatPath">
-            <el-badge :value="chatUnreadCount" :hidden="!chatUnreadCount" class="nav-badge">在线沟通</el-badge>
+            <span class="nav-label">
+              在线沟通
+              <span v-if="chatUnreadCount" class="nav-unread">{{ formatBadge(chatUnreadCount) }}</span>
+            </span>
           </el-menu-item>
         </el-menu>
         <div class="user-area">
@@ -73,6 +79,7 @@ let badgeTimer
 
 const noticePath = '/notice'
 const chatPath = '/chat'
+const formatBadge = (count) => Number(count) > 99 ? '99+' : Number(count)
 
 const handleNav = (path) => {
   if (path === noticePath || path === chatPath) {
@@ -153,7 +160,21 @@ watch(() => userStore.token, refreshBadges)
 .nav :deep(.el-menu--horizontal) { border-bottom: 0; }
 .nav :deep(.el-menu-item) { min-width: auto; padding: 0 clamp(0.625rem, 1.5vw, 1.25rem); justify-content: center; color: var(--cr-text-soft); font-weight: 650; }
 .nav :deep(.el-menu-item.is-active) { color: var(--cr-primary); border-bottom-color: var(--cr-primary); }
-.nav-badge :deep(.el-badge__content) { transform: translate(70%, -45%); }
+.nav-label { display: inline-flex; align-items: center; gap: 0.375rem; line-height: 1; }
+.nav-unread {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.3125rem;
+  border-radius: 999px;
+  background: var(--cr-danger);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+}
 .user-area { display: flex; align-items: center; gap: 0.625rem; min-width: max-content; justify-content: flex-end; }
 .user-avatar { --el-avatar-size: clamp(1.5rem, 2.4vw, 1.75rem); }
 .user-link { appearance: none; border: 0; background: transparent; padding: 0.375rem 0.5rem; display: flex; align-items: center; gap: 0.375rem; cursor: pointer; color: var(--cr-text); font: inherit; border-radius: var(--cr-radius-sm); outline: none; }

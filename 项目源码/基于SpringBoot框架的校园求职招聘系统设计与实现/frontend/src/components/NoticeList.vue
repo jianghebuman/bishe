@@ -43,11 +43,13 @@
 import { reactive, ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { noticeApi } from '@/api'
+import { useUserStore } from '@/store/user'
 
 defineProps({
   title: { type: String, default: '消息中心' },
   subtitle: { type: String, default: '系统通知、投递反馈、面试提醒和审核消息集中展示' }
 })
+const userStore = useUserStore()
 const query = reactive({ pageNum: 1, pageSize: 10, isRead: '' })
 const list = ref([])
 const total = ref(0)
@@ -55,7 +57,10 @@ const unread = ref(0)
 const loading = ref(false)
 const typeText = (t) => ({ SYSTEM: '系统', APPLY: '投递', INTERVIEW: '面试', OFFER: 'Offer', AUDIT: '审核', ACTIVITY: '活动', CHAT: '沟通' }[t] || '系统')
 const tagType = (t) => ({ APPLY: 'success', INTERVIEW: 'warning', OFFER: 'danger', AUDIT: 'primary', ACTIVITY: 'success', CHAT: 'warning' }[t] || 'info')
-const loadUnread = async () => { unread.value = Number((await noticeApi.unread()).data || 0) }
+const loadUnread = async () => {
+  unread.value = Number((await noticeApi.unread()).data || 0)
+  userStore.setUnreadCounts(unread.value, userStore.unreadChatCount)
+}
 const load = async () => {
   loading.value = true
   try {

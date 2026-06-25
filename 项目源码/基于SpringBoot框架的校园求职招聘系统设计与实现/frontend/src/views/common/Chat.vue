@@ -59,6 +59,17 @@ const activeKey = computed(() => peer.peerId ? `${peer.peerRole}:${peer.peerId}`
 const fallbackPeerName = (role, id) => role === 'STUDENT' ? `学生 ${id}` : `企业 ${id}`
 const peerLabel = computed(() => peer.peerName || fallbackPeerName(peer.peerRole, peer.peerId))
 let ws
+const syncChatUnread = () => {
+  const total = conversations.value.reduce((sum, item) => sum + Number(item.unread || 0), 0)
+  userStore.setUnreadCounts(userStore.unreadNoticeCount, total)
+}
+const clearPeerUnread = () => {
+  const found = conversations.value.find(i => i.peerRole === peer.peerRole && Number(i.peerId) === Number(peer.peerId))
+  if (found) {
+    found.unread = 0
+    syncChatUnread()
+  }
+}
 
 const wsUrl = () => {
   const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:'
@@ -67,10 +78,10 @@ const wsUrl = () => {
 const connect = () => {
   if (!userStore.token || ws) return
   ws = new WebSocket(wsUrl())
-  ws.onmessage = (event) => {
+  ws.onmessage = async (event) => {
     const msg = JSON.parse(event.data)
     const hit = peer.peerId && ((msg.fromRole === peer.peerRole && Number(msg.fromUserId) === Number(peer.peerId)) || (msg.toRole === peer.peerRole && Number(msg.toUserId) === Number(peer.peerId)))
-    if (hit) { messages.value.push(msg); scrollBottom(); chatApi.read(peer.peerRole, peer.peerId) }
+    if (hit) { messages.value.push(msg); scrollBottom(); await chatApi.read(peer.peerRole, peer.peerId) }
     loadConversations()
   }
   ws.onclose = () => { ws = null }
@@ -86,12 +97,14 @@ const loadConversations = async () => {
       conversations.value.unshift({ peerRole: peer.peerRole, peerId: peer.peerId, peerName: peer.peerName, lastMessage: null, unread: 0 })
     }
   }
+  syncChatUnread()
 }
 const loadMessages = async () => {
   if (!peer.peerId) return
   const res = await chatApi.messages({ peerRole: peer.peerRole, peerId: peer.peerId })
   messages.value = res.data || []
   await chatApi.read(peer.peerRole, peer.peerId)
+  clearPeerUnread()
   scrollBottom()
 }
 const loadPeerName = async () => {
