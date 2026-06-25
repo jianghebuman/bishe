@@ -48,7 +48,7 @@
             </div>
           </div>
         </div>
-        <div class="page-card sidebar-card mt-20">
+        <div class="page-card sidebar-card">
           <h3 class="block-title">活动提醒</h3>
           <div class="schedule-list">
             <div class="schedule-group">
@@ -73,15 +73,6 @@
             </div>
           </div>
         </div>
-        <div class="page-card sidebar-card mt-20">
-          <h3 class="block-title">快捷入口</h3>
-          <div class="quick-links">
-            <el-button v-for="link in quickLinks" :key="link.path" class="quick-link portal-quick-link" plain @click="$router.push(link.path)">
-              <el-icon><component :is="link.icon" /></el-icon>
-              <span>{{ link.label }}</span>
-            </el-button>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -89,7 +80,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { Notebook, View, Calendar, Briefcase, ChatDotRound, BellFilled } from '@element-plus/icons-vue'
+import { Notebook, View } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
 import request from '@/utils/request'
 
@@ -102,13 +93,6 @@ const categories = ref([])
 const briefNews = ref([])
 const sidebarTalks = ref([])
 const sidebarFairs = ref([])
-const quickLinks = [
-  { label: '职位搜索', path: '/jobs', icon: Briefcase },
-  { label: '宣讲会', path: '/talks', icon: ChatDotRound },
-  { label: '招聘会', path: '/fairs', icon: Calendar },
-  { label: '求职社区', path: '/forum', icon: BellFilled }
-]
-
 const formatDate = (d) => d ? d.substring(0, 10) : ''
 const formatDateTime = (d) => d ? d.replace('T', ' ').substring(0, 16) : ''
 
@@ -143,7 +127,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 .head h2 { color: var(--cr-text); .el-icon { vertical-align: middle; color: var(--cr-primary); } }
 .head .sub { color: var(--cr-text-muted); margin-top: .375rem; }
-.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 17.5rem); gap: clamp(1rem, 2vw, 1.25rem); align-items: stretch; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 18rem); gap: clamp(1rem, 2vw, 1.25rem); align-items: stretch; }
 .news-row { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 0.0625rem dashed #ebeef5; cursor: pointer;
   &:hover .title { color: var(--cr-primary); }
   .cover { width: clamp(7rem, 16vw, 10rem); aspect-ratio: 8 / 5; background-size: cover; background-position: center; border-radius: var(--cr-radius-sm); flex-shrink: 0; }
@@ -154,9 +138,9 @@ onMounted(async () => {
   .meta { display: flex; gap: .5rem 1rem; flex-wrap: wrap; color: var(--cr-text-muted); font-size: .75rem; .el-icon { vertical-align: middle; } }
 }
 .block-title { font-size: .9375rem; color: var(--cr-text); border-left: .1875rem solid var(--cr-primary); padding-left: .5rem; margin-bottom: .75rem; }
-.aside { display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: clamp(1rem, 2vw, 1.25rem); min-height: 0; height: 100%; }
+.aside { display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1rem, 2vw, 1.25rem); min-height: 0; height: 100%; }
 .aside > .page-card { min-height: 0; }
-.sidebar-card { display: flex; flex-direction: column; gap: .75rem; min-height: 0; }
+.sidebar-card { display: flex; flex-direction: column; gap: .75rem; min-height: 0; height: 100%; }
 .brief-list, .schedule-list { display: flex; flex-direction: column; gap: .75rem; }
 .brief-item, .schedule-item { cursor: pointer; }
 .brief-item { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .625rem; align-items: start; padding: .625rem 0; border-bottom: 0.0625rem dashed #ebeef5;
@@ -172,11 +156,6 @@ onMounted(async () => {
 }
 .schedule-dot { width: .5rem; height: .5rem; border-radius: 50%; background: var(--cr-primary); margin-top: .375rem; }
 .schedule-dot.alt { background: var(--cr-success); }
-.quick-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .625rem; align-content: start; }
-.quick-link { justify-content: flex-start; padding-inline: .75rem; }
-.quick-link span { white-space: nowrap; }
-.quick-link :deep(.el-icon) { margin-right: .375rem; }
-.quick-link:hover { border-color: rgba(37, 99, 235, .24); color: var(--cr-primary); }
 ol { padding-left: 0; }
 .hot-list { padding-left: 0;
   li { display: flex; align-items: center; gap: .5rem; padding: .5rem 0; border-bottom: 0.0625rem dashed #ebeef5; font-size: .8125rem; cursor: pointer;
@@ -194,6 +173,5 @@ ol { padding-left: 0; }
 @media (max-width: 35rem) {
   .news-row { flex-direction: column; }
   .news-row .cover { width: 100%; aspect-ratio: 16 / 9; }
-  .quick-links { grid-template-columns: 1fr; }
 }
 </style>

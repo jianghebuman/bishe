@@ -46,7 +46,7 @@ import { useUserStore } from '@/store/user'
 import { showLoginPrompt, showSignupSuccessPrompt } from '@/utils/loginPrompt'
 
 const userStore = useUserStore()
-const query = reactive({ pageNum: 1, pageSize: 10 })
+const query = reactive({ pageNum: 1, pageSize: 5 })
 const list = ref([])
 const total = ref(0)
 const loading = ref(false)

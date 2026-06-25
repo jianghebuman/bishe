@@ -103,7 +103,7 @@ import { Search, Location, User, Briefcase } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
 
 const route = useRoute()
-const query = reactive({ pageNum: 1, pageSize: 10, keyword: '', city: '', categoryId: '', education: '', jobType: '', salaryMin: '' })
+const query = reactive({ pageNum: 1, pageSize: 8, keyword: '', city: '', categoryId: '', education: '', jobType: '', salaryMin: '' })
 const jobs = ref([])
 const total = ref(0)
 const loading = ref(false)
