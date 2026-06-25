@@ -3,7 +3,7 @@
 </template>
 <script setup>
 import AdminBase from './AdminBase.vue'
-import { Odometer, OfficeBuilding, CircleCheck, Briefcase, Tickets, ChatLineRound, Medal, UserFilled, Bell, Lock } from '@element-plus/icons-vue'
+import { Odometer, OfficeBuilding, CircleCheck, Briefcase, Tickets, ChatLineRound, Medal, UserFilled, Bell, Lock, ChatDotRound } from '@element-plus/icons-vue'
 const menus = [
   { path: '/enterprise/dashboard', title: '数据看板', icon: Odometer },
   { path: '/enterprise/profile', title: '企业资料', icon: OfficeBuilding },
@@ -14,6 +14,7 @@ const menus = [
   { path: '/enterprise/offer', title: 'Offer管理', icon: Medal },
   { path: '/enterprise/talent', title: '人才库', icon: UserFilled },
   { path: '/enterprise/notice', title: '消息中心', icon: Bell },
+  { path: '/enterprise/chat', title: '在线沟通', icon: ChatDotRound },
   { path: '/enterprise/password', title: '修改密码', icon: Lock }
 ]
 </script>

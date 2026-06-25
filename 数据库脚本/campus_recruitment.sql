@@ -381,6 +381,29 @@ CREATE TABLE `resume_attachment` (
   KEY `idx_attach_student` (`student_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='附件简历表';
 
+-- ----------------------------
+-- 求职栏信息表
+-- ----------------------------
+DROP TABLE IF EXISTS `job_seeker_post`;
+CREATE TABLE `job_seeker_post` (
+  `id`             bigint       NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `student_id`     bigint       NOT NULL COMMENT '学生ID',
+  `resume_id`      bigint                DEFAULT NULL COMMENT '关联在线简历ID',
+  `title`          varchar(120) NOT NULL COMMENT '求职标题',
+  `expect_post`    varchar(80)           DEFAULT NULL COMMENT '期望岗位',
+  `expect_city`    varchar(80)           DEFAULT NULL COMMENT '期望城市',
+  `expect_salary`  varchar(40)           DEFAULT NULL COMMENT '期望薪资',
+  `intro`          text                  COMMENT '自我介绍',
+  `status`         tinyint      NOT NULL DEFAULT 1 COMMENT '状态：1展示0下架',
+  `view_count`     int          NOT NULL DEFAULT 0 COMMENT '浏览量',
+  `create_time`    datetime              DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time`    datetime              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted`        tinyint      NOT NULL DEFAULT 0 COMMENT '逻辑删除：0否1是',
+  PRIMARY KEY (`id`),
+  KEY `idx_seeker_student` (`student_id`),
+  KEY `idx_seeker_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='求职栏信息表';
+
 -- ============================================================================
 -- 5. 投递 / 面试 / Offer / 收藏 / 人才库
 -- ============================================================================
@@ -507,6 +530,29 @@ CREATE TABLE `talent_pool` (
   PRIMARY KEY (`id`),
   KEY `idx_talent_enterprise` (`enterprise_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='人才库表';
+
+-- ----------------------------
+-- 在线沟通消息表
+-- ----------------------------
+DROP TABLE IF EXISTS `chat_message`;
+CREATE TABLE `chat_message` (
+  `id`              bigint        NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `from_user_id`    bigint        NOT NULL COMMENT '发送方用户ID',
+  `from_role`       varchar(20)   NOT NULL COMMENT '发送方角色：STUDENT/ENTERPRISE',
+  `to_user_id`      bigint        NOT NULL COMMENT '接收方用户ID',
+  `to_role`         varchar(20)   NOT NULL COMMENT '接收方角色：STUDENT/ENTERPRISE',
+  `job_id`          bigint                 DEFAULT NULL COMMENT '关联职位ID',
+  `seeker_post_id`  bigint                 DEFAULT NULL COMMENT '关联求职信息ID',
+  `content`         varchar(1000) NOT NULL COMMENT '消息内容',
+  `is_read`         tinyint       NOT NULL DEFAULT 0 COMMENT '是否已读：0否1是',
+  `create_time`     datetime               DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time`     datetime               DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted`         tinyint       NOT NULL DEFAULT 0 COMMENT '逻辑删除：0否1是',
+  PRIMARY KEY (`id`),
+  KEY `idx_chat_from` (`from_role`,`from_user_id`),
+  KEY `idx_chat_to` (`to_role`,`to_user_id`),
+  KEY `idx_chat_pair_time` (`from_user_id`,`to_user_id`,`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='在线沟通消息表';
 
 -- ============================================================================
 -- 6. 校园活动 / 资讯 / 论坛 / 反馈 / 通知 / 日志
@@ -920,6 +966,7 @@ INSERT INTO `permission` (`id`,`perm_code`,`perm_name`,`perm_type`,`parent_id`,`
 (11,'admin:forum','论坛管理','MENU',0,'/admin/forum',11),
 (12,'admin:feedback','留言反馈','MENU',0,'/admin/feedback',12),
 (13,'admin:log','系统日志','MENU',0,'/admin/log',13),
+(33,'admin:seeker-post','求职信息管理','MENU',0,'/admin/seeker-post',14),
 (14,'enterprise:dashboard','企业数据看板','MENU',0,'/enterprise/dashboard',1),
 (15,'enterprise:profile','企业资料','MENU',0,'/enterprise/profile',2),
 (16,'enterprise:audit','企业认证','MENU',0,'/enterprise/audit',3),
@@ -928,6 +975,7 @@ INSERT INTO `permission` (`id`,`perm_code`,`perm_name`,`perm_type`,`parent_id`,`
 (19,'enterprise:interview','面试管理','MENU',0,'/enterprise/interview',6),
 (20,'enterprise:offer','Offer管理','MENU',0,'/enterprise/offer',7),
 (21,'enterprise:talent','人才库','MENU',0,'/enterprise/talent',8),
+(34,'enterprise:chat','在线沟通','MENU',0,'/enterprise/chat',9),
 (22,'student:dashboard','学生个人中心','MENU',0,'/student/dashboard',1),
 (23,'student:profile','个人信息','MENU',0,'/student/profile',2),
 (24,'student:intention','求职意向','MENU',0,'/student/intention',3),
@@ -938,12 +986,14 @@ INSERT INTO `permission` (`id`,`perm_code`,`perm_name`,`perm_type`,`parent_id`,`
 (29,'student:offer','Offer管理','MENU',0,'/student/offer',8),
 (30,'student:favorite','我的收藏','MENU',0,'/student/favorite',9),
 (31,'student:notice','消息中心','MENU',0,'/student/notice',10),
-(32,'student:forum','我的帖子','MENU',0,'/student/myposts',11);
+(32,'student:forum','我的帖子','MENU',0,'/student/myposts',11),
+(35,'student:seeker-post','我的求职信息','MENU',0,'/student/seeker-post',12),
+(36,'student:chat','在线沟通','MENU',0,'/student/chat',13);
 
 INSERT INTO `role_permission` (`role_id`,`permission_id`) VALUES
-(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),
-(2,14),(2,15),(2,16),(2,17),(2,18),(2,19),(2,20),(2,21),
-(3,22),(3,23),(3,24),(3,25),(3,26),(3,27),(3,28),(3,29),(3,30),(3,31),(3,32);
+(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),(1,33),
+(2,14),(2,15),(2,16),(2,17),(2,18),(2,19),(2,20),(2,21),(2,34),
+(3,22),(3,23),(3,24),(3,25),(3,26),(3,27),(3,28),(3,29),(3,30),(3,31),(3,32),(3,35),(3,36);
 
 -- 更多账号
 INSERT INTO `admin_user` (`id`,`username`,`password`,`real_name`,`phone`,`email`,`role_id`,`status`) VALUES
@@ -1060,6 +1110,11 @@ INSERT INTO `resume_attachment` (`student_id`,`file_name`,`file_url`,`file_size`
 (7,'吴越-UI作品集.pdf','/upload/resume/wuyue-ui-portfolio.pdf',1586240,'pdf'),
 (8,'钱九-后端实习简历.doc','/upload/resume/qianjiu-backend.doc',196320,'doc');
 
+INSERT INTO `job_seeker_post` (`id`,`student_id`,`resume_id`,`title`,`expect_post`,`expect_city`,`expect_salary`,`intro`,`status`,`view_count`) VALUES
+(1,1,1,'计算机本科求Java后端开发实习','Java后端开发','北京,杭州','8K-12K','熟悉Spring Boot、MySQL和Redis，有校园招聘系统和论坛项目经验，希望参与真实业务后端开发。',1,42),
+(2,4,4,'人工智能方向学生寻找算法实习','机器学习算法实习','深圳,广州','10K-15K','关注机器学习、数据挖掘和大模型应用，做过文本分类和推荐系统课程项目。',1,31),
+(3,7,7,'视觉传达专业求UI/交互设计岗位','UI设计师','上海,杭州','6K-10K','擅长Figma、PS和移动端界面设计，可提供作品集，期待参与产品设计与交互优化。',1,18);
+
 -- 更多投递、面试、评价、Offer、收藏、人才库
 INSERT INTO `job_apply` (`id`,`student_id`,`resume_id`,`job_id`,`enterprise_id`,`status`,`apply_remark`,`hr_remark`) VALUES
 (4,3,3,11,6,0,'对教育行业用户运营很感兴趣',NULL),
@@ -1102,6 +1157,10 @@ INSERT INTO `talent_pool` (`enterprise_id`,`student_id`,`resume_id`,`tag`,`remar
 (4,1,1,'可培养','Java基础好，适合后端/算法交叉培养'),
 (5,7,7,'设计作品集优秀','作品集完整，可约设计评审'),
 (6,3,3,'运营潜力','活动策划经验丰富');
+
+INSERT INTO `chat_message` (`from_user_id`,`from_role`,`to_user_id`,`to_role`,`job_id`,`seeker_post_id`,`content`,`is_read`) VALUES
+(2,'ENTERPRISE',1,'STUDENT',NULL,1,'你好，我们看到你的求职信息，想了解一下你最近是否方便参加线上沟通？',0),
+(1,'STUDENT',2,'ENTERPRISE',1,NULL,'您好，我想咨询腾讯后端开发工程师岗位，对实习时长有要求吗？',1);
 
 -- 更多内容、活动和互动数据
 INSERT INTO `banner` (`title`,`image_url`,`link_url`,`sort`,`status`) VALUES

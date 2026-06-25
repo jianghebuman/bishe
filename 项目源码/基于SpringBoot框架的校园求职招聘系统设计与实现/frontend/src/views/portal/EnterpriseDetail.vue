@@ -19,6 +19,7 @@
           <p class="welfare" v-if="enterprise.welfare">
             <el-tag v-for="w in enterprise.welfare.split(',')" :key="w" size="small" type="warning" effect="plain">{{ w }}</el-tag>
           </p>
+          <el-button class="chat-btn" type="primary" @click="consultHr">咨询HR</el-button>
         </div>
       </div>
 
@@ -61,14 +62,31 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { OfficeBuilding, Star, User, Location } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
+import { useUserStore } from '@/store/user'
 
 const route = useRoute()
+const router = useRouter()
+const userStore = useUserStore()
 const loading = ref(false)
 const enterprise = ref(null)
 const jobs = ref([])
+
+const consultHr = () => {
+  if (!userStore.isLogin) {
+    ElMessage.warning('请先登录')
+    router.push('/login')
+    return
+  }
+  if (userStore.role !== 'STUDENT') {
+    ElMessage.warning('请使用学生账号咨询HR')
+    return
+  }
+  router.push({ path: '/student/chat', query: { peerRole: 'ENTERPRISE', peerId: enterprise.value.id } })
+}
 
 onMounted(async () => {
   loading.value = true
@@ -89,6 +107,7 @@ onMounted(async () => {
 .name { color: var(--cr-text); display: flex; align-items: center; gap: .625rem; flex-wrap: wrap; }
 .meta { color: var(--cr-text-soft); margin-top: .625rem; .el-icon { vertical-align: middle; margin-right: .125rem; color: var(--cr-primary); } .sep { margin: 0 .625rem; color: var(--cr-border); } }
 .welfare { margin-top: .75rem; display: flex; gap: .375rem; flex-wrap: wrap; }
+.chat-btn { margin-top: .875rem; }
 .detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17.5rem, 0.34fr); gap: clamp(1rem, 2vw, 1.25rem); align-items: start; }
 .block-title { font-size: 1rem; color: var(--cr-text); border-left: .1875rem solid var(--cr-primary); padding-left: .625rem; margin-bottom: .875rem; .cnt { color: var(--cr-text-muted); font-size: .875rem; margin-left: .375rem; } }
 .rich-text { color: var(--cr-text-soft); line-height: 1.8; white-space: pre-line; }

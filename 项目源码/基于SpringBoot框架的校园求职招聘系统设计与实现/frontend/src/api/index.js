@@ -24,6 +24,8 @@ export const publicApi = {
   announcementDetail: (id) => request.get(`/public/announcements/${id}`),
   talks: (params) => request.get('/public/talks', { params }),
   fairs: (params) => request.get('/public/fairs', { params }),
+  seekerPosts: (params) => request.get('/public/seeker-posts', { params }),
+  seekerPostDetail: (id) => request.get(`/public/seeker-posts/${id}`),
   forumPosts: (params) => request.get('/public/forum/posts', { params }),
   forumPostDetail: (id) => request.get(`/public/forum/posts/${id}`),
   forumComments: (id) => request.get(`/public/forum/posts/${id}/comments`),
@@ -36,6 +38,14 @@ export const noticeApi = {
   unread: () => request.get('/notice/unread-count'),
   read: (id) => request.post(`/notice/${id}/read`),
   readAll: () => request.post('/notice/read-all')
+}
+
+// ==================== 在线沟通 ====================
+export const chatApi = {
+  conversations: () => request.get('/chat/conversations'),
+  messages: (params) => request.get('/chat/messages', { params }),
+  send: (data) => request.post('/chat/messages', data),
+  read: (peerRole, peerId) => request.post('/chat/messages/read', null, { params: { peerRole, peerId } })
 }
 
 // ==================== 学生端 ====================
@@ -75,7 +85,11 @@ export const studentApi = {
   confirmInterview: (id, status) => request.put(`/student/interview/${id}/confirm`, null, { params: { status } }),
   // offer
   offers: (params) => request.get('/student/offer', { params }),
-  handleOffer: (id, status) => request.put(`/student/offer/${id}/handle`, null, { params: { status } })
+  handleOffer: (id, status) => request.put(`/student/offer/${id}/handle`, null, { params: { status } }),
+  // 求职栏
+  seekerPost: () => request.get('/student/seeker-post'),
+  saveSeekerPost: (data) => request.post('/student/seeker-post', data),
+  updateSeekerStatus: (status) => request.put('/student/seeker-post/status', null, { params: { status } })
 }
 
 // ==================== 学生社区 ====================
@@ -172,6 +186,8 @@ export const adminApi = {
   // 反馈
   feedbacks: (params) => request.get('/admin/feedback', { params }),
   replyFeedback: (id, reply) => request.put(`/admin/feedback/${id}/reply`, null, { params: { reply } }),
+  seekerPosts: (params) => request.get('/admin/seeker-posts', { params }),
+  deleteSeekerPost: (id) => request.delete(`/admin/seeker-posts/${id}`),
   // 日志
   logs: (params) => request.get('/admin/log', { params }),
   // 导出

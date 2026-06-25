@@ -24,6 +24,9 @@
           <el-button :type="favorited ? 'warning' : 'default'" size="large" @click="onFavorite">
             <el-icon><Star /></el-icon> {{ favorited ? '已收藏' : '收藏' }}
           </el-button>
+          <el-button size="large" @click="consultHr">
+            <el-icon><ChatLineRound /></el-icon> 咨询HR
+          </el-button>
           <div class="stats">
             <span>浏览 {{ job.viewCount || 0 }}</span>
             <span>投递 {{ job.applyCount || 0 }}</span>
@@ -90,7 +93,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Promotion, Star, OfficeBuilding } from '@element-plus/icons-vue'
+import { Promotion, Star, OfficeBuilding, ChatLineRound } from '@element-plus/icons-vue'
 import { publicApi, studentApi } from '@/api'
 import { useUserStore } from '@/store/user'
 
@@ -149,6 +152,15 @@ const onFavorite = async () => {
     favorited.value = true
     ElMessage.success('已收藏')
   }
+}
+
+const consultHr = () => {
+  if (!ensureLogin()) return
+  if (!enterprise.value?.id) {
+    ElMessage.warning('企业信息不存在')
+    return
+  }
+  router.push({ path: '/student/chat', query: { peerRole: 'ENTERPRISE', peerId: enterprise.value.id, jobId: job.value.id } })
 }
 
 const checkFavorite = async () => {

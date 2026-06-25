@@ -10,6 +10,7 @@
           <el-menu-item index="/">首页</el-menu-item>
           <el-menu-item index="/jobs">职位</el-menu-item>
           <el-menu-item index="/enterprises">企业</el-menu-item>
+          <el-menu-item index="/seekers">求职栏</el-menu-item>
           <el-menu-item index="/talks">宣讲会</el-menu-item>
           <el-menu-item index="/fairs">招聘会</el-menu-item>
           <el-menu-item index="/news">资讯</el-menu-item>

@@ -13,6 +13,8 @@ const routes = [
       { path: 'job/:id', name: 'JobDetail', component: () => import('@/views/portal/JobDetail.vue'), meta: { title: '职位详情' } },
       { path: 'enterprises', name: 'EnterpriseList', component: () => import('@/views/portal/EnterpriseList.vue'), meta: { title: '名企推荐' } },
       { path: 'enterprise/:id', name: 'EnterpriseDetail', component: () => import('@/views/portal/EnterpriseDetail.vue'), meta: { title: '企业详情' } },
+      { path: 'seekers', name: 'SeekerList', component: () => import('@/views/portal/SeekerList.vue'), meta: { title: '求职栏' } },
+      { path: 'seeker/:id', name: 'SeekerDetail', component: () => import('@/views/portal/SeekerDetail.vue'), meta: { title: '求职信息详情' } },
       { path: 'talks', name: 'TalkList', component: () => import('@/views/portal/TalkList.vue'), meta: { title: '宣讲会' } },
       { path: 'fairs', name: 'FairList', component: () => import('@/views/portal/FairList.vue'), meta: { title: '招聘会' } },
       { path: 'news', name: 'NewsList', component: () => import('@/views/portal/NewsList.vue'), meta: { title: '就业资讯' } },
@@ -43,6 +45,8 @@ const routes = [
       { path: 'favorite', component: () => import('@/views/student/Favorite.vue'), meta: { title: '我的收藏' } },
       { path: 'notice', component: () => import('@/views/student/Notice.vue'), meta: { title: '消息中心' } },
       { path: 'myposts', component: () => import('@/views/student/MyPosts.vue'), meta: { title: '我的帖子' } },
+      { path: 'seeker-post', component: () => import('@/views/student/SeekerPost.vue'), meta: { title: '我的求职信息' } },
+      { path: 'chat', component: () => import('@/views/common/Chat.vue'), meta: { title: '在线沟通' } },
       { path: 'password', component: () => import('@/views/common/Password.vue'), meta: { title: '修改密码' } }
     ]
   },
@@ -63,6 +67,7 @@ const routes = [
       { path: 'offer', component: () => import('@/views/enterprise/OfferManage.vue'), meta: { title: 'Offer管理' } },
       { path: 'talent', component: () => import('@/views/enterprise/Talent.vue'), meta: { title: '人才库' } },
       { path: 'notice', component: () => import('@/views/enterprise/Notice.vue'), meta: { title: '消息中心' } },
+      { path: 'chat', component: () => import('@/views/common/Chat.vue'), meta: { title: '在线沟通' } },
       { path: 'password', component: () => import('@/views/common/Password.vue'), meta: { title: '修改密码' } }
     ]
   },
@@ -86,6 +91,7 @@ const routes = [
       { path: 'fair', component: () => import('@/views/admin/Fair.vue'), meta: { title: '招聘会' } },
       { path: 'forum', component: () => import('@/views/admin/ForumManage.vue'), meta: { title: '论坛管理' } },
       { path: 'feedback', component: () => import('@/views/admin/Feedback.vue'), meta: { title: '留言反馈' } },
+      { path: 'seeker-post', component: () => import('@/views/admin/SeekerPostManage.vue'), meta: { title: '求职信息管理' } },
       { path: 'log', component: () => import('@/views/admin/Log.vue'), meta: { title: '系统日志' } },
       { path: 'password', component: () => import('@/views/common/Password.vue'), meta: { title: '修改密码' } }
     ]
