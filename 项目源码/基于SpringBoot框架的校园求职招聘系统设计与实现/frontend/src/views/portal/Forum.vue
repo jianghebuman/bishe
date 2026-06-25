@@ -47,15 +47,33 @@
       </div>
 
       <div class="side">
-        <div class="page-card tips">
-          <h3>社区公约</h3>
+        <div class="page-card side-card">
+          <h3 class="side-title">社区公约</h3>
           <p>1. 分享真实求职经验，尊重他人隐私。</p>
           <p>2. 不发布虚假招聘、广告或攻击性内容。</p>
           <p>3. 面试经验建议包含岗位、流程、题型与复盘。</p>
+          <p>4. Offer 信息可适度脱敏后再公开交流。</p>
         </div>
-        <div class="page-card mt-20 quick">
-          <h3>热门话题</h3>
-          <el-tag>春招</el-tag><el-tag type="success">简历优化</el-tag><el-tag type="warning">面试复盘</el-tag><el-tag type="danger">Offer选择</el-tag>
+        <div class="page-card side-card mt-20">
+          <h3 class="side-title">精选帖子</h3>
+          <div class="side-posts">
+            <div class="side-post" v-for="item in featuredPosts" :key="item.id" @click="$router.push(`/forum/${item.id}`)">
+              <el-tag size="small" :type="tagType(item.category)" effect="plain">{{ item.category || '求职交流' }}</el-tag>
+              <div class="side-post-body">
+                <p class="side-post-title">{{ item.title }}</p>
+                <p class="side-post-meta">{{ item.authorName || '匿名同学' }} · {{ formatTime(item.createTime) }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="page-card side-card mt-20">
+          <h3 class="side-title">快捷入口</h3>
+          <div class="quick-links">
+            <el-button class="quick-link" plain @click="$router.push('/news')">就业资讯</el-button>
+            <el-button class="quick-link" plain @click="$router.push('/talks')">宣讲会</el-button>
+            <el-button class="quick-link" plain @click="$router.push('/fairs')">招聘会</el-button>
+            <el-button class="quick-link" plain @click="$router.push('/notice')">消息中心</el-button>
+          </div>
         </div>
       </div>
     </div>
@@ -101,6 +119,7 @@ const loading = ref(false)
 const dialog = ref(false)
 const publishing = ref(false)
 const form = reactive({ title: '', content: '', category: '求职交流' })
+const featuredPosts = ref([])
 
 const tagType = (c) => c === '经验分享' ? 'success' : c === 'offer捷报' ? 'danger' : 'info'
 const formatTime = (t) => t ? t.replace('T', ' ').substring(0, 16) : ''
@@ -113,6 +132,7 @@ const load = async () => {
     if (!params.category) delete params.category
     const res = await publicApi.forumPosts(params)
     posts.value = res.data.records; total.value = Number(res.data.total)
+    featuredPosts.value = (res.data.records || []).slice(0, 4)
   } finally { loading.value = false }
 }
 const openPublish = () => {
@@ -146,8 +166,17 @@ onMounted(load)
 .post-title { display: flex; align-items: center; gap: .5rem; font-weight: 600; color: var(--cr-text); margin-bottom: .5rem; }
 .post-content { color: var(--cr-text-soft); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: .5rem; }
 .post-meta { display: flex; gap: 1rem; flex-wrap: wrap; color: var(--cr-text-muted); font-size: .75rem; .el-icon { vertical-align: middle; } }
-.tips p { color: var(--cr-text-soft); line-height: 1.8; font-size: .8125rem; }
-.quick { display: flex; flex-direction: column; gap: .625rem; }
+.side-card { display: flex; flex-direction: column; gap: .625rem; }
+.side-title { color: var(--cr-text); font-size: .9375rem; font-weight: 600; }
+.side-card p { color: var(--cr-text-soft); line-height: 1.8; font-size: .8125rem; }
+.side-posts { display: flex; flex-direction: column; gap: .75rem; }
+.side-post { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .625rem; align-items: start; padding: .625rem 0; border-bottom: 0.0625rem dashed #ebeef5; cursor: pointer; }
+.side-post:hover .side-post-title { color: var(--cr-primary); }
+.side-post-body { min-width: 0; }
+.side-post-title { color: var(--cr-text); font-size: .875rem; line-height: 1.45; margin: 0; }
+.side-post-meta { color: var(--cr-text-muted); font-size: .75rem; margin-top: .25rem; }
+.quick-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .625rem; }
+.quick-link { height: 2.5rem; }
 
 @media (max-width: 56.25rem) {
   .content,
@@ -158,6 +187,7 @@ onMounted(load)
   .hero { align-items: stretch; flex-direction: column; }
   .hero :deep(.el-button) { width: 100%; }
   .post-title { align-items: flex-start; flex-direction: column; }
+  .quick-links { grid-template-columns: 1fr; }
 }
 </style>
 
