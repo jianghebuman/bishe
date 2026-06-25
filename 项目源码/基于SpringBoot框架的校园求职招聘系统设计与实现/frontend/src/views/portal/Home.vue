@@ -132,7 +132,8 @@ onMounted(async () => {
 <style scoped lang="scss">
 .banner { border-radius: var(--cr-radius); overflow: hidden; border: 1px solid var(--cr-border-soft); box-shadow: var(--cr-shadow-soft); }
 .banner-item { width: 100%; height: 100%; background-size: cover; background-position: center; position: relative; }
-.banner-title { position: absolute; bottom: clamp(1rem, 2vw, 1.5rem); left: clamp(1rem, 3vw, 2rem); color: #fff; font-size: clamp(1.25rem, 2.3vw, 1.75rem); font-weight: 600; text-shadow: 0 .125rem .5rem rgba(0,0,0,.5); }
+.banner-item::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(12,24,45,.72), rgba(12,24,45,.24) 52%, rgba(12,24,45,.08)); }
+.banner-title { position: absolute; z-index: 1; bottom: clamp(1rem, 2vw, 1.5rem); left: clamp(1rem, 3vw, 2rem); max-width: min(34rem, calc(100% - 2rem)); color: #fff; font-size: clamp(1.25rem, 2.3vw, 1.875rem); line-height: 1.25; font-weight: 750; text-shadow: 0 .125rem .5rem rgba(0,0,0,.42); }
 .search-bar { display: block; }
 .search-form { width: 100%; display: grid; grid-template-columns: minmax(7rem, .24fr) minmax(14rem, 1fr) auto; gap: clamp(.5rem, 1.2vw, .875rem); align-items: stretch; }
 .city-select,
