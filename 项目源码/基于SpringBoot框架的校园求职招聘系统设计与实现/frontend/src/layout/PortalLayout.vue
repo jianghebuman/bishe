@@ -6,7 +6,7 @@
           <el-icon class="logo-icon"><School /></el-icon>
           <span>校园求职招聘系统</span>
         </div>
-        <el-menu mode="horizontal" :default-active="$route.path" class="nav" :ellipsis="false" @select="handleNav">
+        <el-menu ref="navMenuRef" mode="horizontal" :default-active="$route.path" class="nav" :ellipsis="false" @select="handleNav">
           <el-menu-item index="/">首页</el-menu-item>
           <el-menu-item index="/jobs">职位</el-menu-item>
           <el-menu-item index="/enterprises">企业</el-menu-item>
@@ -63,7 +63,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { School, User } from '@element-plus/icons-vue'
@@ -73,6 +73,7 @@ import { showLoginPrompt } from '@/utils/loginPrompt'
 
 const router = useRouter()
 const userStore = useUserStore()
+const navMenuRef = ref()
 const unreadCount = computed(() => Number(userStore.unreadNoticeCount || 0))
 const chatUnreadCount = computed(() => Number(userStore.unreadChatCount || 0))
 let badgeTimer
@@ -80,15 +81,18 @@ let badgeTimer
 const noticePath = '/notice'
 const chatPath = '/chat'
 const formatBadge = (count) => Number(count) > 99 ? '99+' : Number(count)
+const resetNavActive = () => nextTick(() => navMenuRef.value?.updateActiveIndex(router.currentRoute.value.path))
 
 const handleNav = (path) => {
   if (path === noticePath || path === chatPath) {
     if (!userStore.isLogin) {
       showLoginPrompt(path === noticePath ? '登录后才能查看通知消息。' : '登录后才能进入在线沟通。')
+      resetNavActive()
       return
     }
     if (!['STUDENT', 'ENTERPRISE'].includes(userStore.role)) {
       ElMessage.error('无权访问该页面')
+      resetNavActive()
       return
     }
   }
