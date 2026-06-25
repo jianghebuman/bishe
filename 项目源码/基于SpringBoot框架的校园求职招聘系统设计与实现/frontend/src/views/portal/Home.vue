@@ -1,7 +1,7 @@
 <template>
   <div class="home portal-content">
     <!-- 轮播图 -->
-    <el-carousel height="clamp(13.75rem, 24vw, 22.5rem)" class="banner" v-if="home.banners?.length">
+    <el-carousel height="clamp(12.5rem, 24vw, 22.5rem)" class="banner" v-if="home.banners?.length">
       <el-carousel-item v-for="b in home.banners" :key="b.id">
         <div class="banner-item" :style="{ backgroundImage: `url(${b.imageUrl})` }">
           <div class="banner-title">{{ b.title }}</div>
@@ -174,13 +174,33 @@ onMounted(async () => {
 }
 
 @media (max-width: 48rem) {
-  .banner { :deep(.el-carousel__container) { height: clamp(11rem, 42vw, 14rem) !important; } }
-  .search-form { grid-template-columns: minmax(7rem, .42fr) minmax(0, 1fr); }
-  .search-button { grid-column: 1 / -1; width: 100%; min-inline-size: 0; }
+  .banner { :deep(.el-carousel__container) { height: clamp(10.5rem, 52vw, 13.5rem) !important; } }
+  .banner-item::after { background: linear-gradient(180deg, rgba(12,24,45,.06), rgba(12,24,45,.24) 48%, rgba(12,24,45,.78)); }
+  .banner-title {
+    right: .875rem;
+    bottom: .875rem;
+    left: .875rem;
+    max-width: none;
+    font-size: clamp(1.0625rem, 5vw, 1.375rem);
+    line-height: 1.22;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .search-bar { padding: .75rem; }
+  .search-form {
+    grid-template-columns: minmax(0, 1fr) minmax(5.25rem, auto);
+    gap: .625rem;
+  }
+  .keyword-input { grid-column: 1 / -1; order: 1; }
+  .city-select { grid-column: 1; order: 2; }
+  .search-button { grid-column: 2; order: 2; width: auto; min-inline-size: 5.25rem; padding-inline: .75rem; }
+  .search-button :deep(.el-icon) { margin-right: .25rem; }
 }
 
 @media (max-width: 30rem) {
-  .search-form { grid-template-columns: 1fr; }
+  .search-form { grid-template-columns: minmax(0, 1fr) minmax(4.75rem, auto); }
   .section-title { align-items: flex-start; }
 }
 </style>

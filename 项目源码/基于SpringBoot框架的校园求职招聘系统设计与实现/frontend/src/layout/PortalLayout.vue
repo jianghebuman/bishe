@@ -97,6 +97,8 @@ const onCommand = (cmd) => {
 .logo-icon { font-size: clamp(1.5rem, 2.2vw, 1.75rem); }
 .logo .el-icon { color: var(--cr-primary); }
 .nav { flex: 1; border-bottom: none; margin-left: 0; min-width: 0; overflow-x: auto; }
+.nav { scrollbar-width: none; }
+.nav::-webkit-scrollbar { display: none; }
 .nav :deep(.el-menu--horizontal) { border-bottom: 0; }
 .nav :deep(.el-menu-item) { min-width: auto; padding: 0 clamp(0.625rem, 1.5vw, 1.25rem); justify-content: center; color: var(--cr-text-soft); font-weight: 650; }
 .nav :deep(.el-menu-item.is-active) { color: var(--cr-primary); border-bottom-color: var(--cr-primary); }
@@ -129,6 +131,8 @@ const onCommand = (cmd) => {
 @media (max-width: 40rem) {
   .logo span { max-width: 52vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .header-inner { gap: 0.5rem 0.75rem; }
+  .nav { margin-inline: -0.75rem; padding-inline: 0.75rem; scroll-padding-inline: 0.75rem; }
+  .nav :deep(.el-menu) { min-width: max-content; }
   .user-area :deep(.el-button) { padding: 0.5rem 0.625rem; }
 }
 </style>
