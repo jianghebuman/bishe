@@ -150,6 +150,28 @@ li {
     line-height: 1.7;
   }
 
+  .login-required-content {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .login-required-action {
+    justify-self: start;
+    min-width: 5rem;
+    height: 2rem;
+    padding: 0 0.875rem;
+    border: 0;
+    border-radius: var(--cr-radius-sm);
+    background: var(--cr-primary);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .login-required-action:hover {
+    background: var(--cr-primary-strong);
+  }
+
   .el-notification__closeBtn {
     top: 1rem;
     right: 1rem;
