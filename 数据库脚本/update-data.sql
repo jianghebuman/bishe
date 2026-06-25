@@ -49,7 +49,7 @@ SELECT * FROM (
   SELECT 35,'student:seeker-post','我的求职信息','MENU',0,'/student/seeker-post',12
   UNION ALL
   SELECT 36,'student:chat','在线沟通','MENU',0,'/student/chat',13
-) AS src
+) AS src (`id`,`perm_code`,`perm_name`,`perm_type`,`parent_id`,`path`,`sort`)
 WHERE NOT EXISTS (SELECT 1 FROM `permission` p WHERE p.`id` = src.`id`);
 
 INSERT INTO `role_permission` (`role_id`,`permission_id`)
@@ -58,7 +58,7 @@ SELECT * FROM (
   UNION ALL SELECT 2,34
   UNION ALL SELECT 3,35
   UNION ALL SELECT 3,36
-) AS src
+) AS src (`role_id`,`permission_id`)
 WHERE NOT EXISTS (
   SELECT 1
   FROM `role_permission` rp
@@ -72,7 +72,7 @@ SELECT * FROM (
   UNION ALL SELECT 28,'生活服务',3,4
   UNION ALL SELECT 29,'新媒体运营',2,6
   UNION ALL SELECT 30,'门店零售',3,5
-) AS src
+) AS src (`id`,`name`,`parent_id`,`sort`)
 WHERE NOT EXISTS (SELECT 1 FROM `job_category` jc WHERE jc.`id` = src.`id`);
 
 INSERT INTO `sys_dict` (`dict_type`,`dict_label`,`dict_value`,`sort`)
@@ -86,7 +86,7 @@ SELECT * FROM (
   UNION ALL SELECT 'welfare','包吃','包吃',11
   UNION ALL SELECT 'welfare','住宿补贴','住宿补贴',12
   UNION ALL SELECT 'welfare','晋升培训','晋升培训',13
-) AS src
+) AS src (`dict_type`,`dict_label`,`dict_value`,`sort`)
 WHERE NOT EXISTS (
   SELECT 1
   FROM `sys_dict` d
@@ -106,7 +106,7 @@ SELECT * FROM (
   UNION ALL SELECT 6,5,5,'电子信息学生求测试开发实习','测试开发实习生','北京,深圳','7K-12K','掌握Python、接口测试和基础嵌入式开发，做过接口自动化测试平台课程项目。',1,22
   UNION ALL SELECT 7,6,6,'工商管理学生求产品运营/HR方向','产品运营/人力资源','成都,武汉','5K-8K','有就业服务社群运营经历，熟悉活动组织、用户沟通和招聘流程，期望从事运营或HR方向。',1,19
   UNION ALL SELECT 8,8,8,'软件工程大二寻找后端暑期实习','后端开发实习生','南京,苏州','3K-5K','熟悉Java基础、Spring Boot和MySQL，完成过图书管理系统，希望获得暑期实习机会。',1,24
-) AS src
+) AS src (`id`,`student_id`,`resume_id`,`title`,`expect_post`,`expect_city`,`expect_salary`,`intro`,`status`,`view_count`)
 WHERE NOT EXISTS (SELECT 1 FROM `job_seeker_post` jsp WHERE jsp.`id` = src.`id`);
 
 INSERT INTO `chat_message` (`id`,`from_user_id`,`from_role`,`to_user_id`,`to_role`,`job_id`,`seeker_post_id`,`content`,`is_read`)
@@ -114,7 +114,7 @@ SELECT * FROM (
   SELECT 1,2,'ENTERPRISE',1,'STUDENT',NULL,1,'你好，我们看到你的求职信息，想了解一下你最近是否方便参加线上沟通？',0
   UNION ALL
   SELECT 2,1,'STUDENT',2,'ENTERPRISE',1,NULL,'您好，我想咨询腾讯后端开发工程师岗位，对实习时长有要求吗？',1
-) AS src
+) AS src (`id`,`from_user_id`,`from_role`,`to_user_id`,`to_role`,`job_id`,`seeker_post_id`,`content`,`is_read`)
 WHERE NOT EXISTS (SELECT 1 FROM `chat_message` cm WHERE cm.`id` = src.`id`);
 
 INSERT INTO `announcement` (`id`,`category_id`,`title`,`summary`,`content`,`author`,`view_count`,`is_top`,`status`,`publish_time`)
@@ -123,7 +123,7 @@ SELECT * FROM (
   UNION ALL SELECT 10,2,'校企联合开展Java后端专场招聘','多家企业面向后端开发岗位集中放出需求。','<p>本轮专场招聘覆盖Java后端、测试开发与中间件开发方向，欢迎相关专业同学投递。</p>','就业办',144,0,1,'2026-03-10 10:00:00'
   UNION ALL SELECT 11,4,'学院组织毕业生模拟面试活动','邀请企业HR现场点评表达与答辩。','<p>学院将组织模拟面试与群面训练，帮助毕业生提升现场表达和临场反应能力。</p>','校园新闻中心',88,0,1,'2026-03-11 10:00:00'
   UNION ALL SELECT 12,1,'基层就业与西部计划政策说明','解读基层就业、三支一扶和西部计划支持。','<p>就业办整理了基层就业支持政策、补贴方向及报名时间，建议有意向的同学关注。</p>','就业办',104,1,1,'2026-03-12 10:00:00'
-) AS src
+) AS src (`id`,`category_id`,`title`,`summary`,`content`,`author`,`view_count`,`is_top`,`status`,`publish_time`)
 WHERE NOT EXISTS (SELECT 1 FROM `announcement` a WHERE a.`id` = src.`id`);
 
 INSERT INTO `campus_talk` (`id`,`title`,`enterprise_id`,`company_name`,`talk_time`,`location`,`content`,`sign_count`,`status`)
@@ -132,7 +132,7 @@ SELECT * FROM (
   UNION ALL SELECT 8,'腾讯数据分析与算法分享',2,'腾讯科技有限公司','2026-04-24 19:00:00','信息楼三楼报告厅','聚焦数据平台、推荐系统与校招流程。',52,1
   UNION ALL SELECT 9,'海纳金融科技校招说明会',7,'海纳金融科技有限公司','2026-04-26 19:00:00','线上会议室','介绍风控、数据产品与研发岗位。',27,1
   UNION ALL SELECT 10,'美团设计与前端联合宣讲',5,'美团科技有限公司','2026-05-02 19:00:00','艺术设计学院报告厅','覆盖设计、前端与产品岗位。',33,1
-) AS src
+) AS src (`id`,`title`,`enterprise_id`,`company_name`,`talk_time`,`location`,`content`,`sign_count`,`status`)
 WHERE NOT EXISTS (SELECT 1 FROM `campus_talk` ct WHERE ct.`id` = src.`id`);
 
 INSERT INTO `job_fair` (`id`,`title`,`fair_time`,`location`,`host`,`content`,`company_count`,`job_count`,`sign_count`,`status`)
@@ -141,7 +141,7 @@ SELECT * FROM (
   UNION ALL SELECT 8,'教育科技与内容产品专场招聘会','2026-04-26 09:00:00','经管学院大厅','教育学院','面向课程产品、运营、教务与内容岗位。',48,860,240,1
   UNION ALL SELECT 9,'设计与新媒体校企对接会','2026-05-06 09:00:00','艺术设计学院展厅','艺术设计学院','覆盖视觉、交互、品牌与新媒体岗位。',36,520,180,1
   UNION ALL SELECT 10,'金融科技与数据分析招聘会','2026-05-12 09:00:00','信息楼一楼大厅','校就业指导中心','聚焦数据分析、风控、产品和后端岗位。',62,980,300,1
-) AS src
+) AS src (`id`,`title`,`fair_time`,`location`,`host`,`content`,`company_count`,`job_count`,`sign_count`,`status`)
 WHERE NOT EXISTS (SELECT 1 FROM `job_fair` jf WHERE jf.`id` = src.`id`);
 
 INSERT INTO `forum_post` (`id`,`student_id`,`author_name`,`title`,`content`,`category`,`view_count`,`like_count`,`comment_count`,`audit_status`,`status`)
@@ -150,7 +150,7 @@ SELECT * FROM (
   UNION ALL SELECT 10,2,'李四','前端实习面试最常问哪些题','想整理一份面试题清单，欢迎大家补充。','求职交流',83,11,2,1,1
   UNION ALL SELECT 11,4,'赵六','算法岗二面复盘','把二面问到的动态规划和机器学习问题记下来，供大家参考。','经验分享',58,16,2,1,1
   UNION ALL SELECT 12,5,'孙七','Offer选择纠结中','两家 Offer 都不错，想听听大家怎么做决策。','Offer捷报',91,19,4,1,1
-) AS src
+) AS src (`id`,`student_id`,`author_name`,`title`,`content`,`category`,`view_count`,`like_count`,`comment_count`,`audit_status`,`status`)
 WHERE NOT EXISTS (SELECT 1 FROM `forum_post` fp WHERE fp.`id` = src.`id`);
 
 INSERT INTO `forum_comment` (`post_id`,`student_id`,`author_name`,`content`,`like_count`,`status`)
@@ -163,7 +163,7 @@ SELECT * FROM (
   UNION ALL SELECT 11,5,'孙七','机器学习基础可以先过一遍概念再刷题。',3,1
   UNION ALL SELECT 12,1,'张三','建议从成长性、城市、团队和薪资四个维度看。',5,1
   UNION ALL SELECT 12,3,'王五','别忘了看转正概率和项目匹配度。',4,1
-) AS src
+) AS src (`post_id`,`student_id`,`author_name`,`content`,`like_count`,`status`)
 WHERE NOT EXISTS (
   SELECT 1
   FROM `forum_comment` fc
@@ -178,7 +178,7 @@ SELECT * FROM (
   UNION ALL SELECT 5,'STUDENT','孙七','附件简历上传后列表展示很直观。','sunqi@stu.com','感谢反馈，我们会持续优化体验。','2026-03-10 11:00:00',1
   UNION ALL SELECT 4,'ENTERPRISE','阿里云计算有限公司','企业端希望支持批量刷新岗位。','campus@aliyun.com',NULL,NULL,0
   UNION ALL SELECT NULL,'GUEST','访客','请问往届生是否可以参加招聘会？','guest@example.com','可以关注学校就业办后续通知。','2026-03-11 15:00:00',1
-) AS src
+) AS src (`user_id`,`user_type`,`user_name`,`content`,`contact`,`reply`,`reply_time`,`status`)
 WHERE NOT EXISTS (
   SELECT 1
   FROM `message_feedback` mf
@@ -202,7 +202,7 @@ SELECT * FROM (
   UNION ALL SELECT 5,'ENTERPRISE','新的简历投递','您发布的UI视觉设计师岗位收到新的投递。','APPLY',0
   UNION ALL SELECT 1,'ADMIN','待审核提醒','当前有企业认证和岗位待审核，请及时处理。','SYSTEM',0
   UNION ALL SELECT 3,'ADMIN','异常日志提醒','系统检测到一次登录失败记录，请关注。','SYSTEM',1
-) AS src
+) AS src (`receiver_id`,`receiver_type`,`title`,`content`,`notice_type`,`is_read`)
 WHERE NOT EXISTS (
   SELECT 1
   FROM `system_notice` sn
@@ -219,7 +219,7 @@ SELECT * FROM (
   UNION ALL SELECT 4,'STUDENT','zhaoliu','LOGIN','登录','学生登录系统','POST /auth/login','role=STUDENT','127.0.0.1',1,NULL,31
   UNION ALL SELECT 9,'STUDENT','disabled_stu','LOGIN','登录','停用学生登录失败','POST /auth/login','role=STUDENT','127.0.0.1',0,'账号已被禁用，请联系管理员',29
   UNION ALL SELECT 1,'ADMIN','admin','ERROR','导出','导出岗位数据异常示例','GET /admin/export/job','{}','127.0.0.1',0,'演示异常日志',103
-) AS src
+) AS src (`user_id`,`user_type`,`user_name`,`log_type`,`module`,`operation`,`method`,`params`,`ip`,`status`,`error_msg`,`cost_time`)
 WHERE NOT EXISTS (
   SELECT 1
   FROM `operation_log` ol
@@ -237,7 +237,7 @@ SELECT * FROM (
   SELECT 13,'orangecafe','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','青橙餐饮管理有限公司','913101001234567903','酒店餐饮','500-999人','民营企业','上海市徐汇区龙华中路','上海','/upload/image/seed/enterprise-company-logo-v2.png','经营校园周边轻食、咖啡和连锁餐饮门店，提供管培生与兼职岗位。','包吃,节日福利,晋升培训','林店长','021-66112233','hr@orangecafe.com','https://www.orangecafe.com',2,1
   UNION ALL SELECT 14,'haiyuehotel','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','海悦酒店集团有限公司','913502001234567904','生活服务','1000人以上','民营企业','厦门市思明区环岛路','厦门','/upload/image/seed/enterprise-fintech-logo-v2.png','覆盖酒店前厅、会务接待、客户服务和数字化运营岗位。','五险一金,住宿补贴,带薪年假,晋升培训','陈经理','0592-88776655','campus@haiyuehotel.com','https://www.haiyuehotel.com',2,1
   UNION ALL SELECT 15,'starretail','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','星桥零售服务有限公司','913702001234567905','零售连锁','1000人以上','民营企业','青岛市市南区香港中路','青岛','/upload/image/seed/enterprise-eduonline-logo-v2.png','提供便利零售、会员运营、门店管理和线上客服岗位。','五险一金,绩效奖金,节日福利,晋升培训','赵主管','0532-88996677','join@starretail.com','https://www.starretail.com',2,1
-) AS src
+) AS src (`id`,`username`,`password`,`company_name`,`creditCode`,`industry`,`scale`,`nature`,`address`,`city`,`logo`,`intro`,`welfare`,`contact_name`,`contact_phone`,`email`,`website`,`audit_status`,`status`)
 WHERE NOT EXISTS (SELECT 1 FROM `enterprise` e WHERE e.`id` = src.`id`);
 
 INSERT INTO `job_post` (`id`,`enterprise_id`,`category_id`,`title`,`job_type`,`recruit_num`,`city`,`salary_min`,`salary_max`,`education`,`major_require`,`experience`,`duty`,`requirement`,`welfare`,`audit_status`,`audit_remark`,`status`,`view_count`,`apply_count`,`publish_time`)
@@ -252,7 +252,7 @@ SELECT * FROM (
   UNION ALL SELECT 36,15,30,'门店兼职导购',2,15,'青岛',2,4,'不限','不限','在校生','负责顾客接待、商品补货、收银协助和活动推广。','时间稳定，服务态度好，每周可到岗3天以上。','实习津贴,节日福利,晋升培训',1,NULL,1,170,10,'2026-04-05 09:00:00'
   UNION ALL SELECT 37,15,27,'线上客服实习生',2,8,'青岛',3,4,'大专','不限','在校生','负责线上咨询回复、订单问题记录和客户满意度回访。','打字熟练，耐心细致，能接受早晚班轮换。','实习津贴,弹性工作,节日福利',1,NULL,1,156,8,'2026-04-06 09:00:00'
   UNION ALL SELECT 38,15,16,'零售数据分析助理',1,4,'青岛',6,10,'本科','统计学/市场营销/计算机相关','应届','负责门店销售报表、会员数据分析和运营建议输出。','熟悉Excel和SQL基础，有数据分析项目经验优先。','五险一金,绩效奖金,带薪年假',1,NULL,1,148,7,'2026-04-07 09:00:00'
-) AS src
+) AS src (`id`,`enterprise_id`,`category_id`,`title`,`job_type`,`recruit_num`,`city`,`salary_min`,`salary_max`,`education`,`major_require`,`experience`,`duty`,`requirement`,`welfare`,`audit_status`,`audit_remark`,`status`,`view_count`,`apply_count`,`publish_time`)
 WHERE NOT EXISTS (SELECT 1 FROM `job_post` jp WHERE jp.`id` = src.`id`);
 
 -- Normalize avatars and logos for seeded demo accounts.
