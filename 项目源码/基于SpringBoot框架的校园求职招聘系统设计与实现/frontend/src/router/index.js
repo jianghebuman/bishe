@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/store/user'
 import { ElMessage } from 'element-plus'
+import { showLoginPrompt } from '@/utils/loginPrompt'
 
 const routes = [
   // 前台门户（公共）
@@ -116,8 +117,13 @@ router.beforeEach((to, from, next) => {
   const roles = to.matched.find(record => record.meta.roles)?.meta.roles
   if (requiresAuth) {
     if (!userStore.isLogin) {
-      ElMessage.warning('请先登录')
-      next('/login')
+      if (to.path === '/notice' || to.path === '/chat') {
+        showLoginPrompt(to.path === '/notice' ? '登录后才能查看通知消息。' : '登录后才能进入在线沟通。')
+        next(false)
+      } else {
+        ElMessage.warning('请先登录')
+        next('/login')
+      }
       return
     }
     if (role && role !== userStore.role) {

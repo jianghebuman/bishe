@@ -63,6 +63,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { School, User } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
 import { chatApi, noticeApi } from '@/api'
+import { showLoginPrompt } from '@/utils/loginPrompt'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -76,8 +77,7 @@ const chatPath = '/chat'
 const handleNav = (path) => {
   if (path === noticePath || path === chatPath) {
     if (!userStore.isLogin) {
-      ElMessage.warning('请先登录')
-      router.push('/login')
+      showLoginPrompt(path === noticePath ? '登录后才能查看通知消息。' : '登录后才能进入在线沟通。')
       return
     }
     if (!['STUDENT', 'ENTERPRISE'].includes(userStore.role)) {

@@ -38,12 +38,11 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
 import { ChatRound, OfficeBuilding, Clock, Location } from '@element-plus/icons-vue'
 import { activityApi, noticeApi, publicApi } from '@/api'
 import { useUserStore } from '@/store/user'
+import { showLoginPrompt } from '@/utils/loginPrompt'
 
-const router = useRouter()
 const userStore = useUserStore()
 const query = reactive({ pageNum: 1, pageSize: 10 })
 const list = ref([])
@@ -55,8 +54,7 @@ const getDay = (d) => d ? new Date(d.replace(' ', 'T')).getDate() : ''
 const getMonth = (d) => d ? `${new Date(d.replace(' ', 'T')).getMonth() + 1}月` : ''
 const onSign = async (talk) => {
   if (!userStore.isLogin) {
-    ElMessage.warning('请先登录')
-    router.push('/login')
+    showLoginPrompt('登录后才能报名参加宣讲会。')
     return
   }
   const res = await activityApi.sign(1, talk.id)

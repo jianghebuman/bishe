@@ -38,12 +38,11 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useRouter } from 'vue-router'
 import { Calendar, Clock, Location, Trophy } from '@element-plus/icons-vue'
 import { activityApi, noticeApi, publicApi } from '@/api'
 import { useUserStore } from '@/store/user'
+import { showLoginPrompt } from '@/utils/loginPrompt'
 
-const router = useRouter()
 const userStore = useUserStore()
 const query = reactive({ pageNum: 1, pageSize: 6 })
 const list = ref([])
@@ -53,8 +52,7 @@ const loading = ref(false)
 const formatDateTime = (d) => d ? d.replace('T', ' ').substring(0, 16) : ''
 const onSign = async (fair) => {
   if (!userStore.isLogin) {
-    ElMessage.warning('请先登录')
-    router.push('/login')
+    showLoginPrompt('登录后才能报名参加招聘会。')
     return
   }
   const res = await activityApi.sign(2, fair.id)
