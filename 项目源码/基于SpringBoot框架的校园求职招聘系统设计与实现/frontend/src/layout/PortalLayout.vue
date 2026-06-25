@@ -30,10 +30,11 @@
         </el-menu>
         <div class="user-area">
           <template v-if="userStore.isLogin">
-            <el-dropdown trigger="click" @command="onCommand">
-              <button class="user-link" type="button">
-                <el-avatar class="user-avatar" :src="userStore.avatar"><el-icon><User /></el-icon></el-avatar>
-                <span>{{ userStore.name || userStore.username }}</span>
+            <el-dropdown trigger="click" popper-class="top-user-dropdown" @command="onCommand">
+              <button class="top-user-entry" type="button">
+                <el-avatar :size="40" :src="userStore.avatar"><el-icon><User /></el-icon></el-avatar>
+                <span class="top-user-name">{{ userStore.name || userStore.username }}</span>
+                <el-icon><ArrowDown /></el-icon>
               </button>
               <template #dropdown>
                 <el-dropdown-menu>
@@ -66,7 +67,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { School, User } from '@element-plus/icons-vue'
+import { School, User, ArrowDown } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
 import { chatApi, noticeApi } from '@/api'
 import { showLoginPrompt } from '@/utils/loginPrompt'
@@ -180,11 +181,6 @@ watch(() => userStore.token, refreshBadges)
   line-height: 1;
 }
 .user-area { display: flex; align-items: center; gap: 0.625rem; min-width: max-content; justify-content: flex-end; }
-.user-avatar { --el-avatar-size: clamp(1.5rem, 2.4vw, 1.75rem); }
-.user-link { appearance: none; border: 0; background: transparent; padding: 0.375rem 0.5rem; display: flex; align-items: center; gap: 0.375rem; cursor: pointer; color: var(--cr-text); font: inherit; border-radius: var(--cr-radius-sm); outline: none; }
-.user-link:hover { background: var(--cr-surface-soft); }
-.user-link:focus-visible { box-shadow: 0 0 0 0.1875rem rgba(37,99,235,.18); }
-.user-link span:last-child { max-width: 8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 :deep(.el-tooltip__trigger:focus-visible) { outline: none; }
 :deep(.el-tooltip__trigger:focus) { outline: none; }
 .portal-main { flex: 1; background: transparent; padding: clamp(0.875rem, 2vw, 1.625rem) 0; }
@@ -211,5 +207,6 @@ watch(() => userStore.token, refreshBadges)
   .nav { margin-inline: -0.75rem; padding-inline: 0.75rem; scroll-padding-inline: 0.75rem; }
   .nav :deep(.el-menu) { min-width: max-content; }
   .user-area :deep(.el-button) { padding: 0.5rem 0.625rem; }
+  .user-area :deep(.top-user-name) { max-width: 6.25rem; }
 }
 </style>

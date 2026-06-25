@@ -179,6 +179,63 @@ li {
   }
 }
 
+.top-user-entry {
+  appearance: none;
+  min-width: 0;
+  height: 3rem;
+  padding: 0 0.875rem 0 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  border: 0.0625rem solid transparent;
+  border-radius: 1.5rem;
+  background: rgba(37, 99, 235, 0.07);
+  color: var(--cr-text);
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: background .18s, border-color .18s, box-shadow .18s;
+}
+
+.top-user-entry:hover {
+  background: var(--cr-primary-soft);
+  border-color: rgba(37, 99, 235, 0.18);
+  box-shadow: 0 0.5rem 1.125rem rgba(37, 99, 235, 0.12);
+}
+
+.top-user-entry:focus-visible {
+  box-shadow: 0 0 0 0.1875rem rgba(37, 99, 235, 0.18);
+}
+
+.top-user-name {
+  max-width: clamp(5.5rem, 12vw, 11.875rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.top-user-entry .el-icon {
+  font-size: 1rem;
+  color: var(--cr-text-soft);
+}
+
+.top-user-dropdown {
+  min-width: 8.25rem;
+}
+
+.top-user-dropdown .el-dropdown-menu {
+  padding: 0.5rem;
+}
+
+.top-user-dropdown .el-dropdown-menu__item {
+  min-height: 2.625rem;
+  padding: 0 1.125rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
 .el-button {
   font-weight: 600;
 }

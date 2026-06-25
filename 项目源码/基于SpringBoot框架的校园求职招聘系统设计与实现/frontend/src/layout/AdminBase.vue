@@ -26,15 +26,15 @@
           </el-breadcrumb>
         </div>
         <div class="flex" style="align-items: center; gap: 16px;">
-          <el-dropdown @command="onCmd">
-            <span class="user-info">
-              <el-avatar :size="30" :src="userStore.avatar"><el-icon><User /></el-icon></el-avatar>
-              <span>{{ userStore.name || userStore.username }}</span>
+          <el-dropdown trigger="click" popper-class="top-user-dropdown" @command="onCmd">
+            <span class="top-user-entry">
+              <el-avatar :size="40" :src="userStore.avatar"><el-icon><User /></el-icon></el-avatar>
+              <span class="top-user-name">{{ userStore.name || userStore.username }}</span>
               <el-icon><ArrowDown /></el-icon>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="portal">前往门户</el-dropdown-item>
+                <el-dropdown-item command="portal">返回主界面</el-dropdown-item>
                 <el-dropdown-item command="pwd">修改密码</el-dropdown-item>
                 <el-dropdown-item command="logout" divided>退出登录</el-dropdown-item>
               </el-dropdown-menu>
@@ -118,14 +118,12 @@ onBeforeUnmount(() => {
   color: #fff !important;
   box-shadow: 0 10px 18px rgba(37, 99, 235, 0.22);
 }
-.topbar { background: rgba(255,255,255,.92); border-bottom: 1px solid var(--cr-border-soft); box-shadow: 0 8px 20px rgba(22, 38, 68, .05); padding: 0 clamp(12px, 1.6vw, 22px); height: 62px; min-width: 0; gap: 12px; backdrop-filter: blur(12px); }
+.topbar { background: rgba(255,255,255,.92); border-bottom: 1px solid var(--cr-border-soft); box-shadow: 0 8px 20px rgba(22, 38, 68, .05); padding: 0 clamp(12px, 1.6vw, 22px); height: 70px; min-width: 0; gap: 12px; backdrop-filter: blur(12px); }
 .collapse-trigger { cursor: pointer; flex: 0 0 auto; }
 .topbar .flex { min-width: 0; }
 .topbar :deep(.el-breadcrumb) { min-width: 0; display: flex; align-items: center; flex-wrap: nowrap; }
 .topbar :deep(.el-breadcrumb__item) { min-width: 0; }
 .topbar :deep(.el-breadcrumb__inner) { display: inline-block; max-width: clamp(72px, 12vw, 180px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
-.user-info { min-width: 0; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-.user-info span { max-width: clamp(72px, 12vw, 170px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .main { min-width: 0; background: transparent; padding: clamp(12px, 1.5vw, 20px); overflow-y: auto; overflow-x: hidden; }
 
 .is-compact {
@@ -142,8 +140,8 @@ onBeforeUnmount(() => {
     max-width: 72px;
   }
 
-  .user-info span {
-    max-width: 78px;
+  :deep(.top-user-name) {
+    max-width: 86px;
   }
 
   .main {
