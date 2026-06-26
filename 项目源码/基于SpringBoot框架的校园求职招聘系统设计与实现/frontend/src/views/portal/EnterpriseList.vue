@@ -5,7 +5,7 @@
       <p class="sub">汇聚优质企业，发现你的理想雇主</p>
     </div>
 
-    <div class="page-card page-flex-card mt-20">
+    <div class="page-card page-flex-card portal-list-card mt-20">
       <div class="page-flex-scroll">
         <div class="grid" v-loading="loading">
           <div class="ent-card" v-for="e in list" :key="e.id" @click="$router.push(`/enterprise/${e.id}`)">
@@ -37,7 +37,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { OfficeBuilding, Location } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
 
-const query = reactive({ pageNum: 1, pageSize: 12 })
+const query = reactive({ pageNum: 1, pageSize: 20 })
 const list = ref([])
 const total = ref(0)
 const loading = ref(false)

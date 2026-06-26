@@ -5,7 +5,7 @@
       <p class="sub">近期企业到校宣讲安排，提前了解、提前准备</p>
     </div>
 
-    <div class="page-card page-flex-card mt-20">
+    <div class="page-card page-flex-card portal-list-card mt-20">
       <div class="page-flex-scroll">
         <div class="list" v-loading="loading">
           <div class="talk-item" v-for="t in list" :key="t.id">
@@ -46,7 +46,7 @@ import { useUserStore } from '@/store/user'
 import { showLoginPrompt, showSignupSuccessPrompt } from '@/utils/loginPrompt'
 
 const userStore = useUserStore()
-const query = reactive({ pageNum: 1, pageSize: 6 })
+const query = reactive({ pageNum: 1, pageSize: 8 })
 const list = ref([])
 const total = ref(0)
 const loading = ref(false)

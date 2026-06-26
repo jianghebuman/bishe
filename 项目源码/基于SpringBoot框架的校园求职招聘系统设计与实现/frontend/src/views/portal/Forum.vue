@@ -21,7 +21,7 @@
     </div>
 
     <div class="content mt-20">
-      <div class="main-list page-card page-flex-card" v-loading="loading">
+      <div class="main-list page-card page-flex-card portal-list-card" v-loading="loading">
         <div class="page-flex-scroll">
           <div class="post-item" v-for="p in posts" :key="p.id" @click="$router.push(`/forum/${p.id}`)">
             <div class="avatar">{{ (p.authorName || '同学').substring(0, 1) }}</div>
@@ -104,7 +104,7 @@ import { useUserStore } from '@/store/user'
 
 const router = useRouter()
 const userStore = useUserStore()
-const query = reactive({ pageNum: 1, pageSize: 10, keyword: '', category: '' })
+const query = reactive({ pageNum: 1, pageSize: 12, keyword: '', category: '' })
 const posts = ref([])
 const total = ref(0)
 const loading = ref(false)

@@ -5,7 +5,7 @@
       <p class="sub">面向全校学生的双选会、专场招聘会信息</p>
     </div>
 
-    <div class="page-card page-flex-card mt-20">
+    <div class="page-card page-flex-card portal-list-card mt-20">
       <div class="page-flex-scroll">
         <div class="grid" v-loading="loading">
           <div class="fair-card" v-for="f in list" :key="f.id">
@@ -46,7 +46,7 @@ import { useUserStore } from '@/store/user'
 import { showLoginPrompt, showSignupSuccessPrompt } from '@/utils/loginPrompt'
 
 const userStore = useUserStore()
-const query = reactive({ pageNum: 1, pageSize: 8 })
+const query = reactive({ pageNum: 1, pageSize: 12 })
 const list = ref([])
 const total = ref(0)
 const loading = ref(false)

@@ -62,7 +62,7 @@
       </transition>
     </div>
 
-    <div class="page-card page-flex-card mt-20">
+    <div class="page-card page-flex-card portal-list-card mt-20">
       <div class="page-flex-scroll">
         <div class="seeker-grid" v-loading="loading">
           <div class="seeker-card" v-for="item in list" :key="item.post.id" @click="$router.push(`/seeker/${item.post.id}`)">
@@ -125,7 +125,7 @@ const salaryOptions = [
   { label: '10K以上', value: 10 },
   { label: '12K以上', value: 12 }
 ]
-const query = reactive({ pageNum: 1, pageSize: 12, keyword: '', city: '', expectPost: '', college: '', salaryMin: '' })
+const query = reactive({ pageNum: 1, pageSize: 15, keyword: '', city: '', expectPost: '', college: '', salaryMin: '' })
 
 const hasCondition = computed(() => ['keyword', 'city', 'expectPost', 'college', 'salaryMin'].some(k => query[k] !== '' && query[k] != null))
 const activeFilters = computed(() => {

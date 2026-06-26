@@ -7,7 +7,7 @@
 
     <div class="layout mt-20">
       <!-- 左侧资讯列表 -->
-      <div class="page-card main page-flex-card">
+      <div class="page-card main page-flex-card portal-list-card">
         <el-tabs v-model="activeCat" @tab-change="onCatChange">
           <el-tab-pane label="全部" :name="0" />
           <el-tab-pane v-for="c in categories" :key="c.id" :label="c.name" :name="c.id" />
@@ -85,7 +85,7 @@ import { publicApi } from '@/api'
 import request from '@/utils/request'
 
 const activeCat = ref(0)
-const query = reactive({ pageNum: 1, pageSize: 10, categoryId: undefined })
+const query = reactive({ pageNum: 1, pageSize: 12, categoryId: undefined })
 const list = ref([])
 const total = ref(0)
 const loading = ref(false)

@@ -329,6 +329,237 @@ SELECT * FROM (
 ) AS src
 WHERE NOT EXISTS (SELECT 1 FROM `job_post` jp WHERE jp.`id` = src.`id`);
 
+-- Portal list pagination data: keep enterprise, seeker, activity, news and forum pages filled through page 3.
+INSERT INTO `enterprise` (`id`,`username`,`password`,`company_name`,`credit_code`,`industry`,`scale`,`nature`,`address`,`city`,`logo`,`intro`,`welfare`,`contact_name`,`contact_phone`,`email`,`website`,`audit_status`,`status`)
+SELECT * FROM (
+  SELECT 21 AS `id`,'zhiliancloud' AS `username`,'$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO' AS `password`,'智联云校园科技有限公司' AS `company_name`,'913201001234567921' AS `credit_code`,'互联网' AS `industry`,'100-499人' AS `scale`,'民营企业' AS `nature`,'南京市软件谷科创城' AS `address`,'南京' AS `city`,'/upload/image/seed/enterprise-newcorp-logo-v2.png' AS `logo`,'专注校园数字化、就业服务平台和实习协同系统研发。' AS `intro`,'五险一金,弹性工作,带薪年假' AS `welfare`,'顾经理' AS `contact_name`,'025-88220021' AS `contact_phone`,'campus@zhiliancloud.com' AS `email`,'https://www.zhiliancloud.com' AS `website`,2 AS `audit_status`,1 AS `status`
+  UNION ALL SELECT 22,'envisioncampus','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','远景新能源科技有限公司','913205001234567922','新能源','500-999人','民营企业','苏州市工业园区星湖街','苏州','/upload/image/seed/enterprise-greenmaker-logo-v2.png','围绕新能源设备、储能系统和智能运维提供研发与现场工程岗位。','五险一金,年终奖,补充医疗','陆经理','0512-88002222','hr@envision-campus.com','https://www.envision-campus.com',2,1
+  UNION ALL SELECT 23,'boyamedia','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','博雅传媒有限公司','914401001234567923','新媒体运营','100-499人','民营企业','广州市海珠区新港东路','广州','/upload/image/seed/enterprise-company-logo-v2.png','提供品牌内容、短视频运营、校园活动策划和账号增长服务。','绩效奖金,节日福利,带薪年假','梁主管','020-88002223','join@boyamedia.com','https://www.boyamedia.com',2,1
+  UNION ALL SELECT 24,'tiangongim','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','天工智能制造有限公司','911201001234567924','制造业','1000人以上','民营企业','天津市滨海新区先进制造园','天津','/upload/image/seed/enterprise-oldcorp-logo-v2.png','面向智能产线、工业软件和设备测试提供校招岗位。','五险一金,住宿补贴,晋升培训','高经理','022-88002224','campus@tiangongim.com','https://www.tiangongim.com',2,1
+  UNION ALL SELECT 25,'yinqiao','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','银桥金融服务有限公司','915001001234567925','金融','500-999人','民营企业','重庆市江北区金融街','重庆','/upload/image/seed/enterprise-fintech-logo-v2.png','专注普惠金融、支付风控、客户运营和数据分析服务。','五险一金,绩效奖金,补充医疗','杨经理','023-88002225','hr@yinqiao-fin.com','https://www.yinqiao-fin.com',2,1
+  UNION ALL SELECT 26,'futurehealth','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','未来健康科技有限公司','913101001234567926','互联网','100-499人','民营企业','上海市杨浦区创智天地','上海','/upload/image/seed/enterprise-eduonline-logo-v2.png','建设健康管理SaaS、用户运营平台和医疗数据产品。','五险一金,弹性工作,带薪年假','蒋经理','021-88002226','campus@futurehealth.com','https://www.futurehealth.com',2,1
+  UNION ALL SELECT 27,'huixue','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','慧学教育服务有限公司','915101001234567927','教育培训','500-999人','民营企业','成都市高新区天府三街','成都','/upload/image/seed/enterprise-eduonline-logo-v2.png','提供在线课程运营、教研产品和校园学习顾问岗位。','五险一金,节日福利,晋升培训','邱经理','028-88002227','join@huixue-edu.com','https://www.huixue-edu.com',2,1
+  UNION ALL SELECT 28,'daguan','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','达观数据服务有限公司','913101001234567928','人工智能','100-499人','民营企业','上海市徐汇区漕河泾开发区','上海','/upload/image/seed/enterprise-greenmaker-logo-v2.png','围绕文档智能、企业知识库和数据标注平台开展研发。','五险一金,年终奖,弹性工作','许经理','021-88002228','campus@daguan-data.com','https://www.daguan-data.com',2,1
+  UNION ALL SELECT 29,'nanhu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','南湖软件有限公司','914201001234567929','计算机软件','100-499人','民营企业','武汉市东湖高新区软件园','武汉','/upload/image/seed/enterprise-newcorp-logo-v2.png','提供政企软件、移动应用和数据可视化项目交付岗位。','五险一金,带薪年假,补充医疗','冯经理','027-88002229','hr@nanhu-soft.com','https://www.nanhu-soft.com',2,1
+  UNION ALL SELECT 30,'xinghetravel','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','星河文旅集团有限公司','913502001234567930','生活服务','1000人以上','民营企业','厦门市湖里区会展中心','厦门','/upload/image/seed/enterprise-company-logo-v2.png','覆盖文旅运营、酒店管理、活动策划和客户服务岗位。','五险一金,住宿补贴,节日福利','黄经理','0592-88002230','campus@xinghetravel.com','https://www.xinghetravel.com',2,1
+  UNION ALL SELECT 31,'haiboec','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','海博电商科技有限公司','914401001234567931','电子商务','500-999人','民营企业','广州市天河区珠江新城','广州','/upload/image/seed/enterprise-meituan-logo-v2.png','面向跨境电商、内容运营、商家服务和数据运营招募新人。','五险一金,绩效奖金,带薪年假','宋经理','020-88002231','jobs@haiboec.com','https://www.haiboec.com',2,1
+  UNION ALL SELECT 32,'robotworks','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','智造工坊机器人有限公司','914403001234567932','制造业','100-499人','民营企业','深圳市宝安区机器人产业园','深圳','/upload/image/seed/enterprise-greenmaker-logo-v2.png','研发协作机器人、自动化测试平台和产线数据采集系统。','五险一金,年终奖,免费班车','韩经理','0755-88002232','campus@robotworks.com','https://www.robotworks.com',2,1
+  UNION ALL SELECT 33,'qingniaosec','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','青鸟安全科技有限公司','911101001234567933','计算机软件','100-499人','民营企业','北京市海淀区中关村软件园','北京','/upload/image/seed/enterprise-oldcorp-logo-v2.png','提供安全测试、等保咨询、攻防演练和安全开发岗位。','五险一金,补充医疗,弹性工作','马经理','010-88002233','hr@qingniaosec.com','https://www.qingniaosec.com',2,1
+  UNION ALL SELECT 34,'lianghai','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','量海数据科技有限公司','913301001234567934','人工智能','100-499人','民营企业','杭州市滨江区物联网街','杭州','/upload/image/seed/enterprise-fintech-logo-v2.png','专注BI分析、数据治理和行业大模型评测平台。','五险一金,年终奖,带薪年假','叶经理','0571-88002234','campus@lianghai-data.com','https://www.lianghai-data.com',2,1
+  UNION ALL SELECT 35,'qimingcs','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','启明星客户服务有限公司','911201001234567935','生活服务','500-999人','民营企业','天津市和平区南京路','天津','/upload/image/seed/enterprise-company-logo-v2.png','提供客户成功、售后支持、呼叫中心运营和服务质检岗位。','五险一金,绩效奖金,晋升培训','曹经理','022-88002235','join@qimingcs.com','https://www.qimingcs.com',2,1
+  UNION ALL SELECT 36,'yunfanlogistics','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','云帆物流科技有限公司','913201001234567936','物流供应链','500-999人','民营企业','南京市江宁区空港物流园','南京','/upload/image/seed/enterprise-greenmaker-logo-v2.png','建设仓配调度、校园配送和供应链可视化平台。','五险一金,绩效奖金,交通补贴','程经理','025-88002236','campus@yunfan-logistics.com','https://www.yunfan-logistics.com',2,1
+  UNION ALL SELECT 37,'huaxinchip','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','华芯微电子有限公司','913205001234567937','电子信息','1000人以上','民营企业','苏州市高新区科技城','苏州','/upload/image/seed/enterprise-oldcorp-logo-v2.png','面向芯片测试、嵌入式开发和工艺工程培养校招生。','五险一金,补充医疗,免费班车','周经理','0512-88002237','hr@huaxinchip.com','https://www.huaxinchip.com',2,1
+  UNION ALL SELECT 38,'lanhaihealth','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','蓝海健康管理有限公司','913101001234567938','医疗健康','100-499人','民营企业','上海市浦东新区张江高科','上海','/upload/image/seed/enterprise-eduonline-logo-v2.png','提供健康数据运营、互联网医院产品和客户服务岗位。','五险一金,带薪年假,节日福利','沈经理','021-88002238','join@lanhaihealth.com','https://www.lanhaihealth.com',2,1
+  UNION ALL SELECT 39,'haoranai','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','浩然智能科技有限公司','911101001234567939','人工智能','100-499人','民营企业','北京市朝阳区望京科技园','北京','/upload/image/seed/enterprise-newcorp-logo-v2.png','研发智能客服、知识检索和办公自动化产品。','五险一金,年终奖,弹性工作','魏经理','010-88002239','campus@haoran-ai.com','https://www.haoran-ai.com',2,1
+  UNION ALL SELECT 40,'jinyuebank','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','金岳银行科技中心','913301001234567940','金融科技','1000人以上','国有企业','杭州市上城区钱江路','杭州','/upload/image/seed/enterprise-fintech-logo-v2.png','承担银行核心系统、移动金融和风控模型研发。','五险一金,年终奖,补充医疗','邵经理','0571-88002240','campus@jinyuebank.com','https://www.jinyuebank.com',2,1
+  UNION ALL SELECT 41,'chengshiux','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','城市优选零售有限公司','914401001234567941','电子商务','500-999人','民营企业','广州市白云区云城西路','广州','/upload/image/seed/enterprise-meituan-logo-v2.png','面向社区零售、用户增长和商品运营招聘管培生。','五险一金,绩效奖金,餐补','潘经理','020-88002241','jobs@chengshiux.com','https://www.chengshiux.com',2,1
+  UNION ALL SELECT 42,'mingdeedu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','明德在线教育有限公司','915101001234567942','教育培训','100-499人','民营企业','成都市武侯区科华北路','成都','/upload/image/seed/enterprise-eduonline-logo-v2.png','开展职业教育课程、学习平台和校园社群运营。','五险一金,带薪年假,晋升培训','何经理','028-88002242','hr@mingdeedu.com','https://www.mingdeedu.com',2,1
+  UNION ALL SELECT 43,'shuzhiurban','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','数智城市研究院有限公司','914201001234567943','计算机软件','500-999人','国有企业','武汉市洪山区光谷大道','武汉','/upload/image/seed/enterprise-newcorp-logo-v2.png','参与智慧园区、城市治理和公共服务平台建设。','五险一金,补充医疗,项目奖金','丁经理','027-88002243','campus@shuzhiurban.com','https://www.shuzhiurban.com',2,1
+  UNION ALL SELECT 44,'beidoumap','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','北斗星图信息有限公司','914403001234567944','地理信息','100-499人','民营企业','深圳市南山区粤海街道','深圳','/upload/image/seed/enterprise-greenmaker-logo-v2.png','提供地图数据、位置服务和遥感应用研发岗位。','五险一金,弹性工作,带薪年假','罗经理','0755-88002244','join@beidoumap.com','https://www.beidoumap.com',2,1
+  UNION ALL SELECT 45,'zhongyuanbuild','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','中原建科集团有限公司','914101001234567945','建筑工程','1000人以上','国有企业','郑州市郑东新区商务外环路','郑州','/upload/image/seed/enterprise-oldcorp-logo-v2.png','招募工程管理、BIM建模、造价咨询和安全管理方向学生。','五险一金,住宿补贴,项目津贴','袁经理','0371-88002245','campus@zybuild.com','https://www.zybuild.com',2,1
+  UNION ALL SELECT 46,'haichuangbio','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','海创生物科技有限公司','913302001234567946','生物医药','100-499人','民营企业','宁波市高新区院士路','宁波','/upload/image/seed/enterprise-company-logo-v2.png','围绕体外诊断、实验室自动化和质量管理招募新人。','五险一金,补充医疗,带薪年假','孙经理','0574-88002246','hr@haichuangbio.com','https://www.haichuangbio.com',2,1
+  UNION ALL SELECT 47,'rongshengauto','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','荣盛汽车电子有限公司','912201001234567947','汽车电子','500-999人','民营企业','长春市汽开区东风大街','长春','/upload/image/seed/enterprise-greenmaker-logo-v2.png','提供车载软件、测试验证和供应链质量工程岗位。','五险一金,免费班车,年终奖','崔经理','0431-88002247','campus@rongshengauto.com','https://www.rongshengauto.com',2,1
+  UNION ALL SELECT 48,'xinyuegames','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','新跃互动娱乐有限公司','914401001234567948','互联网','100-499人','民营企业','广州市番禺区大学城','广州','/upload/image/seed/enterprise-company-logo-v2.png','面向游戏研发、运营发行、视觉设计和数据分析招募实习生。','弹性工作,绩效奖金,下午茶','曾经理','020-88002248','campus@xinyuegames.com','https://www.xinyuegames.com',2,1
+  UNION ALL SELECT 49,'aoshengmaterials','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','奥盛新材料有限公司','913205001234567949','新材料','500-999人','民营企业','苏州市相城区高铁新城','苏州','/upload/image/seed/enterprise-oldcorp-logo-v2.png','聚焦高分子材料、质量检测和生产工艺优化。','五险一金,住宿补贴,餐补','余经理','0512-88002249','hr@aoshengmaterials.com','https://www.aoshengmaterials.com',2,1
+  UNION ALL SELECT 50,'yuzhoucloud','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','宇舟云计算有限公司','913301001234567950','云计算','100-499人','民营企业','杭州市余杭区未来科技城','杭州','/upload/image/seed/enterprise-newcorp-logo-v2.png','提供云平台运维、DevOps、后端开发和售前工程岗位。','五险一金,弹性工作,认证补贴','金经理','0571-88002250','campus@yuzhoucloud.com','https://www.yuzhoucloud.com',2,1
+  UNION ALL SELECT 51,'shengjingconsult','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','盛景管理咨询有限公司','911101001234567951','咨询服务','100-499人','民营企业','北京市西城区金融大街','北京','/upload/image/seed/enterprise-fintech-logo-v2.png','服务校园人才发展、组织诊断和数字化转型咨询项目。','五险一金,项目奖金,带薪年假','田经理','010-88002251','join@shengjingconsult.com','https://www.shengjingconsult.com',2,1
+  UNION ALL SELECT 52,'qingchengenergy','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','清程能源科技有限公司','913101001234567952','新能源','100-499人','民营企业','上海市闵行区紫竹科学园','上海','/upload/image/seed/enterprise-greenmaker-logo-v2.png','从事充电运营、能源管理平台和碳资产数据服务。','五险一金,年终奖,补充医疗','贺经理','021-88002252','hr@qingchengenergy.com','https://www.qingchengenergy.com',2,1
+  UNION ALL SELECT 53,'tengyunops','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','腾云运维服务有限公司','914403001234567953','IT服务','500-999人','民营企业','深圳市龙岗区坂田街道','深圳','/upload/image/seed/enterprise-newcorp-logo-v2.png','为政企客户提供运维监控、桌面支持和系统实施服务。','五险一金,值班补贴,晋升培训','戴经理','0755-88002253','campus@tengyunops.com','https://www.tengyunops.com',2,1
+  UNION ALL SELECT 54,'pinzhiqa','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','品质云检测技术有限公司','913301001234567954','检测认证','100-499人','民营企业','杭州市萧山区信息港','杭州','/upload/image/seed/enterprise-company-logo-v2.png','提供软件测试、质量体系、自动化检测和客户交付岗位。','五险一金,项目奖金,带薪年假','方经理','0571-88002254','hr@pinzhiqa.com','https://www.pinzhiqa.com',2,1
+  UNION ALL SELECT 55,'hejinghr','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','合景人力资源服务有限公司','913101001234567955','人力资源','100-499人','民营企业','上海市静安区南京西路','上海','/upload/image/seed/enterprise-company-logo-v2.png','提供招聘运营、员工关系、薪酬服务和校园项目助理岗位。','五险一金,节日福利,绩效奖金','许经理','021-88002255','jobs@hejinghr.com','https://www.hejinghr.com',2,1
+  UNION ALL SELECT 56,'yuandaagri','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','远达智慧农业有限公司','914201001234567956','现代农业','500-999人','民营企业','武汉市东西湖区临空港大道','武汉','/upload/image/seed/enterprise-greenmaker-logo-v2.png','建设农业物联网、农产品供应链和数字农场解决方案。','五险一金,住宿补贴,餐补','卢经理','027-88002256','campus@yuandaagri.com','https://www.yuandaagri.com',2,1
+  UNION ALL SELECT 57,'bailianretail','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','百联商业运营有限公司','913101001234567957','零售服务','1000人以上','国有企业','上海市黄浦区淮海中路','上海','/upload/image/seed/enterprise-meituan-logo-v2.png','招募门店运营、会员增长、采购管理和数据运营管培生。','五险一金,带薪年假,节日福利','顾经理','021-88002257','campus@bailianretail.com','https://www.bailianretail.com',2,1
+  UNION ALL SELECT 58,'kunlunmedia','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','昆仑数字传媒有限公司','911101001234567958','新媒体运营','100-499人','民营企业','北京市通州区运河商务区','北京','/upload/image/seed/enterprise-company-logo-v2.png','开展品牌传播、直播电商、内容策划和短视频制作。','五险一金,绩效奖金,弹性工作','梁经理','010-88002258','join@kunlunmedia.com','https://www.kunlunmedia.com',2,1
+  UNION ALL SELECT 59,'tianyuaviation','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','天宇航空服务有限公司','911201001234567959','交通运输','500-999人','民营企业','天津市东丽区空港经济区','天津','/upload/image/seed/enterprise-oldcorp-logo-v2.png','提供机场服务、运行调度、客户管理和安全保障岗位。','五险一金,交通补贴,晋升培训','侯经理','022-88002259','hr@tianyuaviation.com','https://www.tianyuaviation.com',2,1
+  UNION ALL SELECT 60,'rongkeestate','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','融科产业园运营有限公司','913201001234567960','园区运营','500-999人','民营企业','南京市建邺区江东中路','南京','/upload/image/seed/enterprise-fintech-logo-v2.png','负责产业园招商运营、企业服务和活动策划。','五险一金,绩效奖金,通讯补贴','秦经理','025-88002260','campus@rongkeestate.com','https://www.rongkeestate.com',2,1
+  UNION ALL SELECT 61,'juchenglegal','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','矩成法律科技有限公司','914401001234567961','法律科技','100-499人','民营企业','广州市越秀区东风中路','广州','/upload/image/seed/enterprise-newcorp-logo-v2.png','建设合同审查、案件管理和企业合规数字化工具。','五险一金,带薪年假,弹性工作','莫经理','020-88002261','jobs@juchenglegal.com','https://www.juchenglegal.com',2,1
+  UNION ALL SELECT 62,'anxininsurance','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','安信保险服务有限公司','915001001234567962','金融','1000人以上','民营企业','重庆市渝中区解放碑','重庆','/upload/image/seed/enterprise-fintech-logo-v2.png','提供保险运营、理赔支持、数据分析和客户经理岗位。','五险一金,补充医疗,年终奖','夏经理','023-88002262','campus@anxininsurance.com','https://www.anxininsurance.com',2,1
+  UNION ALL SELECT 63,'yihangrobot','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','翼航无人机科技有限公司','914403001234567963','智能制造','100-499人','民营企业','深圳市龙华区观澜科技园','深圳','/upload/image/seed/enterprise-greenmaker-logo-v2.png','研发行业无人机、飞控算法和巡检应用平台。','五险一金,项目奖金,免费班车','邓经理','0755-88002263','hr@yihangrobot.com','https://www.yihangrobot.com',2,1
+  UNION ALL SELECT 64,'xingyanstudio','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','星岩设计工作室有限公司','913502001234567964','创意设计','100-499人','民营企业','厦门市思明区软件园二期','厦门','/upload/image/seed/enterprise-company-logo-v2.png','提供品牌设计、交互设计、空间视觉和项目执行岗位。','弹性工作,绩效奖金,带薪年假','叶经理','0592-88002264','join@xingyanstudio.com','https://www.xingyanstudio.com',2,1
+) AS src
+WHERE NOT EXISTS (SELECT 1 FROM `enterprise` e WHERE e.`id` = src.`id`);
+
+INSERT INTO `student` (`id`,`username`,`password`,`real_name`,`student_no`,`gender`,`college`,`major`,`grade`,`education`,`phone`,`email`,`status`)
+SELECT * FROM (
+  SELECT 18 AS `id`,'liuyang' AS `username`,'$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO' AS `password`,'刘洋' AS `real_name`,'2021007018' AS `student_no`,1 AS `gender`,'计算机学院' AS `college`,'计算机科学与技术' AS `major`,'2021级' AS `grade`,'本科' AS `education`,'13900000018' AS `phone`,'liuyang@stu.com' AS `email`,1 AS `status`
+  UNION ALL SELECT 19,'fangmin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','方敏','2021007019',2,'软件学院','软件工程','2021级','本科','13900000019','fangmin@stu.com',1
+  UNION ALL SELECT 20,'heyu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','何宇','2021007020',1,'人工智能学院','人工智能','2021级','本科','13900000020','heyu@stu.com',1
+  UNION ALL SELECT 21,'songke','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','宋可','2021007021',2,'艺术设计学院','视觉传达设计','2021级','本科','13900000021','songke@stu.com',1
+  UNION ALL SELECT 22,'tangrui','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','唐睿','2021007022',1,'经济管理学院','市场营销','2021级','本科','13900000022','tangrui@stu.com',1
+  UNION ALL SELECT 23,'guojia','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','郭佳','2021007023',2,'电子信息学院','电子信息工程','2021级','本科','13900000023','guojia@stu.com',1
+  UNION ALL SELECT 24,'mazhe','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','马哲','2021007024',1,'计算机学院','网络工程','2021级','本科','13900000024','mazhe@stu.com',1
+  UNION ALL SELECT 25,'xiaoran','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','肖然','2021007025',2,'经济管理学院','信息管理与信息系统','2021级','本科','13900000025','xiaoran@stu.com',1
+  UNION ALL SELECT 26,'lvqing','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','吕晴','2021007026',2,'经济管理学院','工商管理','2021级','本科','13900000026','lvqing@stu.com',1
+  UNION ALL SELECT 27,'penghao','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','彭浩','2021007027',1,'软件学院','软件工程','2021级','本科','13900000027','penghao@stu.com',1
+  UNION ALL SELECT 28,'caixin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','蔡欣','2021007028',2,'艺术设计学院','视觉传达设计','2021级','本科','13900000028','caixin@stu.com',1
+  UNION ALL SELECT 29,'yuanbo','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','袁博','2021007029',1,'人工智能学院','人工智能','2021级','本科','13900000029','yuanbo@stu.com',1
+  UNION ALL SELECT 30,'huzhe','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','胡哲','2021007030',1,'计算机学院','计算机科学与技术','2021级','本科','13900000030','huzhe@stu.com',1
+  UNION ALL SELECT 31,'yinxin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','尹欣','2021007031',2,'经济管理学院','市场营销','2021级','本科','13900000031','yinxin@stu.com',1
+  UNION ALL SELECT 32,'luohan','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','罗瀚','2021007032',1,'电子信息学院','电子信息工程','2021级','本科','13900000032','luohan@stu.com',1
+  UNION ALL SELECT 33,'shenyi','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','沈奕','2021007033',2,'软件学院','软件工程','2021级','本科','13900000033','shenyi@stu.com',1
+  UNION ALL SELECT 34,'zhuoyu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','卓雨','2021007034',2,'经济管理学院','信息管理与信息系统','2021级','本科','13900000034','zhuoyu@stu.com',1
+  UNION ALL SELECT 35,'xiechen','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','谢晨','2021007035',1,'艺术设计学院','视觉传达设计','2021级','本科','13900000035','xiechen@stu.com',1
+  UNION ALL SELECT 36,'duanlei','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','段磊','2021007036',1,'计算机学院','网络工程','2021级','本科','13900000036','duanlei@stu.com',1
+) AS src
+WHERE NOT EXISTS (SELECT 1 FROM `student` s WHERE s.`id` = src.`id`);
+
+INSERT INTO `resume` (`id`,`student_id`,`name`,`gender`,`birth`,`phone`,`email`,`college`,`major`,`education`,`skill_cert`,`award`,`self_eval`,`complete_rate`,`is_public`)
+SELECT * FROM (
+  SELECT 17 AS `id`,18 AS `student_id`,'刘洋' AS `name`,1 AS `gender`,'2003-02' AS `birth`,'13900000018' AS `phone`,'liuyang@stu.com' AS `email`,'计算机学院' AS `college`,'计算机科学与技术' AS `major`,'本科' AS `education`,'CET-6、Java开发实训' AS `skill_cert`,'校级程序设计竞赛二等奖' AS `award`,'熟悉Java后端、接口设计和数据库建模，希望从后端开发岗位起步。' AS `self_eval`,84 AS `complete_rate`,1 AS `is_public`
+  UNION ALL SELECT 18,19,'方敏',2,'2003-07','13900000019','fangmin@stu.com','软件学院','软件工程','本科','CET-4、Vue项目实训','软件工程课程设计优秀作品','熟悉Vue、Element Plus和前端工程化，关注用户体验。',82,1
+  UNION ALL SELECT 19,20,'何宇',1,'2003-03','13900000020','heyu@stu.com','人工智能学院','人工智能','本科','Python数据分析、CET-6','数学建模校赛一等奖','关注NLP、推荐系统和数据挖掘，希望参与算法实习。',87,1
+  UNION ALL SELECT 20,21,'宋可',2,'2003-09','13900000021','songke@stu.com','艺术设计学院','视觉传达设计','本科','Figma、Adobe认证','校园视觉设计大赛二等奖','擅长界面视觉、交互原型和活动页设计。',80,1
+  UNION ALL SELECT 21,22,'唐睿',1,'2002-12','13900000022','tangrui@stu.com','经济管理学院','市场营销','本科','新媒体运营证书','市场调研课程优秀报告','熟悉内容策划、用户调研和活动复盘。',78,1
+  UNION ALL SELECT 22,23,'郭佳',2,'2003-05','13900000023','guojia@stu.com','电子信息学院','电子信息工程','本科','接口测试实训、CET-4','电子设计竞赛校赛二等奖','做事细致，熟悉测试流程和基础自动化脚本。',81,1
+  UNION ALL SELECT 23,24,'马哲',1,'2003-10','13900000024','mazhe@stu.com','计算机学院','网络工程','本科','Linux基础认证、Docker实训','校园网络维护优秀志愿者','熟悉Linux、容器和基础网络排障。',79,1
+  UNION ALL SELECT 24,25,'肖然',2,'2003-01','13900000025','xiaoran@stu.com','经济管理学院','信息管理与信息系统','本科','SQL基础、Excel高级应用','商业分析课程设计一等奖','熟悉SQL、Excel和基础数据可视化。',80,1
+  UNION ALL SELECT 25,26,'吕晴',2,'2002-11','13900000026','lvqing@stu.com','经济管理学院','工商管理','本科','人力资源管理师三级','优秀学生干部','有校园招聘协助和社团组织经验，期望HR方向。',77,1
+  UNION ALL SELECT 26,27,'彭浩',1,'2003-06','13900000027','penghao@stu.com','软件学院','软件工程','本科','Java基础认证、CET-4','Web开发课程优秀项目','熟悉Spring Boot和MySQL，能独立完成小型管理系统。',83,1
+  UNION ALL SELECT 27,28,'蔡欣',2,'2003-08','13900000028','caixin@stu.com','艺术设计学院','视觉传达设计','本科','Figma、Photoshop','校园海报设计一等奖','擅长视觉表达和组件化设计稿整理。',79,1
+  UNION ALL SELECT 28,29,'袁博',1,'2003-04','13900000029','yuanbo@stu.com','人工智能学院','人工智能','本科','Python、机器学习实训','数据挖掘竞赛校级二等奖','希望在算法工程或数据分析方向积累实践。',86,1
+  UNION ALL SELECT 29,30,'胡哲',1,'2003-02','13900000030','huzhe@stu.com','计算机学院','计算机科学与技术','本科','CET-6、Redis基础','蓝桥杯校赛二等奖','关注高并发后端和缓存系统。',85,1
+  UNION ALL SELECT 30,31,'尹欣',2,'2003-12','13900000031','yinxin@stu.com','经济管理学院','市场营销','本科','短视频运营实训','校园营销策划三等奖','擅长内容运营、账号数据复盘和社群沟通。',76,1
+  UNION ALL SELECT 31,32,'罗瀚',1,'2003-07','13900000032','luohan@stu.com','电子信息学院','电子信息工程','本科','嵌入式基础、接口测试','电子工艺实训优秀','希望进入测试开发或硬件测试方向。',78,1
+  UNION ALL SELECT 32,33,'沈奕',2,'2003-05','13900000033','shenyi@stu.com','软件学院','软件工程','本科','Vue项目实训、CET-4','前端课程项目优秀奖','熟悉前端页面开发、组件封装和接口联调。',82,1
+  UNION ALL SELECT 33,34,'卓雨',2,'2003-09','13900000034','zhuoyu@stu.com','经济管理学院','信息管理与信息系统','本科','SQL、Python数据处理','数据分析报告优秀奖','喜欢从业务问题出发做数据整理和分析。',81,1
+  UNION ALL SELECT 34,35,'谢晨',1,'2003-11','13900000035','xiechen@stu.com','艺术设计学院','视觉传达设计','本科','Adobe认证、Figma','校园文创设计二等奖','关注交互体验和品牌视觉统一。',78,1
+  UNION ALL SELECT 35,36,'段磊',1,'2003-06','13900000036','duanlei@stu.com','计算机学院','网络工程','本科','Linux、Shell脚本','校园机房维护优秀志愿者','熟悉基础运维、监控和脚本自动化。',79,1
+) AS src
+WHERE NOT EXISTS (SELECT 1 FROM `resume` r WHERE r.`id` = src.`id`);
+
+INSERT INTO `resume_education` (`resume_id`,`school`,`major`,`degree`,`start_date`,`end_date`,`description`)
+SELECT * FROM (
+  SELECT 17 AS `resume_id`,'某某大学' AS `school`,'计算机科学与技术' AS `major`,'本科' AS `degree`,'2021-09' AS `start_date`,'2025-06' AS `end_date`,'主修Java程序设计、数据库系统、软件工程和计算机网络。' AS `description`
+  UNION ALL SELECT 18,'某某大学','软件工程','本科','2021-09','2025-06','主修Web开发、软件测试、软件项目管理和前端框架。'
+  UNION ALL SELECT 19,'某某大学','人工智能','本科','2021-09','2025-06','主修机器学习、自然语言处理、数据挖掘和概率统计。'
+  UNION ALL SELECT 20,'某某大学','视觉传达设计','本科','2021-09','2025-06','主修界面设计、品牌视觉、交互原型和用户研究。'
+  UNION ALL SELECT 21,'某某大学','市场营销','本科','2021-09','2025-06','主修市场调研、消费者行为、品牌策划和新媒体运营。'
+  UNION ALL SELECT 22,'某某大学','电子信息工程','本科','2021-09','2025-06','主修数字电路、嵌入式系统、软件测试和信号处理。'
+  UNION ALL SELECT 23,'某某大学','网络工程','本科','2021-09','2025-06','主修计算机网络、Linux运维、网络安全和云计算基础。'
+  UNION ALL SELECT 24,'某某大学','信息管理与信息系统','本科','2021-09','2025-06','主修信息系统分析、SQL、数据统计和项目管理。'
+) AS src
+WHERE NOT EXISTS (
+  SELECT 1 FROM `resume_education` re
+  WHERE re.`resume_id` = src.`resume_id` AND re.`school` = src.`school` AND re.`major` = src.`major`
+);
+
+INSERT INTO `job_seeker_post` (`id`,`student_id`,`resume_id`,`title`,`expect_post`,`expect_city`,`expect_salary`,`intro`,`status`,`view_count`,`create_time`,`update_time`)
+SELECT * FROM (
+  SELECT 17 AS `id`,18 AS `student_id`,17 AS `resume_id`,'计算机学生求Java后端开发岗位' AS `title`,'Java后端开发' AS `expect_post`,'南京,杭州' AS `expect_city`,'8K-13K' AS `expect_salary`,'熟悉Spring Boot、MySQL和接口设计，期待参与企业级后端项目。' AS `intro`,1 AS `status`,26 AS `view_count`,'2026-04-21 09:00:00' AS `create_time`,'2026-04-21 09:00:00' AS `update_time`
+  UNION ALL SELECT 18,19,18,'软件学院学生求前端开发实习','前端开发实习生','北京,深圳','7K-11K','熟悉Vue 3、组件化开发和Element Plus，能完成页面联调。',1,24,'2026-04-22 09:00:00','2026-04-22 09:00:00'
+  UNION ALL SELECT 19,20,19,'人工智能学生寻找NLP算法实习','NLP算法实习生','上海,杭州','12K-18K','做过文本分类和知识库检索课程项目，希望参与算法研发。',1,31,'2026-04-23 09:00:00','2026-04-23 09:00:00'
+  UNION ALL SELECT 20,21,20,'视觉传达学生求交互设计岗位','交互设计师','上海,广州','7K-12K','擅长界面视觉、交互流程和高保真原型设计。',1,19,'2026-04-24 09:00:00','2026-04-24 09:00:00'
+  UNION ALL SELECT 21,22,21,'市场营销学生求内容运营岗位','内容运营','广州,深圳','6K-10K','有校园活动策划和短视频账号运营经验，执行力强。',1,22,'2026-04-25 09:00:00','2026-04-25 09:00:00'
+  UNION ALL SELECT 22,23,22,'电子信息学生求测试开发岗位','测试开发','北京,天津','7K-12K','熟悉接口测试和Python脚本，希望进入测试开发方向。',1,20,'2026-04-26 09:00:00','2026-04-26 09:00:00'
+  UNION ALL SELECT 23,24,23,'网络工程学生求运维开发实习','运维开发','杭州,南京','7K-11K','熟悉Linux、Docker和基础网络排障，愿意从运维开发做起。',1,18,'2026-04-27 09:00:00','2026-04-27 09:00:00'
+  UNION ALL SELECT 24,25,24,'信管学生寻找数据分析实习','数据分析','上海,苏州','8K-12K','熟悉SQL、Excel和基础可视化，做过商业分析课程报告。',1,21,'2026-04-28 09:00:00','2026-04-28 09:00:00'
+  UNION ALL SELECT 25,26,25,'工商管理学生求HR实习','人力资源','成都,重庆','5K-8K','有校园招聘协助和社团组织经历，沟通协调能力好。',1,16,'2026-04-29 09:00:00','2026-04-29 09:00:00'
+  UNION ALL SELECT 26,27,26,'软件工程学生求后端实习','后端开发实习生','武汉,长沙','6K-10K','熟悉Java基础、Spring Boot和MySQL，完成过课程项目。',1,23,'2026-04-30 09:00:00','2026-04-30 09:00:00'
+  UNION ALL SELECT 27,28,27,'设计学生求视觉设计岗位','视觉设计师','杭州,上海','6K-10K','擅长活动视觉、图标和移动端页面设计，可提供作品集。',1,17,'2026-05-01 09:00:00','2026-05-01 09:00:00'
+  UNION ALL SELECT 28,29,28,'人工智能学生求数据分析岗位','数据分析实习生','北京,上海','9K-14K','熟悉Python数据处理和机器学习基础，愿意从数据岗位积累。',1,27,'2026-05-02 09:00:00','2026-05-02 09:00:00'
+  UNION ALL SELECT 29,30,29,'计算机学生求高并发后端方向','后端开发','北京,杭州','10K-16K','关注缓存、消息队列和服务性能优化，项目基础扎实。',1,28,'2026-05-03 09:00:00','2026-05-03 09:00:00'
+  UNION ALL SELECT 30,31,30,'营销学生求新媒体运营实习','新媒体运营','广州,厦门','5K-8K','熟悉内容策划和账号数据复盘，能稳定输出运营素材。',1,15,'2026-05-04 09:00:00','2026-05-04 09:00:00'
+  UNION ALL SELECT 31,32,31,'电子信息学生求硬件测试岗位','硬件测试','深圳,苏州','6K-10K','了解嵌入式基础和测试流程，动手能力较强。',1,14,'2026-05-05 09:00:00','2026-05-05 09:00:00'
+  UNION ALL SELECT 32,33,32,'软件学生求前端开发岗位','前端开发','上海,南京','8K-12K','熟悉Vue页面开发、接口联调和基础性能优化。',1,25,'2026-05-06 09:00:00','2026-05-06 09:00:00'
+  UNION ALL SELECT 33,34,33,'信管学生寻找商业分析岗位','商业分析','杭州,上海','8K-13K','能从业务问题出发做数据整理、图表展示和分析结论。',1,18,'2026-05-07 09:00:00','2026-05-07 09:00:00'
+  UNION ALL SELECT 34,35,34,'视觉设计学生求品牌设计岗位','品牌设计','北京,上海','6K-10K','关注品牌视觉一致性和活动页面表现，作品集完整。',1,13,'2026-05-08 09:00:00','2026-05-08 09:00:00'
+  UNION ALL SELECT 35,36,35,'网络工程学生求运维岗位','运维工程师','天津,北京','6K-10K','熟悉Linux、Shell和监控基础，希望参与企业运维实践。',1,16,'2026-05-09 09:00:00','2026-05-09 09:00:00'
+) AS src
+WHERE NOT EXISTS (SELECT 1 FROM `job_seeker_post` jsp WHERE jsp.`id` = src.`id`);
+
+INSERT INTO `announcement` (`id`,`category_id`,`title`,`summary`,`content`,`author`,`view_count`,`is_top`,`status`,`publish_time`)
+SELECT * FROM (
+  SELECT 13 AS `id`,2 AS `category_id`,'智能制造企业联合发布春招岗位' AS `title`,'多家智能制造企业开放研发、测试与工程岗位。' AS `summary`,'<p>本次岗位覆盖工业软件、设备测试、现场工程和质量管理方向，欢迎相关专业同学关注。</p>' AS `content`,'就业办' AS `author`,118 AS `view_count`,0 AS `is_top`,1 AS `status`,'2026-03-13 10:00:00' AS `publish_time`
+  UNION ALL SELECT 14,3,'群面表达与角色分工训练报名','就业指导中心开放无领导小组训练。','<p>训练将模拟真实群面流程，重点练习信息梳理、观点表达和总结陈述。</p>','就业指导中心',96,0,1,'2026-03-14 10:00:00'
+  UNION ALL SELECT 15,4,'学院就业服务月活动安排发布','各学院将陆续开展简历、笔试和面试辅导。','<p>就业服务月包含企业走访、校友分享、岗位推荐和困难帮扶。</p>','校园新闻中心',102,0,1,'2026-03-15 10:00:00'
+  UNION ALL SELECT 16,1,'毕业生签约流程与材料说明','整理三方协议、网签与档案去向常见问题。','<p>请毕业生按时间节点完成就业去向登记，并妥善保管相关材料。</p>','就业办',176,1,1,'2026-03-16 10:00:00'
+  UNION ALL SELECT 17,2,'金融科技与数据分析岗位合集','金融、风控、数据产品岗位集中更新。','<p>本期岗位适合计算机、统计、信管和经管相关专业同学投递。</p>','就业办',134,0,1,'2026-03-17 10:00:00'
+  UNION ALL SELECT 18,3,'技术岗笔试复习路线建议','按基础题、项目题和场景题拆分复习计划。','<p>建议同学结合目标岗位建立错题本，并对项目经历进行结构化复盘。</p>','就业指导中心',158,0,1,'2026-03-18 10:00:00'
+  UNION ALL SELECT 19,4,'校友企业回校开展就业分享','多位校友分享从实习到转正的成长路径。','<p>分享内容包括岗位选择、试用期适应和职业发展规划。</p>','校园新闻中心',91,0,1,'2026-03-19 10:00:00'
+  UNION ALL SELECT 20,2,'生活服务与新消费岗位上新','门店管理、客户服务、运营岗位持续开放。','<p>适合经管、市场营销、旅游管理及不限专业同学关注。</p>','就业办',111,0,1,'2026-03-20 10:00:00'
+  UNION ALL SELECT 21,3,'作品集投递前检查清单','设计类岗位作品集建议突出过程和结果。','<p>作品集应包含项目背景、设计目标、关键过程和上线反馈。</p>','就业指导中心',88,0,1,'2026-03-21 10:00:00'
+  UNION ALL SELECT 22,1,'基层项目报名时间节点提醒','三支一扶、西部计划等基层项目陆续开放。','<p>有意向同学请关注官方报名时间，并提前准备资格材料。</p>','就业办',146,0,1,'2026-03-22 10:00:00'
+  UNION ALL SELECT 23,2,'暑期实习岗位推荐专栏上线','面向低年级开放实习岗位和实践项目。','<p>专栏将持续整理技术、运营、设计和职能类暑期实习机会。</p>','就业办',165,0,1,'2026-03-23 10:00:00'
+  UNION ALL SELECT 24,4,'就业困难学生帮扶通道开通','学校提供一对一岗位推荐和求职辅导。','<p>学院辅导员与就业指导中心将联合建立跟踪台账，提供精准服务。</p>','校园新闻中心',92,0,1,'2026-03-24 10:00:00'
+  UNION ALL SELECT 25,3,'面试自我介绍三分钟模板','围绕背景、项目、能力和意向组织表达。','<p>自我介绍不宜复述简历，应突出与岗位相关的亮点和证据。</p>','就业指导中心',143,0,1,'2026-03-25 10:00:00'
+  UNION ALL SELECT 26,2,'教育科技企业专场岗位开放','课程产品、社群运营、教务支持岗位集中发布。','<p>欢迎教育、经管、计算机及不限专业同学投递相关岗位。</p>','就业办',119,0,1,'2026-03-26 10:00:00'
+  UNION ALL SELECT 27,1,'灵活就业登记与权益保障提示','说明灵活就业去向登记和常见权益问题。','<p>同学可根据实际就业状态完成登记，并关注劳动合同与社保权益。</p>','就业办',131,0,1,'2026-03-27 10:00:00'
+  UNION ALL SELECT 28,3,'产品运营岗位项目经历怎么写','建议从目标、动作、数据和复盘四步展开。','<p>运营类简历要量化活动效果，体现用户理解和执行闭环。</p>','就业指导中心',127,0,1,'2026-03-28 10:00:00'
+  UNION ALL SELECT 29,4,'校园招聘服务系统使用提示','提醒同学完善简历、意向和求职栏信息。','<p>完善个人资料有助于企业更准确地了解求职意向并发起沟通。</p>','就业办',84,0,1,'2026-03-29 10:00:00'
+  UNION ALL SELECT 30,2,'人工智能与数据产品岗位精选','AI应用、数据产品和算法实习岗位持续更新。','<p>本期岗位适合人工智能、计算机、统计和信管相关专业同学。</p>','就业办',156,1,1,'2026-03-30 10:00:00'
+  UNION ALL SELECT 31,3,'投递记录复盘表模板发布','帮助同学跟踪岗位、进度和面试反馈。','<p>建议记录投递渠道、岗位JD、简历版本和每轮反馈，便于持续优化。</p>','就业指导中心',103,0,1,'2026-03-31 10:00:00'
+  UNION ALL SELECT 32,4,'企业HR进校园开展简历点评','就业办邀请企业HR进行现场简历点评。','<p>活动采用预约制，每位同学可获得约15分钟一对一反馈。</p>','校园新闻中心',97,0,1,'2026-04-01 10:00:00'
+  UNION ALL SELECT 33,2,'网络安全岗位招聘信息汇总','安全测试、安全运营和开发岗位开放投递。','<p>建议网络空间安全、计算机和网络工程专业同学重点关注。</p>','就业办',121,0,1,'2026-04-02 10:00:00'
+  UNION ALL SELECT 34,1,'离校手续与就业派遣说明','说明毕业离校前就业材料和派遣流程。','<p>请毕业生按学院通知完成离校手续，并核对就业派遣相关信息。</p>','就业办',137,0,1,'2026-04-03 10:00:00'
+  UNION ALL SELECT 35,3,'如何判断岗位与自己的匹配度','从能力、兴趣、成长空间和城市成本综合判断。','<p>建议同学避免只看薪资，结合岗位职责和团队培养机制做选择。</p>','就业指导中心',148,0,1,'2026-04-04 10:00:00'
+  UNION ALL SELECT 36,2,'本周新增校招岗位一览','整理本周新增企业、岗位和宣讲活动。','<p>本周新增岗位覆盖技术、运营、设计、职能和服务类方向。</p>','就业办',162,0,1,'2026-04-05 10:00:00'
+) AS src
+WHERE NOT EXISTS (SELECT 1 FROM `announcement` a WHERE a.`id` = src.`id`);
+
+INSERT INTO `campus_talk` (`id`,`title`,`enterprise_id`,`company_name`,`talk_time`,`location`,`content`,`sign_count`,`status`)
+SELECT * FROM (
+  SELECT 14 AS `id`,'智联云校园技术开放日' AS `title`,21 AS `enterprise_id`,'智联云校园科技有限公司' AS `company_name`,'2026-05-28 19:00:00' AS `talk_time`,'信息楼一楼报告厅' AS `location`,'介绍校园数字化产品、后端研发和前端工程岗位。' AS `content`,26 AS `sign_count`,1 AS `status`
+  UNION ALL SELECT 15,'远景新能源智能运维宣讲会',22,'远景新能源科技有限公司','2026-06-03 19:00:00','工程训练中心报告厅','围绕储能系统、设备测试和现场工程师培养展开。',32,1
+  UNION ALL SELECT 16,'博雅传媒内容运营分享会',23,'博雅传媒有限公司','2026-06-08 19:00:00','经管学院报告厅','介绍内容策划、短视频运营和品牌活动岗位。',28,1
+  UNION ALL SELECT 17,'天工智能制造校招说明会',24,'天工智能制造有限公司','2026-06-12 19:00:00','机械楼报告厅','介绍工业软件、质量测试和工程管理岗位。',36,1
+  UNION ALL SELECT 18,'银桥金融数据分析宣讲',25,'银桥金融服务有限公司','2026-06-17 19:00:00','经管学院阶梯教室','聚焦金融运营、风控分析和客户成功岗位。',30,1
+  UNION ALL SELECT 19,'未来健康产品运营宣讲会',26,'未来健康科技有限公司','2026-06-21 19:00:00','线上会议室','讲解健康SaaS产品、用户运营和数据产品岗位。',24,1
+  UNION ALL SELECT 20,'慧学教育课程产品说明会',27,'慧学教育服务有限公司','2026-06-26 19:00:00','大学生活动中心B厅','介绍课程运营、教研产品和学习顾问成长路径。',34,1
+  UNION ALL SELECT 21,'达观数据文档智能技术分享',28,'达观数据服务有限公司','2026-07-01 19:00:00','信息楼三楼报告厅','分享知识库、文本理解和数据标注平台项目。',29,1
+  UNION ALL SELECT 22,'南湖软件政企项目宣讲会',29,'南湖软件有限公司','2026-07-06 19:00:00','软件学院报告厅','介绍政企软件交付、前端开发和测试岗位。',22,1
+  UNION ALL SELECT 23,'星河文旅运营管培生宣讲',30,'星河文旅集团有限公司','2026-07-11 19:00:00','经管学院报告厅','面向活动运营、酒店管理和客户服务岗位。',31,1
+  UNION ALL SELECT 24,'青鸟安全攻防实践分享',33,'青鸟安全科技有限公司','2026-07-16 19:00:00','信息楼安全实验室','介绍安全测试、渗透测试和安全运营岗位。',27,1
+  UNION ALL SELECT 25,'量海数据BI与分析宣讲会',34,'量海数据科技有限公司','2026-07-21 19:00:00','信息楼二楼报告厅','介绍BI分析、数据治理和数据产品岗位。',33,1
+) AS src
+WHERE NOT EXISTS (SELECT 1 FROM `campus_talk` ct WHERE ct.`id` = src.`id`);
+
+INSERT INTO `job_fair` (`id`,`title`,`fair_time`,`location`,`host`,`content`,`company_count`,`job_count`,`sign_count`,`status`)
+SELECT * FROM (
+  SELECT 14 AS `id`,'2026暑期实习双选会' AS `title`,'2026-06-08 09:00:00' AS `fair_time`,'学校体育馆主馆' AS `location`,'校就业指导中心' AS `host`,'面向低年级和毕业生开放技术、运营、设计实习岗位。' AS `content`,72 AS `company_count`,1260 AS `job_count`,360 AS `sign_count`,1 AS `status`
+  UNION ALL SELECT 15,'智能制造与新能源专场招聘会','2026-06-14 09:00:00','工程训练中心一楼大厅','工程学院','聚焦设备测试、现场工程、工业软件和质量管理岗位。',46,680,210,1
+  UNION ALL SELECT 16,'金融科技与风控运营招聘会','2026-06-20 09:00:00','经管学院一楼大厅','经济管理学院','覆盖金融运营、数据分析、风控策略和客户服务岗位。',52,760,238,1
+  UNION ALL SELECT 17,'新媒体与品牌内容招聘会','2026-06-28 09:00:00','艺术设计学院展厅','艺术设计学院','面向内容策划、短视频运营、品牌视觉和活动执行岗位。',38,420,180,1
+  UNION ALL SELECT 18,'软件服务与政企项目双选会','2026-07-04 09:00:00','软件学院大厅','软件学院','集中展示政企软件、测试交付、前端后端和实施岗位。',64,980,280,1
+  UNION ALL SELECT 19,'教育培训与课程产品专场','2026-07-10 09:00:00','大学生活动中心A厅','校就业指导中心','覆盖课程产品、社群运营、教务支持和学习顾问岗位。',44,560,190,1
+  UNION ALL SELECT 20,'网络安全与运维开发招聘会','2026-07-16 09:00:00','信息楼一楼大厅','计算机学院','聚焦安全测试、运维开发、云平台和网络工程岗位。',40,620,205,1
+  UNION ALL SELECT 21,'文旅服务与客户成功招聘会','2026-07-22 09:00:00','大学生活动中心前广场','后勤与就业办','面向客户成功、文旅运营、酒店管理和服务质检岗位。',36,440,168,1
+  UNION ALL SELECT 22,'数据产品与商业分析双选会','2026-07-30 09:00:00','信息楼二楼大厅','校就业指导中心','适合信管、统计、计算机和经管专业学生参加。',58,820,260,1
+  UNION ALL SELECT 23,'城市服务与零售管理招聘会','2026-08-06 09:00:00','经管学院大厅','经济管理学院','提供储备店长、会员运营、门店数据和客服岗位。',42,520,176,1
+  UNION ALL SELECT 24,'秋招提前批综合双选会','2026-08-16 09:00:00','学校体育馆东区','校就业指导中心','帮助同学提前接触秋招岗位和企业招聘节奏。',88,1680,430,1
+  UNION ALL SELECT 25,'校友企业专场招聘会','2026-08-26 09:00:00','大学生活动中心多功能厅','校友会与就业办','邀请校友企业提供研发、运营、设计和职能岗位。',50,730,225,1
+  UNION ALL SELECT 26,'秋季综合就业洽谈会','2026-09-05 09:00:00','学校体育馆主馆','校就业指导中心','面向秋招启动阶段集中开放技术、运营、职能和服务类岗位。',96,1860,468,1
+) AS src
+WHERE NOT EXISTS (SELECT 1 FROM `job_fair` jf WHERE jf.`id` = src.`id`);
+
+INSERT INTO `forum_post` (`id`,`student_id`,`author_name`,`title`,`content`,`category`,`view_count`,`like_count`,`comment_count`,`audit_status`,`status`,`create_time`)
+SELECT * FROM (
+  SELECT 13 AS `id`,18 AS `student_id`,'刘洋' AS `author_name`,'后端实习项目经历怎么写更清楚' AS `title`,'我把课程项目拆成背景、职责、难点和结果四块，感觉表达清楚很多。' AS `content`,'经验分享' AS `category`,67 AS `view_count`,12 AS `like_count`,0 AS `comment_count`,1 AS `audit_status`,1 AS `status`,'2026-04-01 12:00:00' AS `create_time`
+  UNION ALL SELECT 14,19,'方敏','前端面试被问到组件封装','记录一下组件通信、表单校验和权限按钮几个问题。','经验分享',74,15,0,1,1,'2026-04-02 12:00:00'
+  UNION ALL SELECT 15,20,'何宇','算法实习需要准备哪些项目','NLP课程项目够不够，还是需要再补一个推荐系统项目？','求职交流',88,11,0,1,1,'2026-04-03 12:00:00'
+  UNION ALL SELECT 16,21,'宋可','作品集页数控制在多少比较合适','想听听投设计岗的同学怎么安排作品集结构。','求职交流',52,8,0,1,1,'2026-04-04 12:00:00'
+  UNION ALL SELECT 17,22,'唐睿','运营岗群面复盘','今天群面题是校园产品增长，数据意识真的很重要。','经验分享',63,13,0,1,1,'2026-04-05 12:00:00'
+  UNION ALL SELECT 18,23,'郭佳','测试开发笔试复习清单','接口测试、数据库和Python基础都要看，分享一下我的复习表。','经验分享',71,16,0,1,1,'2026-04-06 12:00:00'
+  UNION ALL SELECT 19,24,'马哲','运维开发岗位会问哪些Linux命令','准备面试时发现命令细节很多，欢迎补充高频题。','求职交流',49,7,0,1,1,'2026-04-07 12:00:00'
+  UNION ALL SELECT 20,25,'肖然','数据分析作品怎么展示','课程报告能不能作为作品集，需要补哪些图表？','求职交流',58,9,0,1,1,'2026-04-08 12:00:00'
+  UNION ALL SELECT 21,26,'吕晴','HR实习一面结束','主要问了校园活动经历和沟通冲突处理，整体比较贴近经历。','经验分享',45,10,0,1,1,'2026-04-09 12:00:00'
+  UNION ALL SELECT 22,27,'彭浩','拿到后端实习offer了','感谢之前帮我看简历的同学，项目讲清楚后反馈好了很多。','offer捷报',96,24,0,1,1,'2026-04-10 12:00:00'
+  UNION ALL SELECT 23,28,'蔡欣','设计岗作品集点评收获','企业老师建议我把每个项目的目标和约束写在前面。','经验分享',62,14,0,1,1,'2026-04-11 12:00:00'
+  UNION ALL SELECT 24,29,'袁博','数据分析岗二面会问业务吗','一面偏技术，担心二面业务理解不足。','求职交流',53,8,0,1,1,'2026-04-12 12:00:00'
+  UNION ALL SELECT 25,30,'胡哲','缓存项目怎么讲更有亮点','准备把缓存穿透和接口压测结果放进项目介绍。','求职交流',64,12,0,1,1,'2026-04-13 12:00:00'
+  UNION ALL SELECT 26,31,'尹欣','新媒体运营面试复盘','问了账号定位、选题方法和数据复盘，分享几个问题。','经验分享',56,11,0,1,1,'2026-04-14 12:00:00'
+  UNION ALL SELECT 27,32,'罗瀚','硬件测试岗位投递建议','电子信息专业转测试开发是否需要补项目？','求职交流',41,6,0,1,1,'2026-04-15 12:00:00'
+  UNION ALL SELECT 28,33,'沈奕','前端简历终于有回音了','把项目截图和性能优化细节补上后，约面明显变多。','offer捷报',82,21,0,1,1,'2026-04-16 12:00:00'
+  UNION ALL SELECT 29,34,'卓雨','商业分析岗位需要SQL到什么程度','想知道校招笔试里SQL会不会很难。','求职交流',57,9,0,1,1,'2026-04-17 12:00:00'
+  UNION ALL SELECT 30,35,'谢晨','品牌设计岗位面试经历','面试官很关注设计动机和方案取舍，不只是看图好不好看。','经验分享',60,13,0,1,1,'2026-04-18 12:00:00'
+  UNION ALL SELECT 31,36,'段磊','运维实习offer选择','一个偏现场运维，一个偏平台开发，想听听大家建议。','offer捷报',70,17,0,1,1,'2026-04-19 12:00:00'
+  UNION ALL SELECT 32,18,'刘洋','三方签约前要注意什么','第一次签约有点紧张，想确认违约和档案相关问题。','求职交流',77,10,0,1,1,'2026-04-20 12:00:00'
+  UNION ALL SELECT 33,19,'方敏','如何准备前端项目追问','面试官会一直追问为什么这么做，大家怎么训练表达？','求职交流',65,12,0,1,1,'2026-04-21 12:00:00'
+  UNION ALL SELECT 34,20,'何宇','算法岗暑期实习投递节奏','现在投递还来得及吗，哪些公司反馈比较快？','求职交流',73,14,0,1,1,'2026-04-22 12:00:00'
+  UNION ALL SELECT 35,21,'宋可','收到交互设计实习offer','作品集讲解练了很多遍，终于拿到一个满意的机会。','offer捷报',89,23,0,1,1,'2026-04-23 12:00:00'
+  UNION ALL SELECT 36,22,'唐睿','运营岗数据题怎么准备','除了漏斗和留存，还需要准备哪些常见分析题？','求职交流',59,9,0,1,1,'2026-04-24 12:00:00'
+) AS src
+WHERE NOT EXISTS (SELECT 1 FROM `forum_post` fp WHERE fp.`id` = src.`id`);
+
 -- Normalize avatars and logos for seeded demo accounts.
 UPDATE `admin_user` SET `avatar` = '/upload/image/seed/admin-admin.png' WHERE `id` = 1;
 UPDATE `admin_user` SET `avatar` = '/upload/image/seed/admin-jiuyeban.png' WHERE `id` = 2;

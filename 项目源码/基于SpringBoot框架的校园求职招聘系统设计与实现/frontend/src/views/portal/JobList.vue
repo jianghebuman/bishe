@@ -55,7 +55,7 @@
     <div class="result-info">共找到 <b>{{ total }}</b> 个职位</div>
 
     <!-- 职位列表 -->
-    <div class="page-card page-flex-card mt-20">
+    <div class="page-card page-flex-card portal-list-card mt-20">
       <div class="page-flex-scroll">
         <div class="job-list-wrap" v-loading="loading">
           <div class="job-row" v-for="j in jobs" :key="j.id" @click="$router.push(`/job/${j.id}`)">
@@ -103,7 +103,7 @@ import { Search, Location, User, Briefcase } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
 
 const route = useRoute()
-const query = reactive({ pageNum: 1, pageSize: 8, keyword: '', city: '', categoryId: '', education: '', jobType: '', salaryMin: '' })
+const query = reactive({ pageNum: 1, pageSize: 12, keyword: '', city: '', categoryId: '', education: '', jobType: '', salaryMin: '' })
 const jobs = ref([])
 const total = ref(0)
 const loading = ref(false)

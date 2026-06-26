@@ -111,6 +111,9 @@ li {
   min-height: 0;
   overflow: visible;
 }
+.portal-list-card {
+  min-height: var(--portal-list-card-min-height, calc(100dvh - 19rem));
+}
 .mb-10 { margin-bottom: 0.625rem; }
 .mb-20 { margin-bottom: 1.25rem; }
 .mt-20 { margin-top: 1.25rem; }
@@ -136,6 +139,10 @@ li {
 
   .page-card {
     padding: 1rem;
+  }
+
+  .portal-list-card {
+    min-height: 0;
   }
 }
 
