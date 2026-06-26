@@ -168,9 +168,12 @@ onMounted(async () => {
 }
 .list-card .clickable { cursor: pointer; }
 
+@media (min-width: 75rem) {
+  .job-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; }
+}
+
 @media (min-width: 87.5rem) {
   .banner { :deep(.el-carousel__container) { height: clamp(24rem, 30dvh, 34rem) !important; } }
-  .job-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 23.5rem), 1fr)); gap: 1rem; }
   .ent-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 1rem; }
   .info-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .ent-card { min-height: 9.5rem; }

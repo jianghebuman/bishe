@@ -406,18 +406,18 @@ public class PublicController {
         recommendEnterprises.forEach(e -> e.setPassword(null));
         data.put("recommendEnterprises", recommendEnterprises);
 
-        // 宣讲会前 5
+        // 宣讲会前 7
         LambdaQueryWrapper<CampusTalk> talkWrapper = new LambdaQueryWrapper<>();
         talkWrapper.eq(CampusTalk::getStatus, 1)
                 .orderByDesc(CampusTalk::getTalkTime)
-                .last("LIMIT 5");
+                .last("LIMIT 7");
         data.put("talks", campusTalkMapper.selectList(talkWrapper));
 
-        // 招聘会前 5
+        // 招聘会前 7
         LambdaQueryWrapper<JobFair> fairWrapper = new LambdaQueryWrapper<>();
         fairWrapper.eq(JobFair::getStatus, 1)
                 .orderByDesc(JobFair::getFairTime)
-                .last("LIMIT 5");
+                .last("LIMIT 7");
         data.put("fairs", jobFairMapper.selectList(fairWrapper));
 
         // 公告前 7

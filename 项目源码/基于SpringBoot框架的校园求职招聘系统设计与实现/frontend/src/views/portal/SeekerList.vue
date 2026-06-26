@@ -125,7 +125,7 @@ const salaryOptions = [
   { label: '10K以上', value: 10 },
   { label: '12K以上', value: 12 }
 ]
-const query = reactive({ pageNum: 1, pageSize: 9, keyword: '', city: '', expectPost: '', college: '', salaryMin: '' })
+const query = reactive({ pageNum: 1, pageSize: 12, keyword: '', city: '', expectPost: '', college: '', salaryMin: '' })
 
 const hasCondition = computed(() => ['keyword', 'city', 'expectPost', 'college', 'salaryMin'].some(k => query[k] !== '' && query[k] != null))
 const activeFilters = computed(() => {
