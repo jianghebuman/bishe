@@ -5,7 +5,7 @@
       <p class="sub">近期企业到校宣讲安排，提前了解、提前准备</p>
     </div>
 
-    <div class="page-card page-flex-card portal-list-card mt-20">
+    <div class="page-card page-flex-card portal-list-card compact-list-card mt-20">
       <div class="page-flex-scroll">
         <div class="list" v-loading="loading">
           <div class="talk-item" v-for="t in list" :key="t.id">
@@ -46,7 +46,7 @@ import { useUserStore } from '@/store/user'
 import { showLoginPrompt, showSignupSuccessPrompt } from '@/utils/loginPrompt'
 
 const userStore = useUserStore()
-const query = reactive({ pageNum: 1, pageSize: 8 })
+const query = reactive({ pageNum: 1, pageSize: 5 })
 const list = ref([])
 const total = ref(0)
 const loading = ref(false)
@@ -79,15 +79,16 @@ onMounted(load)
 <style scoped lang="scss">
 .head h2 { color: var(--cr-text); .el-icon { vertical-align: middle; color: var(--cr-primary); } }
 .head .sub { color: var(--cr-text-muted); margin-top: .375rem; }
-.talk-item { background: #fff; border: 0.0625rem solid var(--cr-border-soft); border-radius: var(--cr-radius); padding: clamp(1rem, 1.5vw, 1.25rem); margin-bottom: 1rem; display: grid; grid-template-columns: minmax(4.5rem, 5rem) minmax(0, 1fr); gap: clamp(.875rem, 2vw, 1.25rem); box-shadow: var(--cr-shadow-soft);
-  .date { background: linear-gradient(135deg, var(--cr-primary), var(--cr-accent)); border-radius: var(--cr-radius-sm); color: #fff; text-align: center; padding: .875rem 0;
-    .day { font-size: clamp(1.625rem, 4vw, 1.875rem); font-weight: 600; line-height: 1; }
-    .month { font-size: .875rem; margin-top: .375rem; }
+.talk-item { background: #fff; border: 0.0625rem solid var(--cr-border-soft); border-radius: var(--cr-radius); padding: clamp(.875rem, 1.2vw, 1.05rem); margin-bottom: .75rem; display: grid; grid-template-columns: minmax(4rem, 4.625rem) minmax(0, 1fr); gap: clamp(.75rem, 1.5vw, 1rem); box-shadow: var(--cr-shadow-soft);
+  &:last-child { margin-bottom: 0; }
+  .date { background: linear-gradient(135deg, var(--cr-primary), var(--cr-accent)); border-radius: var(--cr-radius-sm); color: #fff; text-align: center; padding: .75rem 0;
+    .day { font-size: clamp(1.375rem, 3vw, 1.625rem); font-weight: 650; line-height: 1; }
+    .month { font-size: .8125rem; margin-top: .25rem; }
   }
   .body { min-width: 0; }
-  .title { color: var(--cr-text); margin-bottom: .625rem; line-height: 1.4; }
-  .meta { display: flex; flex-wrap: wrap; gap: .5rem 1rem; color: var(--cr-text-muted); font-size: .8125rem; margin-bottom: .625rem; .el-icon { vertical-align: middle; color: var(--cr-primary); } }
-  .content { color: var(--cr-text-soft); line-height: 1.7; margin-bottom: .875rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .title { color: var(--cr-text); margin-bottom: .45rem; line-height: 1.35; font-size: 1rem; }
+  .meta { display: flex; flex-wrap: wrap; gap: .35rem .875rem; color: var(--cr-text-muted); font-size: .78125rem; margin-bottom: .45rem; .el-icon { vertical-align: middle; color: var(--cr-primary); } }
+  .content { color: var(--cr-text-soft); font-size: .8125rem; line-height: 1.55; margin-bottom: .625rem; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
   .footer { display: flex; justify-content: space-between; align-items: center; }
 }
 

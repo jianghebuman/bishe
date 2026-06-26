@@ -56,7 +56,7 @@
 
     <!-- 职位列表 -->
     <div class="page-card page-flex-card portal-list-card mt-20">
-      <div class="page-flex-scroll">
+      <div class="page-flex-scroll job-scroll">
         <div class="job-list-wrap" v-loading="loading">
           <div class="job-row" v-for="j in jobs" :key="j.id" @click="$router.push(`/job/${j.id}`)">
             <div class="job-main">
@@ -103,7 +103,7 @@ import { Search, Location, User, Briefcase } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
 
 const route = useRoute()
-const query = reactive({ pageNum: 1, pageSize: 12, keyword: '', city: '', categoryId: '', education: '', jobType: '', salaryMin: '' })
+const query = reactive({ pageNum: 1, pageSize: 3, keyword: '', city: '', categoryId: '', education: '', jobType: '', salaryMin: '' })
 const jobs = ref([])
 const total = ref(0)
 const loading = ref(false)
@@ -167,7 +167,8 @@ watch(() => route.query, (nv) => {
 <style scoped lang="scss">
 .search-bar { display: grid; grid-template-columns: minmax(14rem, 1fr) auto; align-items: center; gap: clamp(.5rem, 1.2vw, .875rem); }
 .search-input { min-width: 0; }
-.filter-row { display: grid; grid-template-columns: minmax(5.5rem, max-content) minmax(0, 1fr); gap: .75rem; padding: .625rem 0; border-bottom: 0.0625rem dashed var(--cr-border-soft);
+.portal-list-card { --portal-list-card-min-height: calc(100dvh - 41rem); }
+.filter-row { display: grid; grid-template-columns: minmax(5.5rem, max-content) minmax(0, 1fr); gap: .75rem; padding: .5rem 0; border-bottom: 0.0625rem dashed var(--cr-border-soft);
   &:last-child { border-bottom: none; }
   .label { color: var(--cr-text-muted); padding-top: .375rem; font-weight: 650; }
   .options { min-width: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
@@ -176,8 +177,10 @@ watch(() => route.query, (nv) => {
     &.active { background: var(--cr-primary); border-color: var(--cr-primary); color: #fff; box-shadow: 0 .5rem 1rem rgba(37,99,235,.14); }
   }
 }
-.result-info { margin: 1.25rem 0 .625rem; color: var(--cr-text-soft); font-size: .875rem; b { color: var(--cr-danger); margin: 0 .25rem; } }
-.job-row { background: rgba(255,255,255,.96); border: 0.0625rem solid var(--cr-border-soft); border-radius: var(--cr-radius); padding: clamp(1rem, 1.5vw, 1.375rem); margin-bottom: .75rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(11.25rem, 0.28fr); gap: 1.125rem; cursor: pointer; transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+.result-info { margin: .875rem 0 .5rem; color: var(--cr-text-soft); font-size: .875rem; b { color: var(--cr-danger); margin: 0 .25rem; } }
+.job-scroll { display: flex; flex-direction: column; }
+.job-list-wrap { flex: 1; display: flex; flex-direction: column; gap: .5rem; }
+.job-row { flex: 1; min-height: 5.5rem; background: rgba(255,255,255,.96); border: 0.0625rem solid var(--cr-border-soft); border-radius: var(--cr-radius); padding: clamp(.875rem, 1.2vw, 1rem); display: grid; align-items: center; grid-template-columns: minmax(0, 1fr) minmax(11.25rem, 0.28fr); gap: 1rem; cursor: pointer; transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
   &:hover { border-color: rgba(37,99,235,.28); box-shadow: var(--cr-shadow); transform: translateY(-.0625rem); }
   .job-main { min-width: 0; }
   .job-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .625rem;
@@ -195,6 +198,8 @@ watch(() => route.query, (nv) => {
 }
 
 @media (max-width: 51.25rem) {
+  .job-row { flex: 0 1 auto; }
+
   .job-row {
     grid-template-columns: 1fr;
   }

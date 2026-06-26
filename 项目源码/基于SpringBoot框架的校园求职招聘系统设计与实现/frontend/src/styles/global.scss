@@ -114,6 +114,16 @@ li {
 .portal-list-card {
   min-height: var(--portal-list-card-min-height, calc(100dvh - 19rem));
 }
+.compact-list-card {
+  min-height: 0;
+}
+.compact-list-card > .page-flex-scroll {
+  flex: 0 1 auto;
+}
+.compact-list-card > .pagination-wrap {
+  margin-top: 0.625rem;
+  padding-top: 0;
+}
 .mb-10 { margin-bottom: 0.625rem; }
 .mb-20 { margin-bottom: 1.25rem; }
 .mt-20 { margin-top: 1.25rem; }

@@ -1,6 +1,6 @@
 <template>
-  <div class="page-container">
-    <div class="page-card">
+  <div class="page-container notice-page">
+    <div class="page-card page-flex-card portal-list-card notice-list-card">
       <div class="header">
         <div>
           <h2>{{ title }}</h2>
@@ -14,7 +14,7 @@
         <el-tab-pane label="未读" :name="0" />
         <el-tab-pane label="已读" :name="1" />
       </el-tabs>
-      <div v-loading="loading">
+      <div class="page-flex-scroll notice-scroll" v-loading="loading">
         <div class="notice-item" v-for="n in list" :key="n.id" :class="{ unread: n.isRead === 0 }" @click="openDetail(n)">
           <div class="icon" :class="n.noticeType?.toLowerCase() || 'system'">{{ typeText(n.noticeType).substring(0, 1) }}</div>
           <div class="body">
@@ -69,7 +69,7 @@ defineProps({
   subtitle: { type: String, default: '系统通知、投递反馈、面试提醒和审核消息集中展示' }
 })
 const userStore = useUserStore()
-const query = reactive({ pageNum: 1, pageSize: 10, isRead: '' })
+const query = reactive({ pageNum: 1, pageSize: 6, isRead: '' })
 const list = ref([])
 const total = ref(0)
 const unread = ref(0)
@@ -109,10 +109,13 @@ onMounted(load)
 </script>
 
 <style scoped lang="scss">
+.notice-list-card { --portal-list-card-min-height: calc(100dvh - 11rem); }
 .header { display:flex; justify-content:space-between; align-items:center; h2{margin-bottom:6px;} p{color:var(--cr-text-muted);} }
-.notice-item { display:flex; gap:14px; padding:18px 0; border-bottom:1px dashed var(--cr-border-soft); cursor:pointer; transition:background .2s; &:hover{background:var(--cr-surface-soft)} &.unread .title::after{content:'未读';font-size:12px;background:var(--cr-danger);color:#fff;border-radius:8px;padding:1px 6px;margin-left:8px;} }
+.notice-scroll { display:flex; flex-direction:column; }
+.notice-item { flex:1; min-height:6.25rem; display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px dashed var(--cr-border-soft); cursor:pointer; transition:background .2s; &:hover{background:var(--cr-surface-soft)} &.unread .title::after{content:'未读';font-size:12px;background:var(--cr-danger);color:#fff;border-radius:8px;padding:1px 6px;margin-left:8px;} }
 .icon { width:42px;height:42px;border-radius:50%;background:var(--cr-text-muted);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0;&.apply,&.activity{background:var(--cr-success)}&.interview,&.chat{background:var(--cr-warning)}&.offer{background:var(--cr-danger)}&.audit{background:var(--cr-primary)} }
-.body{flex:1;min-width:0}.top{display:flex;gap:8px;align-items:center}.title{font-weight:600;color:var(--cr-text)}.content{color:var(--cr-text-soft);line-height:1.7;margin:8px 0}.meta{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--cr-text-muted);font-size:12px;}.ops{display:flex;gap:4px;flex-shrink:0}
+.body{flex:1;min-width:0}.top{display:flex;gap:8px;align-items:center}.title{font-weight:600;color:var(--cr-text)}.content{color:var(--cr-text-soft);line-height:1.6;margin:6px 0;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}.meta{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--cr-text-muted);font-size:12px;}.ops{display:flex;gap:4px;flex-shrink:0}
 .detail-header{display:flex;align-items:center;gap:10px;padding-right:24px;font-weight:600;color:var(--cr-text);line-height:1.5}.detail-meta{display:flex;justify-content:space-between;gap:12px;color:var(--cr-text-muted);font-size:13px;margin-bottom:16px}.detail-content{color:var(--cr-text);font-size:15px;line-height:1.9;white-space:pre-line;background:var(--cr-surface-soft);border-radius:var(--cr-radius-sm);padding:18px;}
+@media (max-width:40rem){.notice-item{flex:0 1 auto;align-items:flex-start}.header{align-items:stretch;flex-direction:column;gap:12px}.header :deep(.el-button){width:100%;}.meta{align-items:flex-start;flex-direction:column}.ops{flex-wrap:wrap}}
 </style>
 

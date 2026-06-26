@@ -7,7 +7,7 @@
 
     <div class="layout mt-20">
       <!-- 左侧资讯列表 -->
-      <div class="page-card main page-flex-card portal-list-card">
+      <div class="page-card main page-flex-card portal-list-card compact-list-card">
         <el-tabs v-model="activeCat" @tab-change="onCatChange">
           <el-tab-pane label="全部" :name="0" />
           <el-tab-pane v-for="c in categories" :key="c.id" :label="c.name" :name="c.id" />
@@ -85,7 +85,7 @@ import { publicApi } from '@/api'
 import request from '@/utils/request'
 
 const activeCat = ref(0)
-const query = reactive({ pageNum: 1, pageSize: 12, categoryId: undefined })
+const query = reactive({ pageNum: 1, pageSize: 6, categoryId: undefined })
 const list = ref([])
 const total = ref(0)
 const loading = ref(false)
@@ -117,9 +117,9 @@ onMounted(async () => {
   try {
     const home = await publicApi.home()
     const news = home.data?.announcements || []
-    briefNews.value = news.slice(0, 3)
-    sidebarTalks.value = (home.data?.talks || []).slice(0, 3)
-    sidebarFairs.value = (home.data?.fairs || []).slice(0, 3)
+    briefNews.value = news.slice(0, 2)
+    sidebarTalks.value = (home.data?.talks || []).slice(0, 2)
+    sidebarFairs.value = (home.data?.fairs || []).slice(0, 2)
   } catch (e) {}
 })
 </script>
@@ -127,23 +127,23 @@ onMounted(async () => {
 <style scoped lang="scss">
 .head h2 { color: var(--cr-text); .el-icon { vertical-align: middle; color: var(--cr-primary); } }
 .head .sub { color: var(--cr-text-muted); margin-top: .375rem; }
-.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 18rem); gap: clamp(1rem, 2vw, 1.25rem); align-items: stretch; }
-.news-row { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 0.0625rem dashed #ebeef5; cursor: pointer;
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 18rem); gap: clamp(1rem, 2vw, 1.25rem); align-items: start; }
+.news-row { display: flex; gap: .875rem; padding: .75rem 0; border-bottom: 0.0625rem dashed #ebeef5; cursor: pointer;
   &:hover .title { color: var(--cr-primary); }
-  .cover { width: clamp(7rem, 16vw, 10rem); aspect-ratio: 8 / 5; background-size: cover; background-position: center; border-radius: var(--cr-radius-sm); flex-shrink: 0; }
+  .cover { width: clamp(6rem, 12vw, 8.25rem); aspect-ratio: 8 / 5; background-size: cover; background-position: center; border-radius: var(--cr-radius-sm); flex-shrink: 0; }
   .body { flex: 1; min-width: 0; }
-  .title { font-size: 1rem; color: var(--cr-text); margin-bottom: .5rem; display: flex; align-items: center; flex-wrap: wrap; gap: .375rem; line-height: 1.45; }
+  .title { font-size: .96875rem; color: var(--cr-text); margin-bottom: .375rem; display: flex; align-items: center; flex-wrap: wrap; gap: .375rem; line-height: 1.4; }
   .top-tag { margin-right: .125rem; }
-  .summary { color: var(--cr-text-soft); font-size: .8125rem; line-height: 1.6; margin-bottom: .625rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .summary { color: var(--cr-text-soft); font-size: .8125rem; line-height: 1.55; margin-bottom: .5rem; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
   .meta { display: flex; gap: .5rem 1rem; flex-wrap: wrap; color: var(--cr-text-muted); font-size: .75rem; .el-icon { vertical-align: middle; } }
 }
 .block-title { font-size: .9375rem; color: var(--cr-text); border-left: .1875rem solid var(--cr-primary); padding-left: .5rem; margin-bottom: .75rem; }
-.aside { display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1rem, 2vw, 1.25rem); min-height: 0; height: 100%; }
+.aside { display: grid; gap: clamp(1rem, 2vw, 1.25rem); min-height: 0; }
 .aside > .page-card { min-height: 0; }
-.sidebar-card { display: flex; flex-direction: column; gap: .75rem; min-height: 0; height: 100%; }
-.brief-list, .schedule-list { display: flex; flex-direction: column; gap: .75rem; }
+.sidebar-card { display: flex; flex-direction: column; gap: .625rem; min-height: 0; }
+.brief-list, .schedule-list { display: flex; flex-direction: column; gap: .5rem; }
 .brief-item, .schedule-item { cursor: pointer; }
-.brief-item { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .625rem; align-items: start; padding: .625rem 0; border-bottom: 0.0625rem dashed #ebeef5;
+.brief-item { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .5rem; align-items: start; padding: .5rem 0; border-bottom: 0.0625rem dashed #ebeef5;
   &:hover .brief-title { color: var(--cr-primary); }
 }
 .brief-body { min-width: 0; }
@@ -151,7 +151,7 @@ onMounted(async () => {
 .brief-meta, .schedule-meta { color: var(--cr-text-muted); font-size: .75rem; margin-top: .25rem; line-height: 1.5; }
 .schedule-group { display: flex; flex-direction: column; gap: .5rem; }
 .schedule-label { color: var(--cr-text); font-weight: 600; font-size: .8125rem; }
-.schedule-item { display: grid; grid-template-columns: .5rem minmax(0, 1fr); gap: .625rem; align-items: start; padding: .5rem 0; border-bottom: 0.0625rem dashed #ebeef5;
+.schedule-item { display: grid; grid-template-columns: .5rem minmax(0, 1fr); gap: .5rem; align-items: start; padding: .375rem 0; border-bottom: 0.0625rem dashed #ebeef5;
   &:hover .schedule-title { color: var(--cr-primary); }
 }
 .schedule-dot { width: .5rem; height: .5rem; border-radius: 50%; background: var(--cr-primary); margin-top: .375rem; }

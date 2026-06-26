@@ -22,7 +22,7 @@
 
     <div class="content mt-20">
       <div class="main-list page-card page-flex-card portal-list-card" v-loading="loading">
-        <div class="page-flex-scroll">
+        <div class="page-flex-scroll forum-scroll">
           <div class="post-item" v-for="p in posts" :key="p.id" @click="$router.push(`/forum/${p.id}`)">
             <div class="avatar">{{ (p.authorName || '同学').substring(0, 1) }}</div>
             <div class="post-body">
@@ -104,7 +104,7 @@ import { useUserStore } from '@/store/user'
 
 const router = useRouter()
 const userStore = useUserStore()
-const query = reactive({ pageNum: 1, pageSize: 12, keyword: '', category: '' })
+const query = reactive({ pageNum: 1, pageSize: 6, keyword: '', category: '' })
 const posts = ref([])
 const total = ref(0)
 const loading = ref(false)
@@ -124,7 +124,7 @@ const load = async () => {
     if (!params.category) delete params.category
     const res = await publicApi.forumPosts(params)
     posts.value = res.data.records; total.value = Number(res.data.total)
-    featuredPosts.value = (res.data.records || []).slice(0, 4)
+    featuredPosts.value = (res.data.records || []).slice(0, 3)
   } finally { loading.value = false }
 }
 const openPublish = () => {
@@ -152,20 +152,21 @@ onMounted(load)
 .toolbar :deep(.el-radio-group) { min-width: 0; overflow-x: auto; }
 .toolbar-search { min-width: 0; }
 .content { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 18rem); gap: clamp(1rem, 2vw, 1.25rem); align-items: stretch; }
-.main-list { min-height: 0; }
+.main-list { --portal-list-card-min-height: calc(100dvh - 22rem); min-height: 0; }
+.forum-scroll { display: flex; flex-direction: column; }
 .side { display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1rem, 2vw, 1.25rem); min-height: 0; height: 100%; }
 .side > .page-card { min-height: 0; }
-.post-item { display: flex; gap: .875rem; padding: 1.125rem 0; border-bottom: 0.0625rem dashed var(--cr-border-soft); cursor: pointer; &:hover .post-title span:last-child { color: var(--cr-primary); } }
+.post-item { flex: 1; min-height: 5.875rem; display: flex; align-items: center; gap: .75rem; padding: .75rem 0; border-bottom: 0.0625rem dashed var(--cr-border-soft); cursor: pointer; &:hover .post-title span:last-child { color: var(--cr-primary); } }
 .avatar { width: clamp(2.25rem, 5vw, 2.75rem); height: clamp(2.25rem, 5vw, 2.75rem); border-radius: 50%; background: linear-gradient(135deg, var(--cr-primary), var(--cr-success)); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0; }
 .post-body { flex: 1; min-width: 0; }
-.post-title { display: flex; align-items: center; gap: .5rem; font-weight: 600; color: var(--cr-text); margin-bottom: .5rem; }
-.post-content { color: var(--cr-text-soft); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: .5rem; }
-.post-meta { display: flex; gap: 1rem; flex-wrap: wrap; color: var(--cr-text-muted); font-size: .75rem; .el-icon { vertical-align: middle; } }
-.side-card { display: flex; flex-direction: column; gap: .625rem; min-height: 0; height: 100%; }
+.post-title { display: flex; align-items: center; gap: .5rem; font-weight: 600; color: var(--cr-text); margin-bottom: .375rem; line-height: 1.35; }
+.post-content { color: var(--cr-text-soft); font-size: .8125rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: .375rem; }
+.post-meta { display: flex; gap: .5rem .875rem; flex-wrap: wrap; color: var(--cr-text-muted); font-size: .75rem; .el-icon { vertical-align: middle; } }
+.side-card { display: flex; flex-direction: column; gap: .5rem; min-height: 0; height: 100%; }
 .side-title { color: var(--cr-text); font-size: .9375rem; font-weight: 600; }
-.side-card p { color: var(--cr-text-soft); line-height: 1.8; font-size: .8125rem; }
-.side-posts { display: flex; flex-direction: column; gap: .75rem; }
-.side-post { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .625rem; align-items: start; padding: .625rem 0; border-bottom: 0.0625rem dashed #ebeef5; cursor: pointer; }
+.side-card p { color: var(--cr-text-soft); line-height: 1.65; font-size: .78125rem; }
+.side-posts { display: flex; flex-direction: column; gap: .5rem; }
+.side-post { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .5rem; align-items: start; padding: .5rem 0; border-bottom: 0.0625rem dashed #ebeef5; cursor: pointer; }
 .side-post:hover .side-post-title { color: var(--cr-primary); }
 .side-post-body { min-width: 0; }
 .side-post-title { color: var(--cr-text); font-size: .875rem; line-height: 1.45; margin: 0; }
@@ -174,6 +175,7 @@ onMounted(load)
   .content,
   .toolbar { grid-template-columns: 1fr; }
   .side { grid-template-rows: auto; }
+  .post-item { flex: 0 1 auto; }
 }
 
 @media (max-width: 40rem) {
