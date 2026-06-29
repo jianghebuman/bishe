@@ -8,9 +8,15 @@ import com.campus.common.PageResult;
 import com.campus.common.UserContext;
 import com.campus.entity.JobSeekerPost;
 import com.campus.entity.Resume;
+import com.campus.entity.ResumeEducation;
+import com.campus.entity.ResumeExperience;
+import com.campus.entity.ResumeProject;
 import com.campus.entity.Student;
 import com.campus.mapper.JobSeekerPostMapper;
+import com.campus.mapper.ResumeEducationMapper;
+import com.campus.mapper.ResumeExperienceMapper;
 import com.campus.mapper.ResumeMapper;
+import com.campus.mapper.ResumeProjectMapper;
 import com.campus.mapper.StudentMapper;
 import com.campus.service.JobSeekerPostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +37,15 @@ public class JobSeekerPostServiceImpl extends ServiceImpl<JobSeekerPostMapper, J
 
     @Autowired
     private ResumeMapper resumeMapper;
+
+    @Autowired
+    private ResumeEducationMapper resumeEducationMapper;
+
+    @Autowired
+    private ResumeProjectMapper resumeProjectMapper;
+
+    @Autowired
+    private ResumeExperienceMapper resumeExperienceMapper;
 
     @Autowired
     private StudentMapper studentMapper;
@@ -191,6 +206,26 @@ public class JobSeekerPostServiceImpl extends ServiceImpl<JobSeekerPostMapper, J
         Map<Long, Resume> resumeMap = includeResume && !resumeIds.isEmpty()
                 ? resumeMapper.selectBatchIds(resumeIds).stream().collect(Collectors.toMap(Resume::getId, r -> r))
                 : java.util.Collections.emptyMap();
+        Map<Long, List<ResumeEducation>> educationMap = java.util.Collections.emptyMap();
+        Map<Long, List<ResumeProject>> projectMap = java.util.Collections.emptyMap();
+        Map<Long, List<ResumeExperience>> experienceMap = java.util.Collections.emptyMap();
+        if (includeResume && !resumeIds.isEmpty()) {
+            educationMap = resumeEducationMapper.selectList(new LambdaQueryWrapper<ResumeEducation>()
+                            .in(ResumeEducation::getResumeId, resumeIds)
+                            .orderByAsc(ResumeEducation::getStartDate))
+                    .stream().collect(Collectors.groupingBy(ResumeEducation::getResumeId));
+            projectMap = resumeProjectMapper.selectList(new LambdaQueryWrapper<ResumeProject>()
+                            .in(ResumeProject::getResumeId, resumeIds)
+                            .orderByAsc(ResumeProject::getStartDate))
+                    .stream().collect(Collectors.groupingBy(ResumeProject::getResumeId));
+            experienceMap = resumeExperienceMapper.selectList(new LambdaQueryWrapper<ResumeExperience>()
+                            .in(ResumeExperience::getResumeId, resumeIds)
+                            .orderByAsc(ResumeExperience::getStartDate))
+                    .stream().collect(Collectors.groupingBy(ResumeExperience::getResumeId));
+        }
+        final Map<Long, List<ResumeEducation>> finalEducationMap = educationMap;
+        final Map<Long, List<ResumeProject>> finalProjectMap = projectMap;
+        final Map<Long, List<ResumeExperience>> finalExperienceMap = experienceMap;
         return posts.stream().map(post -> {
             Map<String, Object> item = new HashMap<>();
             item.put("post", post);
@@ -210,6 +245,9 @@ public class JobSeekerPostServiceImpl extends ServiceImpl<JobSeekerPostMapper, J
                     resume.setEmail(null);
                 }
                 item.put("resume", resume);
+                item.put("educations", finalEducationMap.getOrDefault(post.getResumeId(), java.util.Collections.emptyList()));
+                item.put("projects", finalProjectMap.getOrDefault(post.getResumeId(), java.util.Collections.emptyList()));
+                item.put("experiences", finalExperienceMap.getOrDefault(post.getResumeId(), java.util.Collections.emptyList()));
             }
             return item;
         }).collect(Collectors.toList());
