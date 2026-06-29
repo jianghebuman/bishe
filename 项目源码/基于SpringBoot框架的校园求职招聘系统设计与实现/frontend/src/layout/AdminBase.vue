@@ -112,11 +112,31 @@ onBeforeUnmount(() => {
 .menu { border-right: none; }
 :deep(.el-menu) { background: transparent !important; }
 :deep(.el-menu-item) { margin: 4px 10px; border-radius: 10px; height: 44px; line-height: 44px; }
+:deep(.el-menu-item .el-icon) {
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
+  border-radius: 8px;
+  color: #9fb4cc;
+  font-size: 17px;
+  transition: background .18s, color .18s;
+}
 :deep(.el-menu-item:hover) { background: rgba(255,255,255,.08) !important; color: #fff !important; }
+:deep(.el-menu-item:hover .el-icon) {
+  background: rgba(255, 255, 255, 0.08);
+  color: #eaf6ff;
+}
 :deep(.el-menu-item.is-active) {
   background: linear-gradient(90deg, var(--cr-primary), var(--cr-accent)) !important;
   color: #fff !important;
   box-shadow: 0 10px 18px rgba(37, 99, 235, 0.22);
+}
+:deep(.el-menu-item.is-active .el-icon) {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+:deep(.el-menu--collapse .el-menu-item .el-icon) {
+  margin-right: 0;
 }
 .topbar { background: rgba(255,255,255,.92); border-bottom: 1px solid var(--cr-border-soft); box-shadow: 0 8px 20px rgba(22, 38, 68, .05); padding: 0 clamp(12px, 1.6vw, 22px); height: 70px; min-width: 0; gap: 12px; backdrop-filter: blur(12px); }
 .collapse-trigger { cursor: pointer; flex: 0 0 auto; }
