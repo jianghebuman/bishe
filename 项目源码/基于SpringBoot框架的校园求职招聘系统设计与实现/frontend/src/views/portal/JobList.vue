@@ -13,46 +13,49 @@
       <div class="filter-row">
         <span class="label">城市：</span>
         <div class="options">
-          <span class="opt" :class="{ active: !query.city }" @click="setFilter('city', '')">全部</span>
-          <span class="opt" v-for="c in cities" :key="c.dictValue" :class="{ active: query.city === c.dictValue }" @click="setFilter('city', c.dictValue)">{{ c.dictLabel }}</span>
+          <span class="opt" :class="{ active: isEmptyFilter('city') }" @click="setFilter('city', '')">全部</span>
+          <span class="opt" v-for="c in cities" :key="c.dictValue" :class="{ active: hasFilter('city', c.dictValue) }" @click="setFilter('city', c.dictValue)">{{ c.dictLabel }}</span>
         </div>
       </div>
       <div class="filter-row">
         <span class="label">岗位类别：</span>
         <div class="options">
-          <span class="opt" :class="{ active: !query.categoryId }" @click="setFilter('categoryId', '')">全部</span>
-          <span class="opt" v-for="c in categories" :key="c.id" :class="{ active: query.categoryId === c.id }" @click="setFilter('categoryId', c.id)">{{ c.name }}</span>
+          <span class="opt" :class="{ active: isEmptyFilter('categoryId') }" @click="setFilter('categoryId', '')">全部</span>
+          <span class="opt" v-for="c in categories" :key="c.id" :class="{ active: hasFilter('categoryId', c.id) }" @click="setFilter('categoryId', c.id)">{{ c.name }}</span>
         </div>
       </div>
       <div class="filter-row">
         <span class="label">学历要求：</span>
         <div class="options">
-          <span class="opt" :class="{ active: !query.education }" @click="setFilter('education', '')">不限</span>
-          <span class="opt" v-for="e in educations" :key="e.dictValue" :class="{ active: query.education === e.dictValue }" @click="setFilter('education', e.dictValue)">{{ e.dictLabel }}</span>
+          <span class="opt" :class="{ active: isEmptyFilter('education') }" @click="setFilter('education', '')">不限</span>
+          <span class="opt" v-for="e in educations" :key="e.dictValue" :class="{ active: hasFilter('education', e.dictValue) }" @click="setFilter('education', e.dictValue)">{{ e.dictLabel }}</span>
         </div>
       </div>
       <div class="filter-row">
         <span class="label">工作性质：</span>
         <div class="options">
-          <span class="opt" :class="{ active: !query.jobType }" @click="setFilter('jobType', '')">不限</span>
-          <span class="opt" :class="{ active: query.jobType === 1 }" @click="setFilter('jobType', 1)">全职</span>
-          <span class="opt" :class="{ active: query.jobType === 2 }" @click="setFilter('jobType', 2)">实习</span>
+          <span class="opt" :class="{ active: isEmptyFilter('jobType') }" @click="setFilter('jobType', '')">不限</span>
+          <span class="opt" :class="{ active: hasFilter('jobType', 1) }" @click="setFilter('jobType', 1)">全职</span>
+          <span class="opt" :class="{ active: hasFilter('jobType', 2) }" @click="setFilter('jobType', 2)">实习</span>
         </div>
       </div>
       <div class="filter-row">
         <span class="label">薪资范围：</span>
         <div class="options">
-          <span class="opt" :class="{ active: !query.salaryMin }" @click="setFilter('salaryMin', '')">不限</span>
-          <span class="opt" :class="{ active: query.salaryMin === 5 }" @click="setFilter('salaryMin', 5)">5K以上</span>
-          <span class="opt" :class="{ active: query.salaryMin === 10 }" @click="setFilter('salaryMin', 10)">10K以上</span>
-          <span class="opt" :class="{ active: query.salaryMin === 15 }" @click="setFilter('salaryMin', 15)">15K以上</span>
-          <span class="opt" :class="{ active: query.salaryMin === 20 }" @click="setFilter('salaryMin', 20)">20K以上</span>
+          <span class="opt" :class="{ active: isEmptyFilter('salaryMin') }" @click="setFilter('salaryMin', '')">不限</span>
+          <span class="opt" :class="{ active: hasFilter('salaryMin', 5) }" @click="setFilter('salaryMin', 5)">5K以上</span>
+          <span class="opt" :class="{ active: hasFilter('salaryMin', 10) }" @click="setFilter('salaryMin', 10)">10K以上</span>
+          <span class="opt" :class="{ active: hasFilter('salaryMin', 15) }" @click="setFilter('salaryMin', 15)">15K以上</span>
+          <span class="opt" :class="{ active: hasFilter('salaryMin', 20) }" @click="setFilter('salaryMin', 20)">20K以上</span>
         </div>
       </div>
     </div>
 
     <!-- 结果统计 -->
-    <div class="result-info">共找到 <b>{{ total }}</b> 个职位</div>
+    <div class="result-info">
+      <template v-if="recommended">暂无完全匹配，已推荐 <b>{{ total }}</b> 个相近职位</template>
+      <template v-else>共找到 <b>{{ total }}</b> 个职位</template>
+    </div>
 
     <!-- 职位列表 -->
     <div class="page-card page-flex-card portal-list-card mt-20">
@@ -103,16 +106,38 @@ import { Search, Location, User, Briefcase } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
 
 const route = useRoute()
-const query = reactive({ pageNum: 1, pageSize: 3, keyword: '', city: '', categoryId: '', education: '', jobType: '', salaryMin: '' })
+const query = reactive({ pageNum: 1, pageSize: 3, keyword: '', city: [], categoryId: [], education: [], jobType: [], salaryMin: [], salaryMax: '' })
 const jobs = ref([])
 const total = ref(0)
+const recommended = ref(false)
 const loading = ref(false)
 const cities = ref([])
 const categories = ref([])
 const educations = ref([])
 
+const listKeys = ['city', 'categoryId', 'education', 'jobType', 'salaryMin']
+const toNumber = (value) => {
+  const n = Number(value)
+  return Number.isFinite(n) ? n : undefined
+}
+const toList = (value, mapper = v => v) => {
+  if (value == null || value === '') return []
+  const text = Array.isArray(value) ? value.join(',') : String(value)
+  return text.split(/[,\uFF0C]/).map(v => mapper(v.trim())).filter(v => v !== '' && v != null)
+}
+const sameValue = (a, b) => String(a) === String(b)
+const isEmptyFilter = (key) => query[key].length === 0
+const hasFilter = (key, value) => query[key].some(v => sameValue(v, value))
 const setFilter = (key, value) => {
-  query[key] = value
+  if (key === 'salaryMin') query.salaryMax = ''
+  if (value === '') {
+    query[key] = []
+  } else {
+    const values = query[key]
+    const index = values.findIndex(v => sameValue(v, value))
+    if (index >= 0) values.splice(index, 1)
+    else values.push(value)
+  }
   query.pageNum = 1
   loadList()
 }
@@ -134,17 +159,35 @@ const loadList = async () => {
   loading.value = true
   try {
     const params = {}
-    Object.keys(query).forEach(k => { if (query[k] !== '' && query[k] != null) params[k] = query[k] })
+    Object.keys(query).forEach(k => {
+      const value = query[k]
+      if (Array.isArray(value)) {
+        if (value.length) params[k] = value.join(',')
+      } else if (value !== '' && value != null) {
+        params[k] = value
+      }
+    })
     const res = await publicApi.jobs(params)
-    jobs.value = res.data.records
-    total.value = Number(res.data.total)
+    jobs.value = res.data.records || []
+    total.value = Number(res.data.total || 0)
+    recommended.value = !!res.data.recommended
   } finally { loading.value = false }
 }
 
+const applyRouteQuery = (routeQuery) => {
+  query.keyword = routeQuery.keyword || ''
+  query.salaryMax = routeQuery.salaryMax || ''
+  query.city = toList(routeQuery.city)
+  query.categoryId = toList(routeQuery.categoryId, toNumber)
+  query.education = toList(routeQuery.education)
+  query.jobType = toList(routeQuery.jobType, toNumber)
+  query.salaryMin = toList(routeQuery.salaryMin, toNumber)
+  listKeys.forEach(k => { query[k] = Array.from(new Map(query[k].map(v => [String(v), v])).values()) })
+}
+
 onMounted(async () => {
-  // 接受首页传过来的 keyword/city
-  if (route.query.keyword) query.keyword = route.query.keyword
-  if (route.query.city) query.city = route.query.city
+  // 接受首页和求职意向传过来的筛选条件
+  applyRouteQuery(route.query)
   try {
     const [city, cat, edu] = await Promise.all([publicApi.dict('city'), publicApi.jobCategories(), publicApi.dict('education')])
     cities.value = city.data
@@ -155,12 +198,9 @@ onMounted(async () => {
 })
 
 watch(() => route.query, (nv) => {
-  if (nv.keyword !== undefined || nv.city !== undefined) {
-    query.keyword = nv.keyword || ''
-    query.city = nv.city || ''
-    query.pageNum = 1
-    loadList()
-  }
+  applyRouteQuery(nv)
+  query.pageNum = 1
+  loadList()
 })
 </script>
 

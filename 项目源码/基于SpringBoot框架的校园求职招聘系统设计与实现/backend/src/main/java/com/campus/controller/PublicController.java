@@ -36,10 +36,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -107,35 +113,36 @@ public class PublicController {
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String city,
-            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String categoryId,
             @RequestParam(required = false) String education,
-            @RequestParam(required = false) Integer jobType,
-            @RequestParam(required = false) Integer salaryMin) {
-        LambdaQueryWrapper<JobPost> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(JobPost::getAuditStatus, 1)
-                .eq(JobPost::getStatus, 1)
-                .like(keyword != null && !keyword.isEmpty(), JobPost::getTitle, keyword)
-                .eq(city != null && !city.isEmpty(), JobPost::getCity, city)
-                .eq(categoryId != null, JobPost::getCategoryId, categoryId)
-                .eq(education != null && !education.isEmpty(), JobPost::getEducation, education)
-                .eq(jobType != null, JobPost::getJobType, jobType)
-                .ge(salaryMin != null, JobPost::getSalaryMin, salaryMin)
-                .orderByDesc(JobPost::getPublishTime)
-                .orderByDesc(JobPost::getCreateTime);
-        Page<JobPost> page = jobPostMapper.selectPage(new Page<>(pageNum, pageSize), wrapper);
+            @RequestParam(required = false) String jobType,
+            @RequestParam(required = false) String salaryMin,
+            @RequestParam(required = false) String salaryMax) {
+        int safePageNum = pageNum == null || pageNum < 1 ? 1 : pageNum;
+        int safePageSize = pageSize == null || pageSize < 1 ? 10 : pageSize;
+        String keywordText = trimToEmpty(keyword);
+        List<String> cities = splitStrings(city);
+        List<Long> categoryIds = expandCategoryIds(splitLongs(categoryId));
+        List<String> educations = splitStrings(education);
+        List<Integer> jobTypes = splitIntegers(jobType);
+        List<Integer> salaryMins = splitIntegers(salaryMin);
+        List<Integer> salaryMaxes = splitIntegers(salaryMax);
+        Integer minSalary = salaryMins.isEmpty() ? null : Collections.min(salaryMins);
+        Integer maxSalary = salaryMaxes.isEmpty() ? null : Collections.max(salaryMaxes);
 
-        // 批量查企业名称
-        List<JobPost> postList = page.getRecords();
-        Map<Long, String> companyNameMap = batchEnterpriseName(
-                postList.stream().map(JobPost::getEnterpriseId).collect(Collectors.toList()));
+        LambdaQueryWrapper<JobPost> wrapper = buildJobWrapper(
+                keywordText, cities, categoryIds, educations, jobTypes, minSalary, maxSalary);
+        Page<JobPost> page = jobPostMapper.selectPage(new Page<>(safePageNum, safePageSize), wrapper);
 
-        List<Map<String, Object>> records = postList.stream().map(post -> {
-            Map<String, Object> item = beanToMap(post);
-            item.put("companyName", companyNameMap.get(post.getEnterpriseId()));
-            return item;
-        }).collect(Collectors.toList());
+        if (page.getTotal() == 0 && hasJobCondition(keywordText, cities, categoryIds, educations, jobTypes,
+                minSalary, maxSalary)) {
+            return Result.success(recommendJobs(safePageNum, safePageSize, keywordText, cities, categoryIds,
+                    educations, jobTypes, minSalary, maxSalary));
+        }
 
-        return Result.success(PageResult.of(page.getTotal(), records));
+        PageResult<Map<String, Object>> result = toJobResult(page.getTotal(), page.getRecords(), false,
+                page.getTotal());
+        return Result.success(result);
     }
 
     /** 职位详情：浏览量+1，返回职位+企业信息 */
@@ -452,6 +459,211 @@ public class PublicController {
             map.put(e.getId(), e.getCompanyName());
         }
         return map;
+    }
+
+    private LambdaQueryWrapper<JobPost> buildJobWrapper(String keyword, List<String> cities, List<Long> categoryIds,
+                                                        List<String> educations, List<Integer> jobTypes,
+                                                        Integer minSalary, Integer maxSalary) {
+        LambdaQueryWrapper<JobPost> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(JobPost::getAuditStatus, 1)
+                .eq(JobPost::getStatus, 1)
+                .and(!keyword.isEmpty(), w -> w.like(JobPost::getTitle, keyword)
+                        .or().like(JobPost::getMajorRequire, keyword)
+                        .or().like(JobPost::getDuty, keyword)
+                        .or().like(JobPost::getRequirement, keyword))
+                .in(!cities.isEmpty(), JobPost::getCity, cities)
+                .in(!categoryIds.isEmpty(), JobPost::getCategoryId, categoryIds)
+                .in(!educations.isEmpty(), JobPost::getEducation, educations)
+                .in(!jobTypes.isEmpty(), JobPost::getJobType, jobTypes)
+                .ge(minSalary != null, JobPost::getSalaryMin, minSalary)
+                .le(maxSalary != null, JobPost::getSalaryMax, maxSalary)
+                .orderByDesc(JobPost::getPublishTime)
+                .orderByDesc(JobPost::getCreateTime);
+        return wrapper;
+    }
+
+    private PageResult<Map<String, Object>> recommendJobs(int pageNum, int pageSize, String keyword,
+                                                          List<String> cities, List<Long> categoryIds,
+                                                          List<String> educations, List<Integer> jobTypes,
+                                                          Integer minSalary, Integer maxSalary) {
+        LambdaQueryWrapper<JobPost> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(JobPost::getAuditStatus, 1)
+                .eq(JobPost::getStatus, 1);
+        List<JobPost> all = jobPostMapper.selectList(wrapper);
+        Map<Long, Integer> scoreMap = new HashMap<>(all.size());
+        for (JobPost post : all) {
+            scoreMap.put(post.getId(), jobScore(post, keyword, cities, categoryIds, educations, jobTypes,
+                    minSalary, maxSalary));
+        }
+
+        List<JobPost> ranked = all.stream()
+                .filter(post -> scoreMap.get(post.getId()) > 0)
+                .sorted((a, b) -> {
+                    int scoreDiff = scoreMap.get(b.getId()) - scoreMap.get(a.getId());
+                    if (scoreDiff != 0) {
+                        return scoreDiff;
+                    }
+                    return compareDateDesc(a.getPublishTime(), b.getPublishTime());
+                })
+                .collect(Collectors.toList());
+        if (ranked.isEmpty()) {
+            ranked = all.stream()
+                    .sorted((a, b) -> compareDateDesc(a.getPublishTime(), b.getPublishTime()))
+                    .collect(Collectors.toList());
+        }
+
+        int fromIndex = Math.min((pageNum - 1) * pageSize, ranked.size());
+        int toIndex = Math.min(fromIndex + pageSize, ranked.size());
+        return toJobResult((long) ranked.size(), ranked.subList(fromIndex, toIndex), true, 0L);
+    }
+
+    private int jobScore(JobPost post, String keyword, List<String> cities, List<Long> categoryIds,
+                         List<String> educations, List<Integer> jobTypes, Integer minSalary, Integer maxSalary) {
+        int score = 0;
+        String searchable = (trimToEmpty(post.getTitle()) + " " + trimToEmpty(post.getMajorRequire())
+                + " " + trimToEmpty(post.getDuty()) + " " + trimToEmpty(post.getRequirement())).toLowerCase();
+        for (String part : keywordParts(keyword)) {
+            if (searchable.contains(part)) {
+                score += part.equals(keyword.toLowerCase()) ? 80 : 18;
+            }
+        }
+        if (!cities.isEmpty() && cities.contains(post.getCity())) {
+            score += 24;
+        }
+        if (!categoryIds.isEmpty() && post.getCategoryId() != null && categoryIds.contains(post.getCategoryId())) {
+            score += 28;
+        }
+        if (!educations.isEmpty()) {
+            if (educations.contains(post.getEducation())) {
+                score += 8;
+            } else if ("不限".equals(post.getEducation())) {
+                score += 4;
+            }
+        }
+        if (!jobTypes.isEmpty() && post.getJobType() != null && jobTypes.contains(post.getJobType())) {
+            score += 16;
+        }
+        if (minSalary != null && post.getSalaryMax() != null) {
+            score += post.getSalaryMax() >= minSalary ? 10 : Math.max(0, 4 - (minSalary - post.getSalaryMax()));
+        }
+        if (maxSalary != null && post.getSalaryMin() != null) {
+            score += post.getSalaryMin() <= maxSalary ? 10 : Math.max(0, 4 - (post.getSalaryMin() - maxSalary));
+        }
+        return score;
+    }
+
+    private PageResult<Map<String, Object>> toJobResult(Long total, List<JobPost> postList, boolean recommended,
+                                                        Long strictTotal) {
+        Map<Long, String> companyNameMap = batchEnterpriseName(
+                postList.stream().map(JobPost::getEnterpriseId).collect(Collectors.toList()));
+        List<Map<String, Object>> records = postList.stream().map(post -> {
+            Map<String, Object> item = beanToMap(post);
+            item.put("companyName", companyNameMap.get(post.getEnterpriseId()));
+            return item;
+        }).collect(Collectors.toList());
+        PageResult<Map<String, Object>> result = PageResult.of(total, records);
+        result.setRecommended(recommended);
+        result.setStrictTotal(strictTotal);
+        return result;
+    }
+
+    private boolean hasJobCondition(String keyword, List<String> cities, List<Long> categoryIds,
+                                    List<String> educations, List<Integer> jobTypes,
+                                    Integer minSalary, Integer maxSalary) {
+        return !keyword.isEmpty() || !cities.isEmpty() || !categoryIds.isEmpty() || !educations.isEmpty()
+                || !jobTypes.isEmpty() || minSalary != null || maxSalary != null;
+    }
+
+    private List<Long> expandCategoryIds(List<Long> categoryIds) {
+        if (categoryIds.isEmpty()) {
+            return categoryIds;
+        }
+        Set<Long> expanded = new LinkedHashSet<>(categoryIds);
+        List<JobCategory> all = jobCategoryMapper.selectList(new LambdaQueryWrapper<JobCategory>()
+                .select(JobCategory::getId, JobCategory::getParentId));
+        boolean changed;
+        do {
+            changed = false;
+            for (JobCategory category : all) {
+                if (category.getParentId() != null && expanded.contains(category.getParentId())
+                        && expanded.add(category.getId())) {
+                    changed = true;
+                }
+            }
+        } while (changed);
+        return new ArrayList<>(expanded);
+    }
+
+    private List<String> keywordParts(String keyword) {
+        String value = trimToEmpty(keyword).toLowerCase();
+        if (value.isEmpty()) {
+            return Collections.emptyList();
+        }
+        Set<String> parts = new LinkedHashSet<>();
+        parts.add(value);
+        String shortName = value.replace("工程师", "").replace("实习生", "")
+                .replace("岗位", "").replace("职位", "").trim();
+        if (!shortName.isEmpty()) {
+            parts.add(shortName);
+        }
+        for (String token : Arrays.asList("java", "后端", "前端", "开发", "测试", "算法", "数据", "产品",
+                "运营", "设计", "ui", "市场", "销售", "财务", "人力", "客服", "运维", "安全")) {
+            if (value.contains(token)) {
+                parts.add(token);
+            }
+        }
+        return new ArrayList<>(parts);
+    }
+
+    private List<String> splitStrings(String text) {
+        String value = trimToEmpty(text);
+        if (value.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return Arrays.stream(value.split("[,，]"))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private List<Long> splitLongs(String text) {
+        List<Long> list = new ArrayList<>();
+        for (String part : splitStrings(text)) {
+            try {
+                list.add(Long.valueOf(part));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return list;
+    }
+
+    private List<Integer> splitIntegers(String text) {
+        List<Integer> list = new ArrayList<>();
+        for (String part : splitStrings(text)) {
+            try {
+                list.add(Integer.valueOf(part));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return list;
+    }
+
+    private String trimToEmpty(String text) {
+        return text == null ? "" : text.trim();
+    }
+
+    private int compareDateDesc(Date a, Date b) {
+        if (a == null && b == null) {
+            return 0;
+        }
+        if (a == null) {
+            return 1;
+        }
+        if (b == null) {
+            return -1;
+        }
+        return b.compareTo(a);
     }
 
     /** 将职位实体转为可扩展的 Map，便于附带企业名称等冗余字段 */

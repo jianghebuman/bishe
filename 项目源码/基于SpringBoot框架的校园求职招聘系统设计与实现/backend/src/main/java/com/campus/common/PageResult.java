@@ -21,6 +21,12 @@ public class PageResult<T> implements Serializable {
     /** 当前页数据 */
     private List<T> records;
 
+    /** 是否为无完全匹配后的相近推荐结果 */
+    private Boolean recommended;
+
+    /** 完全匹配结果数 */
+    private Long strictTotal;
+
     public PageResult() {
     }
 

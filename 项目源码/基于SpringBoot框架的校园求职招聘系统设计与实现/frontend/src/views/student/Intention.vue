@@ -14,7 +14,7 @@
         <el-form-item label="到岗时间"><el-select v-model="form.arrivalTime" style="width:100%"><el-option label="随时到岗" value="随时到岗"/><el-option label="一周内" value="一周内"/><el-option label="一个月内" value="一个月内"/><el-option label="毕业后到岗" value="毕业后到岗"/></el-select></el-form-item>
         <el-form-item>
           <el-button type="primary" :loading="saving" @click="save">保存意向</el-button>
-          <el-button @click="$router.push('/jobs')">按意向搜索岗位</el-button>
+          <el-button @click="searchByIntention">按意向搜索岗位</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -23,9 +23,11 @@
 
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { studentApi, publicApi } from '@/api'
 
+const router = useRouter()
 const saving = ref(false)
 const cities = ref([])
 const form = reactive({ expectPost: '', expectCity: '', expectSalary: '', jobType: 1, arrivalTime: '毕业后到岗' })
@@ -35,6 +37,21 @@ const load = async () => {
   cities.value = c.data || []
 }
 const save = async () => { saving.value = true; try { await studentApi.saveIntention(form); ElMessage.success('求职意向已保存') } finally { saving.value = false } }
+const salaryPart = (text, index) => {
+  const values = String(text || '').match(/\d+(?:\.\d+)?/g) || []
+  return values[index] == null ? undefined : Number(values[index])
+}
+const searchByIntention = () => {
+  const query = { intent: '1' }
+  if (form.expectPost?.trim()) query.keyword = form.expectPost.trim()
+  if (form.expectCity?.trim()) query.city = form.expectCity.trim()
+  if (form.jobType) query.jobType = String(form.jobType)
+  const min = salaryPart(form.expectSalary, 0)
+  const max = salaryPart(form.expectSalary, 1)
+  if (min != null) query.salaryMin = String(min)
+  if (max != null) query.salaryMax = String(max)
+  router.push({ path: '/jobs', query })
+}
 onMounted(load)
 </script>
 
