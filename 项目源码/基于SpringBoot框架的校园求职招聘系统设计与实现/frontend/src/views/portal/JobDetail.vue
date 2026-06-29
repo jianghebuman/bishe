@@ -160,7 +160,7 @@ const consultHr = () => {
     ElMessage.warning('企业信息不存在')
     return
   }
-  router.push({ path: '/student/chat', query: { peerRole: 'ENTERPRISE', peerId: enterprise.value.id, peerName: enterprise.value.companyName || `企业${enterprise.value.id}`, jobId: job.value.id } })
+  router.push({ path: '/chat', query: { peerRole: 'ENTERPRISE', peerId: enterprise.value.id, peerName: enterprise.value.companyName || `企业${enterprise.value.id}`, jobId: job.value.id } })
 }
 
 const checkFavorite = async () => {

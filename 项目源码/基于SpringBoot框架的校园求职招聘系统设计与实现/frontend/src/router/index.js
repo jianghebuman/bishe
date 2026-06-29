@@ -51,7 +51,7 @@ const routes = [
       { path: 'notice', component: () => import('@/views/student/Notice.vue'), meta: { title: '消息中心' } },
       { path: 'myposts', component: () => import('@/views/student/MyPosts.vue'), meta: { title: '我的帖子' } },
       { path: 'seeker-post', component: () => import('@/views/student/SeekerPost.vue'), meta: { title: '我的求职信息' } },
-      { path: 'chat', component: () => import('@/views/common/Chat.vue'), meta: { title: '在线沟通' } },
+      { path: 'chat', redirect: to => ({ path: '/chat', query: to.query }) },
       { path: 'password', component: () => import('@/views/common/Password.vue'), meta: { title: '修改密码' } }
     ]
   },
@@ -72,7 +72,7 @@ const routes = [
       { path: 'offer', component: () => import('@/views/enterprise/OfferManage.vue'), meta: { title: 'Offer管理' } },
       { path: 'talent', component: () => import('@/views/enterprise/Talent.vue'), meta: { title: '人才库' } },
       { path: 'notice', component: () => import('@/views/enterprise/Notice.vue'), meta: { title: '消息中心' } },
-      { path: 'chat', component: () => import('@/views/common/Chat.vue'), meta: { title: '在线沟通' } },
+      { path: 'chat', redirect: to => ({ path: '/chat', query: to.query }) },
       { path: 'password', component: () => import('@/views/common/Password.vue'), meta: { title: '修改密码' } }
     ]
   },

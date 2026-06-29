@@ -60,7 +60,7 @@ const resume = ref(null)
 const contact = () => {
   if (!userStore.isLogin) { ElMessage.warning('请先登录'); router.push('/login'); return }
   if (userStore.role !== 'ENTERPRISE') { ElMessage.warning('请使用企业账号联系求职者'); return }
-  router.push({ path: '/enterprise/chat', query: { peerRole: 'STUDENT', peerId: post.value.studentId, peerName: student.value?.realName || `学生${post.value.studentId}`, seekerPostId: post.value.id } })
+  router.push({ path: '/chat', query: { peerRole: 'STUDENT', peerId: post.value.studentId, peerName: student.value?.realName || `学生${post.value.studentId}`, seekerPostId: post.value.id } })
 }
 
 onMounted(async () => {

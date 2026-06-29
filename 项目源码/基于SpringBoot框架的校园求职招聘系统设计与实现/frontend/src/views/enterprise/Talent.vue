@@ -89,7 +89,7 @@ const add = async (row) => {
 const chat = (studentId, peerName) => {
   const query = { peerRole: 'STUDENT', peerId: studentId }
   if (peerName) query.peerName = peerName
-  router.push({ path: '/enterprise/chat', query })
+  router.push({ path: '/chat', query })
 }
 const remove = (row) => ElMessageBox.confirm('确定移出人才库？').then(async () => {
   await enterpriseApi.delTalent(row.id)
