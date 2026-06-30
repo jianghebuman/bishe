@@ -6,6 +6,9 @@
         <template #prefix><el-icon><Search /></el-icon></template>
       </el-input>
       <el-button type="primary" size="large" native-type="submit">搜索职位</el-button>
+      <el-button class="favorite-entry" type="primary" plain size="large" native-type="button" @click="goFavorite">
+        <el-icon><Star /></el-icon> 我的收藏
+      </el-button>
     </form>
 
     <!-- 筛选区 -->
@@ -53,7 +56,11 @@
 
     <!-- 结果统计 -->
     <div class="result-info">
-      <template v-if="recommended">暂无完全匹配，已推荐 <b>{{ total }}</b> 个相近职位</template>
+      <template v-if="query.companyName">
+        <span>{{ query.companyName }}：共找到 <b>{{ total }}</b> 个在招职位</span>
+        <el-button text type="primary" @click="clearEnterpriseFilter">查看全部职位</el-button>
+      </template>
+      <template v-else-if="recommended">暂无完全匹配，已推荐 <b>{{ total }}</b> 个相近职位</template>
       <template v-else>共找到 <b>{{ total }}</b> 个职位</template>
     </div>
 
@@ -80,6 +87,9 @@
             <div class="job-side">
               <div class="company">{{ j.companyName || '名企招聘' }}</div>
               <div class="publish">发布于 {{ relativeTime(j.publishTime) }}</div>
+              <el-button class="favorite-btn" :type="favoriteIds.has(j.id) ? 'warning' : 'default'" plain size="small" @click.stop="toggleFavorite(j)">
+                <el-icon><Star /></el-icon> {{ favoriteIds.has(j.id) ? '已收藏' : '收藏' }}
+              </el-button>
             </div>
           </div>
           <el-empty v-if="!loading && jobs.length === 0" description="暂无符合条件的职位" />
@@ -101,18 +111,23 @@
 
 <script setup>
 import { reactive, ref, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { Search, Location, User, Briefcase } from '@element-plus/icons-vue'
-import { publicApi } from '@/api'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { Search, Location, User, Briefcase, Star } from '@element-plus/icons-vue'
+import { publicApi, studentApi } from '@/api'
+import { useUserStore } from '@/store/user'
 import { useResponsivePageSize } from '@/utils/responsivePageSize'
 
 const route = useRoute()
-const query = reactive({ pageNum: 1, pageSize: 10, keyword: '', city: [], categoryId: [], education: [], jobType: [], salaryMin: [], salaryMax: '' })
+const router = useRouter()
+const userStore = useUserStore()
+const query = reactive({ pageNum: 1, pageSize: 10, keyword: '', enterpriseId: '', companyName: '', city: [], categoryId: [], education: [], jobType: [], salaryMin: [], salaryMax: '' })
 const jobs = ref([])
 const total = ref(0)
 const recommended = ref(false)
 const loading = ref(false)
 const listRef = ref(null)
+const favoriteIds = ref(new Set())
 const cities = ref([])
 const categories = ref([])
 const educations = ref([])
@@ -146,6 +161,59 @@ const setFilter = (key, value) => {
 
 const onSearch = () => { query.pageNum = 1; loadList() }
 
+const ensureStudent = (message = '请使用学生账号操作') => {
+  if (!userStore.isLogin) {
+    ElMessage.warning('请先登录')
+    router.push('/login')
+    return false
+  }
+  if (userStore.role !== 'STUDENT') {
+    ElMessage.warning(message)
+    return false
+  }
+  return true
+}
+
+const goFavorite = () => {
+  if (!ensureStudent('请使用学生账号查看收藏')) return
+  router.push('/student/favorite')
+}
+
+const clearEnterpriseFilter = () => {
+  router.push('/jobs')
+}
+
+const syncFavoriteStatus = async () => {
+  if (!userStore.isLogin || userStore.role !== 'STUDENT' || jobs.value.length === 0) {
+    favoriteIds.value = new Set()
+    return
+  }
+  const rows = await Promise.all(jobs.value.map(async (job) => {
+    try {
+      const res = await studentApi.checkFavorite(job.id)
+      return [job.id, !!res.data?.favorite]
+    } catch (e) {
+      return [job.id, false]
+    }
+  }))
+  favoriteIds.value = new Set(rows.filter(([, favorite]) => favorite).map(([id]) => id))
+}
+
+const toggleFavorite = async (job) => {
+  if (!ensureStudent()) return
+  const next = new Set(favoriteIds.value)
+  if (next.has(job.id)) {
+    await studentApi.delFavorite(job.id)
+    next.delete(job.id)
+    ElMessage.success('已取消收藏')
+  } else {
+    await studentApi.addFavorite(job.id)
+    next.add(job.id)
+    ElMessage.success('已收藏')
+  }
+  favoriteIds.value = next
+}
+
 const relativeTime = (dt) => {
   if (!dt) return ''
   const d = new Date(dt.replace(' ', 'T'))
@@ -173,11 +241,14 @@ const loadList = async () => {
     jobs.value = res.data.records || []
     total.value = Number(res.data.total || 0)
     recommended.value = !!res.data.recommended
+    await syncFavoriteStatus()
   } finally { loading.value = false }
 }
 
 const applyRouteQuery = (routeQuery) => {
   query.keyword = routeQuery.keyword || ''
+  query.enterpriseId = routeQuery.enterpriseId || ''
+  query.companyName = routeQuery.companyName || ''
   query.salaryMax = routeQuery.salaryMax || ''
   query.city = toList(routeQuery.city)
   query.categoryId = toList(routeQuery.categoryId, toNumber)
@@ -210,8 +281,10 @@ watch(() => route.query, (nv) => {
 </script>
 
 <style scoped lang="scss">
-.search-bar { display: grid; grid-template-columns: minmax(14rem, 1fr) auto; align-items: center; gap: clamp(.5rem, 1.2vw, .875rem); }
-.search-input { min-width: 0; }
+.search-bar { display: flex; align-items: center; gap: clamp(.5rem, 1.2vw, .875rem); }
+.search-input { flex: 1 1 44rem; max-width: 76rem; min-width: 0; }
+.search-bar :deep(.el-button) { flex-shrink: 0; }
+.favorite-entry { margin-left: 0; }
 .portal-list-card { --portal-list-card-min-height: calc(100dvh - 41rem); }
 .filter-row { display: grid; grid-template-columns: minmax(5.5rem, max-content) minmax(0, 1fr); gap: .75rem; padding: .5rem 0; border-bottom: 0.0625rem dashed var(--cr-border-soft);
   &:last-child { border-bottom: none; }
@@ -222,7 +295,7 @@ watch(() => route.query, (nv) => {
     &.active { background: var(--cr-primary); border-color: var(--cr-primary); color: #fff; box-shadow: 0 .5rem 1rem rgba(37,99,235,.14); }
   }
 }
-.result-info { margin: .875rem 0 .5rem; color: var(--cr-text-soft); font-size: .875rem; b { color: var(--cr-danger); margin: 0 .25rem; } }
+.result-info { margin: .875rem 0 .5rem; color: var(--cr-text-soft); font-size: .875rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; b { color: var(--cr-danger); margin: 0 .25rem; } }
 .job-scroll { display: flex; flex-direction: column; }
 .job-list-wrap { flex: 1; display: flex; flex-direction: column; gap: .5rem; }
 .job-row { min-height: 7.875rem; background: rgba(255,255,255,.96); border: 0.0625rem solid var(--cr-border-soft); border-radius: var(--cr-radius); padding: clamp(.875rem, 1.2vw, 1rem); display: grid; align-items: center; grid-template-columns: minmax(0, 1fr) minmax(11.25rem, 0.28fr); gap: 1rem; cursor: pointer; transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
@@ -239,6 +312,7 @@ watch(() => route.query, (nv) => {
   .job-side { min-width: 0; padding-left: 1.125rem; border-left: 0.0625rem solid var(--cr-border-soft); text-align: right;
     .company { font-size: .875rem; color: var(--cr-text); margin-bottom: .5rem; font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .publish { color: var(--cr-text-muted); font-size: .75rem; }
+    .favorite-btn { margin: .625rem 0 0; min-width: 5rem; }
   }
 }
 
@@ -259,7 +333,7 @@ watch(() => route.query, (nv) => {
 @media (max-width: 40rem) {
   .search-bar {
     align-items: stretch;
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .search-bar :deep(.el-button) {

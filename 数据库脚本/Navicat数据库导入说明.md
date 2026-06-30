@@ -32,7 +32,7 @@
 该脚本包含：
 
 - 自动创建数据库 `campus_recruitment`
-- 35 张业务表（共 409 个字段）
+- 36 张业务表（共 416 个字段）
 - 角色、字典、岗位类别初始化数据
 - 管理员、学生、企业测试账号
 - 首页轮播图、公告、宣讲会、招聘会、职位、简历、投递、面试、Offer、论坛等演示数据
@@ -76,7 +76,7 @@ FROM information_schema.tables
 WHERE table_schema = 'campus_recruitment';
 ```
 
-正常情况下应返回 `35`。
+正常情况下应返回 `36`。
 
 ## 5. 默认测试账号
 
@@ -130,6 +130,6 @@ DROP DATABASE campus_recruitment;
 ## 7. 脚本同步说明
 
 - 仓库中的权威初始化脚本为 [campus_recruitment.sql](./campus_recruitment.sql)。
-- 2026-06-25 已核对本地仓库与 GitHub `main` 分支中的该脚本，文件内容一致。
-- 同日已将脚本导入临时对比库，并与本机 `campus_recruitment` 数据库核对，结果为 35 张表、409 个字段，表结构一致。
+- 2026-06-30 已同步企业收藏表，当前初始化脚本为 36 张表、416 个字段。
+- 同日已将 `favorite_enterprise` 表补入本机 `campus_recruitment` 数据库。
 - 本地数据库在系统运行后会新增业务数据，因此 `operation_log`、`system_notice`、`activity_sign`、`student` 等表的记录数可能高于初始化脚本，这是正常现象；若需要回到初始演示数据，请重新导入脚本。

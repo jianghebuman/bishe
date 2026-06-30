@@ -67,13 +67,13 @@ SQL 文件：
 
 [数据库脚本/campus_recruitment.sql](数据库脚本/campus_recruitment.sql)
 
-该脚本会创建 `campus_recruitment` 数据库，并初始化 35 张业务表、角色/权限、字典、测试账号和演示数据。
+该脚本会创建 `campus_recruitment` 数据库，并初始化 36 张业务表、角色/权限、字典、测试账号和演示数据。
 
 ### 数据库同步说明
 
 - 数据库初始化脚本以 [数据库脚本/campus_recruitment.sql](数据库脚本/campus_recruitment.sql) 为准。
 - `git rev-parse HEAD:"数据库脚本/campus_recruitment.sql"` 与 `git rev-parse origin/main:"数据库脚本/campus_recruitment.sql"` 当前一致，说明仓库本地脚本与 GitHub `main` 分支脚本一致。
-- 2026-06-25 已将该脚本导入临时库并与本机 `campus_recruitment` 对比，结果为 35 张表、409 个字段，表结构同步。
+- 2026-06-30 已将企业收藏表同步到本机 `campus_recruitment`，当前初始化脚本为 36 张表、416 个字段。
 - 本地数据库在项目运行后会产生业务数据漂移，当前与初始化脚本存在记录数差异的表主要有：`activity_sign`、`student`、`system_notice`、`operation_log`。如需恢复到初始演示数据，请重新导入 SQL 脚本。
 
 ### 启动后端

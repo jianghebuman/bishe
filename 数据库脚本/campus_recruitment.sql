@@ -523,6 +523,21 @@ CREATE TABLE `favorite_job` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='职位收藏表';
 
 -- ----------------------------
+-- 企业收藏表
+-- ----------------------------
+DROP TABLE IF EXISTS `favorite_enterprise`;
+CREATE TABLE `favorite_enterprise` (
+  `id`            bigint   NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `student_id`    bigint   NOT NULL COMMENT '学生ID',
+  `enterprise_id` bigint   NOT NULL COMMENT '企业ID',
+  `create_time`   datetime          DEFAULT CURRENT_TIMESTAMP COMMENT '收藏时间',
+  `update_time`   datetime          DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted`       tinyint  NOT NULL DEFAULT 0 COMMENT '逻辑删除：0否1是',
+  PRIMARY KEY (`id`),
+  KEY `idx_fav_enterprise_student` (`student_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='企业收藏表';
+
+-- ----------------------------
 -- 人才库表
 -- ----------------------------
 DROP TABLE IF EXISTS `talent_pool`;
@@ -906,6 +921,9 @@ INSERT INTO `offer_record` (`id`,`apply_id`,`student_id`,`enterprise_id`,`job_id
 -- 职位收藏
 INSERT INTO `favorite_job` (`student_id`,`job_id`) VALUES (1,2),(1,4),(2,1);
 
+-- 企业收藏
+INSERT INTO `favorite_enterprise` (`student_id`,`enterprise_id`) VALUES (1,1),(1,2),(2,1);
+
 -- 轮播图
 INSERT INTO `banner` (`title`,`image_url`,`link_url`,`sort`,`status`) VALUES
 ('春季校园双选会岗位上线','/upload/image/seed/banner-campus-fair.jpg','/fairs',1,1),
@@ -1188,6 +1206,9 @@ INSERT INTO `offer_record` (`id`,`apply_id`,`student_id`,`enterprise_id`,`job_id
 
 INSERT INTO `favorite_job` (`student_id`,`job_id`) VALUES
 (1,6),(1,13),(2,7),(2,9),(3,11),(3,15),(4,6),(4,13),(5,8),(5,10),(6,12),(6,19),(7,8),(7,14),(8,9);
+
+INSERT INTO `favorite_enterprise` (`student_id`,`enterprise_id`) VALUES
+(1,5),(1,13),(2,4),(2,6),(3,8),(3,16),(4,7),(5,10),(6,12),(7,14),(8,9);
 
 INSERT INTO `talent_pool` (`enterprise_id`,`student_id`,`resume_id`,`tag`,`remark`) VALUES
 (1,2,2,'前端优秀','前端基础扎实，可关注后续岗位'),

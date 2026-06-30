@@ -112,6 +112,7 @@ public class PublicController {
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long enterpriseId,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String categoryId,
             @RequestParam(required = false) String education,
@@ -131,10 +132,10 @@ public class PublicController {
         Integer maxSalary = salaryMaxes.isEmpty() ? null : Collections.max(salaryMaxes);
 
         LambdaQueryWrapper<JobPost> wrapper = buildJobWrapper(
-                keywordText, cities, categoryIds, educations, jobTypes, minSalary, maxSalary);
+                keywordText, enterpriseId, cities, categoryIds, educations, jobTypes, minSalary, maxSalary);
         Page<JobPost> page = jobPostMapper.selectPage(new Page<>(safePageNum, safePageSize), wrapper);
 
-        if (page.getTotal() == 0 && hasJobCondition(keywordText, cities, categoryIds, educations, jobTypes,
+        if (enterpriseId == null && page.getTotal() == 0 && hasJobCondition(keywordText, cities, categoryIds, educations, jobTypes,
                 minSalary, maxSalary)) {
             return Result.success(recommendJobs(safePageNum, safePageSize, keywordText, cities, categoryIds,
                     educations, jobTypes, minSalary, maxSalary));
@@ -461,12 +462,13 @@ public class PublicController {
         return map;
     }
 
-    private LambdaQueryWrapper<JobPost> buildJobWrapper(String keyword, List<String> cities, List<Long> categoryIds,
+    private LambdaQueryWrapper<JobPost> buildJobWrapper(String keyword, Long enterpriseId, List<String> cities, List<Long> categoryIds,
                                                         List<String> educations, List<Integer> jobTypes,
                                                         Integer minSalary, Integer maxSalary) {
         LambdaQueryWrapper<JobPost> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(JobPost::getAuditStatus, 1)
                 .eq(JobPost::getStatus, 1)
+                .eq(enterpriseId != null, JobPost::getEnterpriseId, enterpriseId)
                 .and(!keyword.isEmpty(), w -> w.like(JobPost::getTitle, keyword)
                         .or().like(JobPost::getMajorRequire, keyword)
                         .or().like(JobPost::getDuty, keyword)

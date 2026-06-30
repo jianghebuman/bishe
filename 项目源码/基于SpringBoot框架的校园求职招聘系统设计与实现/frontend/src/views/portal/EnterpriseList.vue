@@ -28,6 +28,9 @@
                 <el-tag v-if="e.nature" size="small" effect="plain">{{ e.nature }}</el-tag>
                 <el-tag v-for="w in welfareTags(e.welfare)" :key="w" size="small" type="success" effect="plain">{{ w }}</el-tag>
               </div>
+              <el-button class="favorite-btn" :type="favoriteIds.has(e.id) ? 'warning' : 'default'" plain size="small" @click.stop="toggleFavorite(e)">
+                <el-icon><Star /></el-icon> {{ favoriteIds.has(e.id) ? '已收藏' : '收藏企业' }}
+              </el-button>
             </div>
           </div>
           <el-empty v-if="!loading && list.length === 0" description="暂无企业" class="grid-empty" />
@@ -46,7 +49,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { OfficeBuilding, Location, Star } from '@element-plus/icons-vue'
-import { publicApi } from '@/api'
+import { publicApi, studentApi } from '@/api'
 import { useUserStore } from '@/store/user'
 import { useResponsivePageSize } from '@/utils/responsivePageSize'
 
@@ -57,6 +60,7 @@ const list = ref([])
 const total = ref(0)
 const loading = ref(false)
 const gridRef = ref(null)
+const favoriteIds = ref(new Set())
 const welfareTags = (welfare) => String(welfare || '').split(',').filter(Boolean).slice(0, 2)
 
 const goFavorite = () => {
@@ -72,12 +76,52 @@ const goFavorite = () => {
   router.push('/student/favorite')
 }
 
+const syncFavoriteStatus = async () => {
+  if (!userStore.isLogin || userStore.role !== 'STUDENT' || list.value.length === 0) {
+    favoriteIds.value = new Set()
+    return
+  }
+  const rows = await Promise.all(list.value.map(async (enterprise) => {
+    try {
+      const res = await studentApi.checkEnterpriseFavorite(enterprise.id)
+      return [enterprise.id, !!res.data?.favorite]
+    } catch (e) {
+      return [enterprise.id, false]
+    }
+  }))
+  favoriteIds.value = new Set(rows.filter(([, favorite]) => favorite).map(([id]) => id))
+}
+
+const toggleFavorite = async (enterprise) => {
+  if (!userStore.isLogin) {
+    ElMessage.warning('请先登录')
+    router.push('/login')
+    return
+  }
+  if (userStore.role !== 'STUDENT') {
+    ElMessage.warning('请使用学生账号收藏企业')
+    return
+  }
+  const next = new Set(favoriteIds.value)
+  if (next.has(enterprise.id)) {
+    await studentApi.delEnterpriseFavorite(enterprise.id)
+    next.delete(enterprise.id)
+    ElMessage.success('已取消收藏')
+  } else {
+    await studentApi.addEnterpriseFavorite(enterprise.id)
+    next.add(enterprise.id)
+    ElMessage.success('已收藏')
+  }
+  favoriteIds.value = next
+}
+
 const load = async () => {
   loading.value = true
   try {
     const res = await publicApi.enterprises(query)
     list.value = res.data.records
     total.value = Number(res.data.total)
+    await syncFavoriteStatus()
   } finally { loading.value = false }
 }
 const { initResponsivePageSize } = useResponsivePageSize(gridRef, query, load, { itemMinWidth: 340, itemMinHeight: 180, gap: 16, rows: 3 })
@@ -106,6 +150,7 @@ onMounted(async () => {
   .city { font-size: .8125rem; color: var(--cr-text-soft); margin-bottom: .375rem; .el-icon { vertical-align: middle; color: var(--cr-primary); } }
   .intro { color: var(--cr-text-soft); font-size: .8125rem; line-height: 1.55; margin-bottom: .5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .chips { margin-top: auto; display: flex; flex-wrap: wrap; gap: .375rem; }
+  .favorite-btn { width: max-content; margin: .75rem 0 0; }
 }
 
 @media (max-width: 28.75rem) {
@@ -121,6 +166,10 @@ onMounted(async () => {
   .ent-card {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .ent-card .favorite-btn {
+    width: 100%;
   }
 }
 </style>

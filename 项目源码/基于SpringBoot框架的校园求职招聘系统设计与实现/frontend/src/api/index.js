@@ -84,6 +84,10 @@ export const studentApi = {
   addFavorite: (jobId) => request.post(`/student/favorite/${jobId}`),
   delFavorite: (jobId) => request.delete(`/student/favorite/${jobId}`),
   checkFavorite: (jobId) => request.get(`/student/favorite/check/${jobId}`),
+  enterpriseFavorites: (params) => request.get('/student/favorite/enterprise', { params }),
+  addEnterpriseFavorite: (enterpriseId) => request.post(`/student/favorite/enterprise/${enterpriseId}`),
+  delEnterpriseFavorite: (enterpriseId) => request.delete(`/student/favorite/enterprise/${enterpriseId}`),
+  checkEnterpriseFavorite: (enterpriseId) => request.get(`/student/favorite/enterprise/check/${enterpriseId}`),
   // 投递
   apply: (data) => request.post('/student/apply', data),
   applyList: (params) => request.get('/student/apply', { params }),

@@ -18,13 +18,16 @@
           </div>
         </div>
         <div class="head-right">
-          <el-button type="primary" size="large" :loading="applying" @click="onApply">
+          <el-button class="action-btn" type="primary" size="large" :loading="applying" @click="onApply">
             <el-icon><Promotion /></el-icon> 立即投递
           </el-button>
-          <el-button :type="favorited ? 'warning' : 'default'" size="large" @click="onFavorite">
+          <el-button class="action-btn" :type="favorited ? 'warning' : 'default'" size="large" @click="onFavorite">
             <el-icon><Star /></el-icon> {{ favorited ? '已收藏' : '收藏' }}
           </el-button>
-          <el-button size="large" @click="consultHr">
+          <el-button class="action-btn" size="large" @click="goFavorite">
+            <el-icon><Star /></el-icon> 我的收藏
+          </el-button>
+          <el-button class="action-btn" size="large" @click="consultHr">
             <el-icon><ChatLineRound /></el-icon> 咨询HR
           </el-button>
           <div class="stats">
@@ -154,6 +157,11 @@ const onFavorite = async () => {
   }
 }
 
+const goFavorite = () => {
+  if (!ensureLogin()) return
+  router.push('/student/favorite')
+}
+
 const consultHr = () => {
   if (!ensureLogin()) return
   if (!enterprise.value?.id) {
@@ -188,11 +196,17 @@ onMounted(async () => {
 .head { display: flex; gap: clamp(1rem, 2vw, 1.25rem); }
 .head-left { flex: 1; }
 .head-right { flex: 0 1 15rem; display: flex; flex-direction: column; gap: .625rem; align-items: flex-end; }
+.action-btn {
+  width: 8.75rem;
+  height: 3.25rem;
+  margin-left: 0;
+  justify-content: center;
+}
 .title { color: var(--cr-text); margin-bottom: .5rem; }
 .salary { color: var(--cr-danger); font-size: clamp(1.375rem, 2vw, 1.75rem); font-weight: 800; margin-bottom: .75rem; }
 .meta { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .625rem; }
 .welfare { display: flex; gap: .375rem; flex-wrap: wrap; }
-.stats { font-size: .75rem; color: var(--cr-text-muted); margin-top: .375rem; span { margin-left: .625rem; } }
+.stats { width: 8.75rem; display: flex; justify-content: space-between; font-size: .75rem; color: var(--cr-text-muted); margin-top: .375rem; }
 .detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17.5rem, 0.34fr); gap: clamp(1rem, 2vw, 1.25rem); align-items: start; }
 .block-title { font-size: 1rem; color: var(--cr-text); border-left: .1875rem solid var(--cr-primary); padding-left: .625rem; }
 .rich-text { color: var(--cr-text-soft); line-height: 1.85; white-space: pre-line; margin-top: .625rem; }
@@ -214,18 +228,16 @@ onMounted(async () => {
     align-items: stretch;
   }
 
-  .head-right :deep(.el-button) {
+  .action-btn {
     width: 100%;
     margin-left: 0;
   }
 
   .stats {
+    width: 100%;
+    justify-content: flex-start;
+    gap: .75rem;
     text-align: left;
-  }
-
-  .stats span {
-    margin-left: 0;
-    margin-right: .75rem;
   }
 
   .detail-grid {

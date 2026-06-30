@@ -76,6 +76,17 @@ CREATE TABLE IF NOT EXISTS `chat_message` (
   KEY `idx_chat_pair_time` (`from_user_id`,`to_user_id`,`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='在线沟通消息表';
 
+CREATE TABLE IF NOT EXISTS `favorite_enterprise` (
+  `id`            bigint   NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `student_id`    bigint   NOT NULL COMMENT '学生ID',
+  `enterprise_id` bigint   NOT NULL COMMENT '企业ID',
+  `create_time`   datetime          DEFAULT CURRENT_TIMESTAMP COMMENT '收藏时间',
+  `update_time`   datetime          DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted`       tinyint  NOT NULL DEFAULT 0 COMMENT '逻辑删除：0否1是',
+  PRIMARY KEY (`id`),
+  KEY `idx_fav_enterprise_student` (`student_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='企业收藏表';
+
 -- New permissions and role mappings.
 INSERT INTO `permission` (`id`,`perm_code`,`perm_name`,`perm_type`,`parent_id`,`path`,`sort`)
 SELECT * FROM (
@@ -287,6 +298,28 @@ SELECT * FROM (
   UNION ALL SELECT 20,'qingmu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','青木零售科技有限公司','911101001234567910','零售连锁','100-499人','民营企业','北京市丰台区总部基地','北京','/upload/image/seed/enterprise-company-logo-v2.png','专注连锁零售数字化运营和门店会员服务。','包吃,节日福利,绩效奖金,晋升培训','赵主管','010-77889966','hr@qingmu-retail.com','https://www.qingmu-retail.com',2,1
 ) AS src
 WHERE NOT EXISTS (SELECT 1 FROM `enterprise` e WHERE e.`id` = src.`id`);
+
+INSERT INTO `favorite_enterprise` (`student_id`,`enterprise_id`)
+SELECT * FROM (
+  SELECT 1 AS `student_id`,5 AS `enterprise_id`
+  UNION ALL SELECT 1,13
+  UNION ALL SELECT 2,4
+  UNION ALL SELECT 2,6
+  UNION ALL SELECT 3,8
+  UNION ALL SELECT 3,16
+  UNION ALL SELECT 4,7
+  UNION ALL SELECT 5,10
+  UNION ALL SELECT 6,12
+  UNION ALL SELECT 7,14
+  UNION ALL SELECT 8,9
+) AS src
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM `favorite_enterprise` fe
+  WHERE fe.`student_id` = src.`student_id`
+    AND fe.`enterprise_id` = src.`enterprise_id`
+    AND fe.`deleted` = 0
+);
 
 INSERT INTO `student` (`id`,`username`,`password`,`real_name`,`student_no`,`gender`,`college`,`major`,`grade`,`education`,`phone`,`email`,`status`)
 SELECT * FROM (
