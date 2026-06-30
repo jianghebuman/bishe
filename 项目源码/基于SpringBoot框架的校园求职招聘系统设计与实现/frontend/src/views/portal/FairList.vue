@@ -24,7 +24,7 @@
                 <div class="stat-item"><span class="num">{{ f.jobCount || 0 }}</span><span class="label">提供岗位</span></div>
                 <div class="stat-item"><span class="num">{{ f.signCount || 0 }}</span><span class="label">报名人数</span></div>
               </div>
-              <el-button type="primary" size="small" class="w-full" @click="onSign(f)">立即报名</el-button>
+              <el-button type="primary" class="w-full sign-button" @click="onSign(f)">立即报名</el-button>
             </div>
           </div>
           <el-empty v-if="!loading && list.length === 0" description="暂无招聘会" class="grid-empty" />
@@ -94,11 +94,12 @@ onMounted(async () => {
   .body { flex: 1; display: flex; flex-direction: column; padding: .875rem; }
   .info-row { color: var(--cr-text-soft); font-size: .78125rem; line-height: 1.65; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; .el-icon { vertical-align: middle; margin-right: .25rem; color: var(--cr-primary); } }
   .content { color: var(--cr-text-muted); font-size: .78125rem; line-height: 1.55; margin: .5rem 0; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .375rem; padding: .5rem; background: var(--cr-surface-soft); border-radius: var(--cr-radius-sm); margin: auto 0 .625rem;
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .375rem; padding: .5rem; background: var(--cr-surface-soft); border-radius: var(--cr-radius-sm); margin: .625rem 0 .75rem;
     .stat-item { flex: 1; text-align: center;
       .num { display: block; color: var(--cr-danger); font-size: 1rem; font-weight: 750; line-height: 1.2; }
       .label { color: var(--cr-text-muted); font-size: .6875rem; }
     }
   }
+  .sign-button { height: 2rem; font-size: .875rem; }
 }
 </style>
