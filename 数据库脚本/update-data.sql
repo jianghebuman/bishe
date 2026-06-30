@@ -25,32 +25,28 @@ ALTER TABLE `enterprise`
   MODIFY `username` varchar(50) DEFAULT NULL COMMENT '旧企业登录账号(兼容迁移)',
   MODIFY `password` varchar(100) DEFAULT NULL COMMENT '旧企业密码(兼容迁移)';
 
-DROP PROCEDURE IF EXISTS add_enterprise_hr_columns;
-DELIMITER //
-CREATE PROCEDURE add_enterprise_hr_columns()
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'job_post' AND COLUMN_NAME = 'hr_id') THEN
-    ALTER TABLE `job_post` ADD COLUMN `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`, ADD KEY `idx_job_hr` (`hr_id`);
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'job_apply' AND COLUMN_NAME = 'hr_id') THEN
-    ALTER TABLE `job_apply` ADD COLUMN `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`, ADD KEY `idx_apply_hr` (`hr_id`);
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'interview_notice' AND COLUMN_NAME = 'hr_id') THEN
-    ALTER TABLE `interview_notice` ADD COLUMN `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`, ADD KEY `idx_notice_hr` (`hr_id`);
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'interview_feedback' AND COLUMN_NAME = 'hr_id') THEN
-    ALTER TABLE `interview_feedback` ADD COLUMN `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'offer_record' AND COLUMN_NAME = 'hr_id') THEN
-    ALTER TABLE `offer_record` ADD COLUMN `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`, ADD KEY `idx_offer_hr` (`hr_id`);
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'talent_pool' AND COLUMN_NAME = 'hr_id') THEN
-    ALTER TABLE `talent_pool` ADD COLUMN `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`, ADD KEY `idx_talent_hr` (`hr_id`);
-  END IF;
-END//
-DELIMITER ;
-CALL add_enterprise_hr_columns();
-DROP PROCEDURE IF EXISTS add_enterprise_hr_columns;
+ALTER TABLE `job_post`
+  ADD COLUMN IF NOT EXISTS `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`;
+CREATE INDEX IF NOT EXISTS `idx_job_hr` ON `job_post` (`hr_id`);
+
+ALTER TABLE `job_apply`
+  ADD COLUMN IF NOT EXISTS `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`;
+CREATE INDEX IF NOT EXISTS `idx_apply_hr` ON `job_apply` (`hr_id`);
+
+ALTER TABLE `interview_notice`
+  ADD COLUMN IF NOT EXISTS `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`;
+CREATE INDEX IF NOT EXISTS `idx_notice_hr` ON `interview_notice` (`hr_id`);
+
+ALTER TABLE `interview_feedback`
+  ADD COLUMN IF NOT EXISTS `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`;
+
+ALTER TABLE `offer_record`
+  ADD COLUMN IF NOT EXISTS `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`;
+CREATE INDEX IF NOT EXISTS `idx_offer_hr` ON `offer_record` (`hr_id`);
+
+ALTER TABLE `talent_pool`
+  ADD COLUMN IF NOT EXISTS `hr_id` bigint DEFAULT NULL COMMENT '负责HR账号ID' AFTER `enterprise_id`;
+CREATE INDEX IF NOT EXISTS `idx_talent_hr` ON `talent_pool` (`hr_id`);
 
 INSERT INTO `enterprise_hr` (`enterprise_id`,`username`,`password`,`real_name`,`phone`,`email`,`hr_role`,`status`)
 SELECT e.`id`, e.`username`, e.`password`, e.`contact_name`, e.`contact_phone`, e.`email`, 'SUPERVISOR', e.`status`
@@ -84,41 +80,16 @@ SET t.`hr_id` = hr.`id`
 WHERE t.`hr_id` IS NULL;
 
 -- Enterprise audit authority verification trace fields.
-DROP PROCEDURE IF EXISTS add_enterprise_audit_verify_columns;
-DELIMITER //
-CREATE PROCEDURE add_enterprise_audit_verify_columns()
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'enterprise_audit' AND COLUMN_NAME = 'verify_source') THEN
-    ALTER TABLE `enterprise_audit` ADD COLUMN `verify_source` varchar(120) DEFAULT NULL COMMENT '权威核验来源' AFTER `audit_time`;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'enterprise_audit' AND COLUMN_NAME = 'verify_source_url') THEN
-    ALTER TABLE `enterprise_audit` ADD COLUMN `verify_source_url` varchar(255) DEFAULT NULL COMMENT '权威核验来源地址' AFTER `verify_source`;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'enterprise_audit' AND COLUMN_NAME = 'verify_time') THEN
-    ALTER TABLE `enterprise_audit` ADD COLUMN `verify_time` datetime DEFAULT NULL COMMENT '权威核验时间' AFTER `verify_source_url`;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'enterprise_audit' AND COLUMN_NAME = 'verify_company_name') THEN
-    ALTER TABLE `enterprise_audit` ADD COLUMN `verify_company_name` varchar(120) DEFAULT NULL COMMENT '权威来源企业名称' AFTER `verify_time`;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'enterprise_audit' AND COLUMN_NAME = 'verify_credit_code') THEN
-    ALTER TABLE `enterprise_audit` ADD COLUMN `verify_credit_code` varchar(60) DEFAULT NULL COMMENT '权威来源统一社会信用代码' AFTER `verify_company_name`;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'enterprise_audit' AND COLUMN_NAME = 'verify_status') THEN
-    ALTER TABLE `enterprise_audit` ADD COLUMN `verify_status` varchar(60) DEFAULT NULL COMMENT '权威来源登记状态' AFTER `verify_credit_code`;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'enterprise_audit' AND COLUMN_NAME = 'verify_result') THEN
-    ALTER TABLE `enterprise_audit` ADD COLUMN `verify_result` tinyint NOT NULL DEFAULT 0 COMMENT '核验结果：0未核验1一致2不一致3未接入或异常' AFTER `verify_status`;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'enterprise_audit' AND COLUMN_NAME = 'verify_remark') THEN
-    ALTER TABLE `enterprise_audit` ADD COLUMN `verify_remark` varchar(255) DEFAULT NULL COMMENT '核验说明' AFTER `verify_result`;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'enterprise_audit' AND COLUMN_NAME = 'verify_snapshot_hash') THEN
-    ALTER TABLE `enterprise_audit` ADD COLUMN `verify_snapshot_hash` varchar(64) DEFAULT NULL COMMENT '权威返回快照SHA256' AFTER `verify_remark`;
-  END IF;
-END//
-DELIMITER ;
-CALL add_enterprise_audit_verify_columns();
-DROP PROCEDURE IF EXISTS add_enterprise_audit_verify_columns;
+ALTER TABLE `enterprise_audit`
+  ADD COLUMN IF NOT EXISTS `verify_source` varchar(120) DEFAULT NULL COMMENT '权威核验来源' AFTER `audit_time`,
+  ADD COLUMN IF NOT EXISTS `verify_source_url` varchar(255) DEFAULT NULL COMMENT '权威核验来源地址' AFTER `verify_source`,
+  ADD COLUMN IF NOT EXISTS `verify_time` datetime DEFAULT NULL COMMENT '权威核验时间' AFTER `verify_source_url`,
+  ADD COLUMN IF NOT EXISTS `verify_company_name` varchar(120) DEFAULT NULL COMMENT '权威来源企业名称' AFTER `verify_time`,
+  ADD COLUMN IF NOT EXISTS `verify_credit_code` varchar(60) DEFAULT NULL COMMENT '权威来源统一社会信用代码' AFTER `verify_company_name`,
+  ADD COLUMN IF NOT EXISTS `verify_status` varchar(60) DEFAULT NULL COMMENT '权威来源登记状态' AFTER `verify_credit_code`,
+  ADD COLUMN IF NOT EXISTS `verify_result` tinyint NOT NULL DEFAULT 0 COMMENT '核验结果：0未核验1一致2不一致3未接入或异常' AFTER `verify_status`,
+  ADD COLUMN IF NOT EXISTS `verify_remark` varchar(255) DEFAULT NULL COMMENT '核验说明' AFTER `verify_result`,
+  ADD COLUMN IF NOT EXISTS `verify_snapshot_hash` varchar(64) DEFAULT NULL COMMENT '权威返回快照SHA256' AFTER `verify_remark`;
 
 -- New tables introduced after the original server-side seed snapshot.
 CREATE TABLE IF NOT EXISTS `job_seeker_post` (
