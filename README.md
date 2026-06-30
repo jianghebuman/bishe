@@ -134,6 +134,10 @@ http://localhost:8080
 
 [deploy/README.md](deploy/README.md)
 
+如果服务器内存较小，推荐改用“本地构建前端、服务器仅部署产物”的方式：
+
+[deploy/本地构建前端-服务器部署流程.md](deploy/本地构建前端-服务器部署流程.md)
+
 已提供：
 
 - `application-prod.yml`：生产环境变量配置
