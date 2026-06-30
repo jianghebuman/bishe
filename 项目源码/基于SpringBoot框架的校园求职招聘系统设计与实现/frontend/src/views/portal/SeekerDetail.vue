@@ -10,6 +10,7 @@
           </div>
         </div>
         <div class="head-actions">
+          <el-button @click="viewStudentInfo">查看学生个人信息</el-button>
           <el-button @click="requestResume">请求查看简历</el-button>
           <el-button type="primary" @click="contact">联系TA</el-button>
         </div>
@@ -52,6 +53,21 @@
           <p><b>浏览：</b>{{ post.viewCount || 0 }}</p>
         </div>
       </div>
+
+      <el-dialog v-model="studentDialog" title="学生个人信息" width="680px">
+        <el-descriptions :column="2" border v-if="studentDetail">
+          <el-descriptions-item label="姓名">{{ studentDetail.realName || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="性别">{{ genderLabel(studentDetail.gender) }}</el-descriptions-item>
+          <el-descriptions-item label="学号">{{ studentDetail.studentNo || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="年级">{{ studentDetail.grade || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="学院">{{ studentDetail.college || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="专业">{{ studentDetail.major || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="学历">{{ studentDetail.education || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="手机号">{{ studentDetail.phone || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="邮箱">{{ studentDetail.email || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="个人简介" :span="2">{{ studentDetail.intro || '-' }}</el-descriptions-item>
+        </el-descriptions>
+      </el-dialog>
     </template>
   </div>
 </template>
@@ -62,7 +78,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { defineComponent, h } from 'vue'
 import { User } from '@element-plus/icons-vue'
-import { publicApi } from '@/api'
+import { enterpriseApi, publicApi } from '@/api'
 import { useUserStore } from '@/store/user'
 
 const route = useRoute()
@@ -75,6 +91,8 @@ const resume = ref(null)
 const educations = ref([])
 const projects = ref([])
 const experiences = ref([])
+const studentDialog = ref(false)
+const studentDetail = ref(null)
 
 const ResumeBlock = defineComponent({
   props: { title: String, content: String },
@@ -125,6 +143,13 @@ const requestResume = () => {
   })
 }
 const genderLabel = (gender) => Number(gender) === 1 ? '男' : Number(gender) === 2 ? '女' : '保密'
+const viewStudentInfo = async () => {
+  if (!userStore.isLogin) { ElMessage.warning('请先登录'); router.push('/login'); return }
+  if (userStore.role !== 'ENTERPRISE') { ElMessage.warning('请使用企业账号查看学生信息'); return }
+  const res = await enterpriseApi.seekerStudentInfo(post.value.id)
+  studentDetail.value = res.data
+  studentDialog.value = true
+}
 
 onMounted(async () => {
   loading.value = true

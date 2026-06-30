@@ -4,6 +4,7 @@ import com.campus.common.PageResult;
 import com.campus.common.RequireRole;
 import com.campus.common.Result;
 import com.campus.entity.JobSeekerPost;
+import com.campus.entity.Student;
 import com.campus.service.JobSeekerPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,6 +39,12 @@ public class JobSeekerPostController {
     @GetMapping("/public/seeker-posts/{id}")
     public Result<Map<String, Object>> publicDetail(@PathVariable Long id) {
         return Result.success(jobSeekerPostService.publicDetail(id));
+    }
+
+    @GetMapping("/enterprise/seeker-posts/{id}/student")
+    @RequireRole("ENTERPRISE")
+    public Result<Student> studentInfo(@PathVariable Long id) {
+        return Result.success(jobSeekerPostService.studentInfoForEnterprise(id));
     }
 
     @GetMapping("/student/seeker-post")

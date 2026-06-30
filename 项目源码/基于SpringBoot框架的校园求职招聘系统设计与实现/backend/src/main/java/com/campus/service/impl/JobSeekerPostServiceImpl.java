@@ -126,6 +126,20 @@ public class JobSeekerPostServiceImpl extends ServiceImpl<JobSeekerPostMapper, J
     }
 
     @Override
+    public Student studentInfoForEnterprise(Long id) {
+        JobSeekerPost post = this.getById(id);
+        if (post == null || post.getStatus() == null || post.getStatus() != 1) {
+            throw new BusinessException("求职信息不存在或已下架");
+        }
+        Student student = studentMapper.selectById(post.getStudentId());
+        if (student != null) {
+            student.setPassword(null);
+            student.setLastLogin(null);
+        }
+        return student;
+    }
+
+    @Override
     public JobSeekerPost myPost() {
         return this.getOne(new LambdaQueryWrapper<JobSeekerPost>()
                 .eq(JobSeekerPost::getStudentId, UserContext.getUserId())

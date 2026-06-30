@@ -14,6 +14,7 @@ import com.campus.service.InterviewService;
 import com.campus.service.JobPostService;
 import com.campus.service.OfferService;
 import com.campus.service.TalentPoolService;
+import com.campus.vo.EnterpriseApplyDetailVO;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -100,7 +101,7 @@ public class EnterpriseBusinessController {
     }
 
     @GetMapping("/apply/{id}")
-    public Result<JobApply> applyDetail(@PathVariable Long id) {
+    public Result<EnterpriseApplyDetailVO> applyDetail(@PathVariable Long id) {
         return Result.success(enterpriseApplyService.viewDetail(id));
     }
 

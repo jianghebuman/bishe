@@ -3,6 +3,7 @@ package com.campus.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.campus.common.PageResult;
 import com.campus.entity.JobSeekerPost;
+import com.campus.entity.Student;
 
 import java.util.Map;
 
@@ -12,6 +13,8 @@ public interface JobSeekerPostService extends IService<JobSeekerPost> {
                                                String expectPost, String college, Integer salaryMin);
 
     Map<String, Object> publicDetail(Long id);
+
+    Student studentInfoForEnterprise(Long id);
 
     JobSeekerPost myPost();
 

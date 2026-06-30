@@ -22,6 +22,9 @@ public class JobApply implements Serializable {
 
     private Long enterpriseId;
 
+    @TableField(exist = false)
+    private String studentName;
+
     private Integer status;
 
     private String applyRemark;

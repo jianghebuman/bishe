@@ -3,6 +3,7 @@ package com.campus.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.campus.common.PageResult;
 import com.campus.entity.JobApply;
+import com.campus.vo.EnterpriseApplyDetailVO;
 
 /**
  * 企业端投递（收到的简历）服务。
@@ -33,9 +34,9 @@ public interface EnterpriseApplyService extends IService<JobApply> {
     void updateStatus(Long applyId, Integer status, String hrRemark);
 
     /**
-     * 查看简历详情：返回该投递记录，并把 status=0（待查看）的置为 1（已查看）。
+     * 查看简历详情：返回投递、投递人姓名、在线简历和附件信息，并把 status=0（待查看）的置为 1（已查看）。
      *
      * @param applyId 投递ID
      */
-    JobApply viewDetail(Long applyId);
+    EnterpriseApplyDetailVO viewDetail(Long applyId);
 }

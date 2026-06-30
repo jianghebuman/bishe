@@ -147,7 +147,8 @@ export const enterpriseApi = {
   talentList: (params) => request.get('/enterprise/talent', { params }),
   addTalent: (data) => request.post('/enterprise/talent', data),
   delTalent: (id) => request.delete(`/enterprise/talent/${id}`),
-  searchTalent: (params) => request.get('/enterprise/talent/search', { params })
+  searchTalent: (params) => request.get('/enterprise/talent/search', { params }),
+  seekerStudentInfo: (id) => request.get(`/enterprise/seeker-posts/${id}/student`)
 }
 
 // ==================== 管理端 ====================
