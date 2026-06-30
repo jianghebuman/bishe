@@ -60,7 +60,7 @@
     <!-- 职位列表 -->
     <div class="page-card page-flex-card portal-list-card mt-20">
       <div class="page-flex-scroll job-scroll">
-        <div class="job-list-wrap" v-loading="loading">
+        <div ref="listRef" class="job-list-wrap" v-loading="loading">
           <div class="job-row" v-for="j in jobs" :key="j.id" @click="$router.push(`/job/${j.id}`)">
             <div class="job-main">
               <div class="job-head">
@@ -104,13 +104,15 @@ import { reactive, ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Search, Location, User, Briefcase } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
+import { useResponsivePageSize } from '@/utils/responsivePageSize'
 
 const route = useRoute()
-const query = reactive({ pageNum: 1, pageSize: 3, keyword: '', city: [], categoryId: [], education: [], jobType: [], salaryMin: [], salaryMax: '' })
+const query = reactive({ pageNum: 1, pageSize: 10, keyword: '', city: [], categoryId: [], education: [], jobType: [], salaryMin: [], salaryMax: '' })
 const jobs = ref([])
 const total = ref(0)
 const recommended = ref(false)
 const loading = ref(false)
+const listRef = ref(null)
 const cities = ref([])
 const categories = ref([])
 const educations = ref([])
@@ -185,6 +187,8 @@ const applyRouteQuery = (routeQuery) => {
   listKeys.forEach(k => { query[k] = Array.from(new Map(query[k].map(v => [String(v), v])).values()) })
 }
 
+const { initResponsivePageSize } = useResponsivePageSize(listRef, query, loadList, { columns: 1, itemMinHeight: 126, gap: 8, rows: 4, minPageSize: 3, maxPageSize: 10, pagerReserve: 0 })
+
 onMounted(async () => {
   // 接受首页和求职意向传过来的筛选条件
   applyRouteQuery(route.query)
@@ -194,6 +198,7 @@ onMounted(async () => {
     categories.value = cat.data
     educations.value = edu.data
   } catch (e) {}
+  await initResponsivePageSize()
   loadList()
 })
 
@@ -220,7 +225,7 @@ watch(() => route.query, (nv) => {
 .result-info { margin: .875rem 0 .5rem; color: var(--cr-text-soft); font-size: .875rem; b { color: var(--cr-danger); margin: 0 .25rem; } }
 .job-scroll { display: flex; flex-direction: column; }
 .job-list-wrap { flex: 1; display: flex; flex-direction: column; gap: .5rem; }
-.job-row { flex: 1; min-height: 5.5rem; background: rgba(255,255,255,.96); border: 0.0625rem solid var(--cr-border-soft); border-radius: var(--cr-radius); padding: clamp(.875rem, 1.2vw, 1rem); display: grid; align-items: center; grid-template-columns: minmax(0, 1fr) minmax(11.25rem, 0.28fr); gap: 1rem; cursor: pointer; transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+.job-row { min-height: 7.875rem; background: rgba(255,255,255,.96); border: 0.0625rem solid var(--cr-border-soft); border-radius: var(--cr-radius); padding: clamp(.875rem, 1.2vw, 1rem); display: grid; align-items: center; grid-template-columns: minmax(0, 1fr) minmax(11.25rem, 0.28fr); gap: 1rem; cursor: pointer; transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
   &:hover { border-color: rgba(37,99,235,.28); box-shadow: var(--cr-shadow); transform: translateY(-.0625rem); }
   .job-main { min-width: 0; }
   .job-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .625rem;
@@ -238,8 +243,6 @@ watch(() => route.query, (nv) => {
 }
 
 @media (max-width: 51.25rem) {
-  .job-row { flex: 0 1 auto; }
-
   .job-row {
     grid-template-columns: 1fr;
   }

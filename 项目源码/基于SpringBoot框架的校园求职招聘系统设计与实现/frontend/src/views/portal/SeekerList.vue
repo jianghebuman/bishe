@@ -64,7 +64,7 @@
 
     <div class="page-card page-flex-card portal-list-card mt-20">
       <div class="page-flex-scroll seeker-scroll">
-        <div class="seeker-grid" v-loading="loading">
+        <div ref="gridRef" class="seeker-grid" v-loading="loading">
           <div class="seeker-card" v-for="item in list" :key="item.post.id" @click="$router.push(`/seeker/${item.post.id}`)">
             <div class="card-top">
               <el-avatar :src="item.student?.avatar"><el-icon><User /></el-icon></el-avatar>
@@ -106,6 +106,7 @@ import { ElMessage } from 'element-plus'
 import { Filter, User } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
 import { useUserStore } from '@/store/user'
+import { useResponsivePageSize } from '@/utils/responsivePageSize'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -113,6 +114,7 @@ const loading = ref(false)
 const list = ref([])
 const total = ref(0)
 const showFilters = ref(false)
+const gridRef = ref(null)
 const cities = ref([])
 const postTypes = [
   { label: '后端开发', value: '后端' },
@@ -130,7 +132,7 @@ const salaryOptions = [
   { label: '10K以上', value: 10 },
   { label: '12K以上', value: 12 }
 ]
-const query = reactive({ pageNum: 1, pageSize: 10, keyword: '', city: '', expectPost: '', college: '', salaryMin: '' })
+const query = reactive({ pageNum: 1, pageSize: 15, keyword: '', city: '', expectPost: '', college: '', salaryMin: '' })
 
 const hasCondition = computed(() => ['keyword', 'city', 'expectPost', 'college', 'salaryMin'].some(k => query[k] !== '' && query[k] != null))
 const activeFilters = computed(() => {
@@ -185,7 +187,10 @@ const publish = () => {
   if (userStore.role !== 'STUDENT') { ElMessage.warning('请使用学生账号发布'); return }
   router.push('/student/seeker-post')
 }
+const { initResponsivePageSize } = useResponsivePageSize(gridRef, query, load, { itemMinWidth: 320, itemMinHeight: 216, gap: 12, rows: 3, pagerReserve: 0 })
+
 onMounted(async () => {
+  await initResponsivePageSize()
   try {
     const res = await publicApi.dict('city')
     cities.value = res.data || []
@@ -214,15 +219,16 @@ onMounted(async () => {
 .filter-drop-enter-from, .filter-drop-leave-to { opacity: 0; transform: translateY(-.25rem); }
 .portal-list-card { --portal-list-card-min-height: calc(100dvh - 22rem); }
 .seeker-scroll { display:flex; flex-direction:column; }
-.seeker-grid { flex:1; min-height:100%; display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,20rem),1fr)); grid-auto-rows:minmax(15.25rem,1fr); gap:1rem; }
-.seeker-card { min-height:15.25rem; background:#fff; border:1px solid var(--cr-border-soft); border-radius:var(--cr-radius-sm); padding:1rem; box-shadow:var(--cr-shadow-soft); cursor:pointer; display:flex; flex-direction:column; gap:.75rem; transition:transform .18s, box-shadow .18s;
+.seeker-grid { display:grid; align-content:start; grid-template-columns:repeat(auto-fill,minmax(min(100%,20rem),1fr)); grid-auto-rows:minmax(13.5rem,auto); gap:.75rem; }
+.seeker-card { min-height:13.5rem; background:#fff; border:1px solid var(--cr-border-soft); border-radius:var(--cr-radius-sm); padding:.9375rem 1rem; box-shadow:var(--cr-shadow-soft); cursor:pointer; display:flex; flex-direction:column; gap:.5625rem; transition:transform .18s, box-shadow .18s;
   &:hover { transform:translateY(-.125rem); box-shadow:var(--cr-shadow); }
 }
-.card-top { display:flex; gap:.75rem; align-items:center; min-width:0; h3{font-size:1rem;color:var(--cr-text);margin-bottom:.25rem;line-height:1.35;} p{color:var(--cr-text-muted);font-size:.8125rem;} }
+.card-top { display:flex; gap:.625rem; align-items:center; min-width:0; :deep(.el-avatar){--el-avatar-size:2.25rem;} h3{font-size:.9375rem;color:var(--cr-text);margin:0 0 .0625rem;line-height:1.25;} p{margin:0;color:var(--cr-text-muted);font-size:.75rem;} }
 .student-info { min-width: 0; }
-.student-meta { display:flex; flex-wrap:wrap; gap:.375rem .75rem; color:var(--cr-text-muted); font-size:.75rem; padding:.5rem .625rem; background:var(--cr-surface-soft); border-radius:var(--cr-radius-sm); }
-.tags { display:flex; flex-wrap:wrap; gap:.375rem; }
-.intro { color:var(--cr-text-soft); line-height:1.65; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
-.card-foot { margin-top:auto; display:flex; justify-content:space-between; align-items:center; color:var(--cr-text-muted); font-size:.8125rem; }
+.student-meta { display:flex; flex-wrap:wrap; gap:.1875rem .5rem; color:var(--cr-text-muted); font-size:.71875rem; padding:.25rem .5rem; background:var(--cr-surface-soft); border-radius:var(--cr-radius-sm); }
+.tags { display:flex; flex-wrap:wrap; gap:.25rem; }
+.tags :deep(.el-tag--small) { height:1.375rem; padding:0 .375rem; font-size:.71875rem; }
+.intro { margin:0; color:var(--cr-text-soft); font-size:.8125rem; line-height:1.4; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
+.card-foot { margin-top:auto; display:flex; justify-content:space-between; align-items:center; color:var(--cr-text-muted); font-size:.75rem; }
 @media (max-width:40rem){.head{align-items:stretch;flex-direction:column}.head :deep(.el-button){width:100%;}.filter-row{grid-template-columns:1fr;gap:.5rem}.filter-row .label{padding-top:0;}}
 </style>

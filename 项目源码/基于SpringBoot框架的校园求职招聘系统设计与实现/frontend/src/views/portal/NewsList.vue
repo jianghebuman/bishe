@@ -13,18 +13,20 @@
           <el-tab-pane v-for="c in categories" :key="c.id" :label="c.name" :name="c.id" />
         </el-tabs>
         <div class="page-flex-scroll">
-          <div class="news-row" v-for="n in list" :key="n.id" @click="$router.push(`/news/${n.id}`)" v-loading="loading">
-            <div class="cover" v-if="n.cover" :style="{ backgroundImage: `url(${n.cover})` }"></div>
-            <div class="body">
-              <h3 class="title">
-                <el-tag size="small" type="danger" v-if="n.isTop" effect="dark" class="top-tag">置顶</el-tag>
-                {{ n.title }}
-              </h3>
-              <p class="summary">{{ n.summary }}</p>
-              <div class="meta">
-                <span>{{ n.author || '就业办' }}</span>
-                <span>{{ formatDate(n.publishTime || n.createTime) }}</span>
-                <span><el-icon><View /></el-icon> {{ n.viewCount || 0 }}</span>
+          <div ref="listRef" class="news-list-wrap" v-loading="loading">
+            <div class="news-row" v-for="n in list" :key="n.id" @click="$router.push(`/news/${n.id}`)">
+              <div class="cover" v-if="n.cover" :style="{ backgroundImage: `url(${n.cover})` }"></div>
+              <div class="body">
+                <h3 class="title">
+                  <el-tag size="small" type="danger" v-if="n.isTop" effect="dark" class="top-tag">置顶</el-tag>
+                  {{ n.title }}
+                </h3>
+                <p class="summary">{{ n.summary }}</p>
+                <div class="meta">
+                  <span>{{ n.author || '就业办' }}</span>
+                  <span>{{ formatDate(n.publishTime || n.createTime) }}</span>
+                  <span><el-icon><View /></el-icon> {{ n.viewCount || 0 }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -83,9 +85,10 @@ import { ref, reactive, onMounted } from 'vue'
 import { Notebook, View } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
 import request from '@/utils/request'
+import { useResponsivePageSize } from '@/utils/responsivePageSize'
 
 const activeCat = ref(0)
-const query = reactive({ pageNum: 1, pageSize: 6, categoryId: undefined })
+const query = reactive({ pageNum: 1, pageSize: 8, categoryId: undefined })
 const list = ref([])
 const total = ref(0)
 const loading = ref(false)
@@ -93,6 +96,7 @@ const categories = ref([])
 const briefNews = ref([])
 const sidebarTalks = ref([])
 const sidebarFairs = ref([])
+const listRef = ref(null)
 const formatDate = (d) => d ? d.substring(0, 10) : ''
 const formatDateTime = (d) => d ? d.replace('T', ' ').substring(0, 16) : ''
 
@@ -107,12 +111,15 @@ const load = async () => {
 }
 const onCatChange = (v) => { query.categoryId = v || undefined; query.pageNum = 1; load() }
 
+const { initResponsivePageSize } = useResponsivePageSize(listRef, query, load, { columns: 1, itemMinHeight: 102, gap: 0, rows: 8, minPageSize: 6, maxPageSize: 8, pagerReserve: 0 })
+
 onMounted(async () => {
   try {
     // 资讯分类用通用 mapper 直查（公共接口未必暴露）
     const cat = await request.get('/public/news-categories').catch(() => null)
     if (cat) categories.value = cat.data || []
   } catch (e) {}
+  await initResponsivePageSize()
   await load()
   try {
     const home = await publicApi.home()
@@ -128,7 +135,8 @@ onMounted(async () => {
 .head h2 { color: var(--cr-text); .el-icon { vertical-align: middle; color: var(--cr-primary); } }
 .head .sub { color: var(--cr-text-muted); margin-top: .375rem; }
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 18rem); gap: clamp(1rem, 2vw, 1.25rem); align-items: start; }
-.news-row { display: flex; gap: .875rem; padding: .75rem 0; border-bottom: 0.0625rem dashed #ebeef5; cursor: pointer;
+.news-list-wrap { display: grid; }
+.news-row { min-height: 6.375rem; display: flex; align-items: center; gap: .875rem; padding: .75rem 0; border-bottom: 0.0625rem dashed #ebeef5; cursor: pointer;
   &:hover .title { color: var(--cr-primary); }
   .cover { width: clamp(6rem, 12vw, 8.25rem); aspect-ratio: 8 / 5; background-size: cover; background-position: center; border-radius: var(--cr-radius-sm); flex-shrink: 0; }
   .body { flex: 1; min-width: 0; }

@@ -23,7 +23,8 @@
     <div class="content mt-20">
       <div class="main-list page-card page-flex-card portal-list-card" v-loading="loading">
         <div class="page-flex-scroll forum-scroll">
-          <div class="post-item" v-for="p in posts" :key="p.id" @click="$router.push(`/forum/${p.id}`)">
+          <div ref="listRef" class="post-list">
+            <div class="post-item" v-for="p in posts" :key="p.id" @click="$router.push(`/forum/${p.id}`)">
             <div class="avatar">{{ (p.authorName || '同学').substring(0, 1) }}</div>
             <div class="post-body">
               <div class="post-title">
@@ -39,6 +40,7 @@
                 <span><el-icon><ChatLineRound /></el-icon> {{ p.commentCount || 0 }}</span>
               </div>
             </div>
+          </div>
           </div>
           <el-empty v-if="!loading && posts.length === 0" description="暂无帖子，来发布第一条交流吧" />
         </div>
@@ -101,15 +103,17 @@ import { ElMessage } from 'element-plus'
 import { ChatDotRound, EditPen, Search, User, Clock, View, Pointer, ChatLineRound } from '@element-plus/icons-vue'
 import { publicApi, forumApi } from '@/api'
 import { useUserStore } from '@/store/user'
+import { useResponsivePageSize } from '@/utils/responsivePageSize'
 
 const router = useRouter()
 const userStore = useUserStore()
-const query = reactive({ pageNum: 1, pageSize: 6, keyword: '', category: '' })
+const query = reactive({ pageNum: 1, pageSize: 8, keyword: '', category: '' })
 const posts = ref([])
 const total = ref(0)
 const loading = ref(false)
 const dialog = ref(false)
 const publishing = ref(false)
+const listRef = ref(null)
 const form = reactive({ title: '', content: '', category: '求职交流' })
 const featuredPosts = ref([])
 
@@ -143,7 +147,12 @@ const submitPost = async () => {
     reload()
   } finally { publishing.value = false }
 }
-onMounted(load)
+const { initResponsivePageSize } = useResponsivePageSize(listRef, query, load, { columns: 1, itemMinHeight: 96, gap: 0, rows: 8, minPageSize: 6, maxPageSize: 8, pagerReserve: 0 })
+
+onMounted(async () => {
+  await initResponsivePageSize()
+  load()
+})
 </script>
 
 <style scoped lang="scss">
@@ -152,11 +161,12 @@ onMounted(load)
 .toolbar :deep(.el-radio-group) { min-width: 0; overflow-x: auto; }
 .toolbar-search { min-width: 0; }
 .content { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 18rem); gap: clamp(1rem, 2vw, 1.25rem); align-items: stretch; }
-.main-list { --portal-list-card-min-height: calc(100dvh - 22rem); min-height: 0; }
+.main-list { --portal-list-card-min-height: calc(100dvh - 22rem); }
 .forum-scroll { display: flex; flex-direction: column; }
+.post-list { display: grid; }
 .side { display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1rem, 2vw, 1.25rem); min-height: 0; height: 100%; }
 .side > .page-card { min-height: 0; }
-.post-item { flex: 1; min-height: 5.875rem; display: flex; align-items: center; gap: .75rem; padding: .75rem 0; border-bottom: 0.0625rem dashed var(--cr-border-soft); cursor: pointer; &:hover .post-title span:last-child { color: var(--cr-primary); } }
+.post-item { min-height: 6rem; display: flex; align-items: center; gap: .75rem; padding: .625rem 0; border-bottom: 0.0625rem dashed var(--cr-border-soft); cursor: pointer; &:hover .post-title span:last-child { color: var(--cr-primary); } }
 .avatar { width: clamp(2.25rem, 5vw, 2.75rem); height: clamp(2.25rem, 5vw, 2.75rem); border-radius: 50%; background: linear-gradient(135deg, var(--cr-primary), var(--cr-success)); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0; }
 .post-body { flex: 1; min-width: 0; }
 .post-title { display: flex; align-items: center; gap: .5rem; font-weight: 600; color: var(--cr-text); margin-bottom: .375rem; line-height: 1.35; }
@@ -175,7 +185,6 @@ onMounted(load)
   .content,
   .toolbar { grid-template-columns: 1fr; }
   .side { grid-template-rows: auto; }
-  .post-item { flex: 0 1 auto; }
 }
 
 @media (max-width: 40rem) {
