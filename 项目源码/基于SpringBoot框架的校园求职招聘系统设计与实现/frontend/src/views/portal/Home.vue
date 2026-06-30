@@ -24,7 +24,7 @@
         </form>
         <div class="hero-actions">
           <el-button type="primary" size="large" class="primary-pill" @click="$router.push('/jobs')">浏览职位</el-button>
-          <el-button size="large" class="ghost-pill" @click="$router.push('/register')">发布或完善信息</el-button>
+          <el-button size="large" class="ghost-pill" @click="goProfileAction">发布或完善信息</el-button>
         </div>
       </div>
       <div class="hero-board">
@@ -177,8 +177,10 @@ import { computed, ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, OfficeBuilding } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
+import { useUserStore } from '@/store/user'
 
 const router = useRouter()
+const userStore = useUserStore()
 const home = reactive({ banners: [], hotJobs: [], recommendEnterprises: [], talks: [], fairs: [], announcements: [] })
 const kw = ref('')
 const city = ref('')
@@ -193,6 +195,17 @@ const features = [
 
 const formatDate = (d) => d ? d.substring(0, 10) : ''
 const goSearch = () => router.push({ path: '/jobs', query: { keyword: kw.value, city: city.value } })
+const goProfileAction = () => {
+  if (!userStore.isLogin) {
+    router.push('/login')
+  } else if (userStore.role === 'STUDENT') {
+    router.push('/student/seeker-post')
+  } else if (userStore.role === 'ENTERPRISE') {
+    router.push('/enterprise/job')
+  } else {
+    router.push('/admin')
+  }
+}
 const firstJob = computed(() => home.hotJobs?.[0])
 const nextTalk = computed(() => home.talks?.[0])
 const stats = computed(() => [
