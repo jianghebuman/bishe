@@ -97,7 +97,7 @@ onMounted(async () => {
   .meta { display: flex; flex-wrap: wrap; gap: .25rem .75rem; color: var(--cr-text-muted); font-size: .78125rem; margin-bottom: .3rem; .el-icon { vertical-align: middle; color: var(--cr-primary); } }
   .content { color: var(--cr-text-soft); font-size: .8125rem; line-height: 1.4; margin-bottom: .45rem; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
   .footer { display: flex; justify-content: space-between; align-items: center; }
-  .sign-btn { min-width: 5.25rem; height: 2rem; padding: 0 .875rem; font-weight: 700; }
+  .sign-btn { min-width: 7rem; height: 2.75rem; padding: 0 1.375rem; font-size: .9375rem; font-weight: 700; border-radius: .625rem; }
 }
 
 @media (max-width: 35rem) {
@@ -117,6 +117,10 @@ onMounted(async () => {
     align-items: stretch;
     flex-direction: column;
     gap: .625rem;
+  }
+
+  .talk-item .sign-btn {
+    width: 100%;
   }
 }
 </style>
