@@ -97,6 +97,90 @@ li {
   padding: clamp(1rem, 1.6vw, 1.375rem);
   box-shadow: var(--cr-shadow-soft);
 }
+.student-screen-page {
+  width: min(154rem, calc(100% - clamp(1rem, 3vw, 3rem)));
+  min-height: calc(100dvh - 70px - clamp(1.5rem, 3vw, 2.5rem));
+  padding: clamp(0.75rem, 1.2vw, 1.25rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.student-screen-card {
+  width: 100%;
+  min-height: 0;
+}
+.student-screen-card .header h2 {
+  font-size: clamp(1.8rem, 1.55vw, 2.25rem);
+  line-height: 1.25;
+}
+.student-screen-card .header p {
+  margin-top: 0.45rem;
+  font-size: clamp(1.0625rem, 0.96vw, 1.25rem);
+  line-height: 1.65;
+}
+.student-screen-card .el-divider--horizontal {
+  margin: 1.5rem 0;
+}
+.student-screen-card .el-form-item {
+  margin-bottom: 1.45rem;
+}
+.student-screen-card .el-form-item__label {
+  height: 3.375rem;
+  align-items: center;
+  color: var(--cr-text-soft);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.student-screen-card .el-input__wrapper,
+.student-screen-card .el-select__wrapper {
+  min-height: 3.375rem;
+  padding: 0 1.125rem;
+}
+.student-screen-card .el-input__inner,
+.student-screen-card .el-select__placeholder,
+.student-screen-card .el-select__selected-item,
+.student-screen-card .el-radio__label,
+.student-screen-card .el-textarea__inner {
+  font-size: 1.0625rem;
+}
+.student-screen-card .el-textarea__inner {
+  padding: 1rem 1.125rem;
+  line-height: 1.7;
+}
+.student-screen-card .el-radio {
+  height: 3.375rem;
+  margin-right: 1.5rem;
+}
+.student-screen-card .el-button {
+  min-height: 3rem;
+  padding: 0 1.25rem;
+  font-size: 1.0625rem;
+}
+.student-screen-card .el-table {
+  font-size: 1.0625rem;
+}
+.student-screen-card .el-table .cell {
+  line-height: 1.65;
+}
+.student-screen-card :is(.profile-glance, .intention-summary, .security-tips) h3,
+.student-screen-card .match-panel h4 {
+  font-size: 1.1875rem;
+}
+.student-screen-card :is(.glance-grid, .summary-grid, .profile-visibility, .security-state) span {
+  font-size: 0.9375rem;
+}
+.student-screen-card :is(.glance-grid, .summary-grid, .profile-visibility, .security-state) strong {
+  font-size: 1.0625rem;
+}
+.student-screen-card .match-panel p,
+.student-screen-card .security-tips li,
+.student-screen-card .upload-sub {
+  font-size: 1rem;
+}
+.student-screen-card .upload-label {
+  font-size: 1.125rem;
+}
 .page-flex-card {
   min-height: 0;
   display: flex;
@@ -142,6 +226,12 @@ li {
 
   .page-card {
     padding: 1rem;
+  }
+
+  .student-screen-page {
+    width: calc(100% - 1.5rem);
+    min-height: 0;
+    padding: 0.75rem 0;
   }
 
   .portal-list-card {

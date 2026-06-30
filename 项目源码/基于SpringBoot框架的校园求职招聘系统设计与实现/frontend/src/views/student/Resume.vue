@@ -1,8 +1,8 @@
 <template>
-  <div class="page-container">
-    <el-row :gutter="16">
-      <el-col :span="17">
-        <div class="page-card">
+  <div class="page-container resume-page">
+    <el-row class="resume-layout" :gutter="16">
+      <el-col class="resume-main-col" :span="17">
+        <div class="page-card resume-main-card">
           <div class="header">
             <div>
               <h2>在线简历</h2>
@@ -39,15 +39,59 @@
         <ResumeSection title="项目经历" type="project" :items="projects" @add="openProject" @edit="openProject" @del="delProject" />
         <ResumeSection title="实习/工作经历" type="experience" :items="experiences" @add="openExperience" @edit="openExperience" @del="delExperience" />
       </el-col>
-      <el-col :span="7">
-        <div class="page-card tips">
-          <h3>简历优化建议</h3>
-          <ul>
-            <li>基本信息保持真实，手机号和邮箱必须可联系。</li>
-            <li>项目经历建议用「背景-任务-行动-结果」描述。</li>
-            <li>技能证书和获奖经历尽量量化成果。</li>
-            <li>自我评价避免空话，突出岗位匹配度。</li>
-          </ul>
+      <el-col class="resume-side-col" :span="7">
+        <div class="page-card tips resume-tips">
+          <div class="tips-head">
+            <div>
+              <h3>简历优化建议</h3>
+              <p>按企业筛选习惯补齐关键内容</p>
+            </div>
+            <strong>{{ resume.completeRate || 0 }}%</strong>
+          </div>
+          <el-progress :percentage="resume.completeRate || 0" :stroke-width="10" />
+
+          <div class="tips-status">
+            <span>当前状态</span>
+            <strong>{{ Number(resume.completeRate || 0) >= 80 ? '可以投递' : '继续完善' }}</strong>
+            <p>{{ Number(resume.completeRate || 0) >= 80 ? '基础信息已经比较完整，下一步重点补项目成果、实习职责和岗位关键词。' : '建议先补齐联系方式、教育经历、项目经历和自我评价，再开始批量投递。' }}</p>
+          </div>
+
+          <div class="tip-block priority-block">
+            <h4>优先补强</h4>
+            <div class="priority-list">
+              <div>
+                <span>联系方式</span>
+                <strong>{{ resume.phone && resume.email ? '已完整' : '需补齐' }}</strong>
+              </div>
+              <div>
+                <span>项目经历</span>
+                <strong>{{ projects.length ? `${projects.length} 项` : '待新增' }}</strong>
+              </div>
+              <div>
+                <span>实习经历</span>
+                <strong>{{ experiences.length ? `${experiences.length} 段` : '可补充' }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="tip-block">
+            <h4>写法模板</h4>
+            <ul class="tips-list">
+              <li><strong>项目：</strong>背景 + 负责模块 + 技术方案 + 结果数据。</li>
+              <li><strong>技能：</strong>把“熟悉”改成可证明的框架、工具和产出。</li>
+              <li><strong>评价：</strong>少写空话，多写岗位匹配点和协作优势。</li>
+            </ul>
+          </div>
+
+          <div class="tip-block check-block">
+            <h4>投递前检查</h4>
+            <div class="check-grid">
+              <span>电话可联系</span>
+              <span>邮箱可联系</span>
+              <span>经历有时间</span>
+              <span>描述有结果</span>
+            </div>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -223,7 +267,144 @@ onMounted(load)
 <style scoped lang="scss">
 .header { display:flex; justify-content:space-between; align-items:center; gap:1rem; h2{margin-bottom:6px;} p{color:var(--cr-text-muted);} }
 .header-actions { display:flex; align-items:center; gap:.75rem; flex-wrap:wrap; justify-content:flex-end; }
-.tips ul { padding-left: 18px; li { list-style: disc; color:var(--cr-text-soft); line-height:1.9; } }
+.resume-layout {
+  align-items: flex-start;
+}
+.resume-side-col {
+  display: flex;
+}
+.resume-tips {
+  position: sticky;
+  top: 20px;
+  width: 100%;
+  min-height: clamp(700px, calc(100dvh - 190px), 920px);
+  padding: 28px;
+}
+.tips-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  h3 {
+    margin-bottom: 6px;
+    color: var(--cr-text);
+    font-size: 22px;
+  }
+
+  p {
+    color: var(--cr-text-muted);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  strong {
+    min-width: 72px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    background: var(--cr-primary-soft);
+    color: var(--cr-primary);
+    font-size: 20px;
+    text-align: center;
+  }
+}
+.tips-status {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid rgba(37, 99, 235, 0.16);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(8, 145, 178, 0.08));
+
+  span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--cr-text-muted);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--cr-text);
+    font-size: 22px;
+  }
+
+  p {
+    color: var(--cr-text-soft);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+}
+.tip-block {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--cr-border-soft);
+
+  h4 {
+    margin-bottom: 14px;
+    color: var(--cr-text);
+    font-size: 18px;
+  }
+}
+.priority-list {
+  display: grid;
+  gap: 12px;
+
+  div {
+    min-width: 0;
+    padding: 16px 18px;
+    border: 1px solid var(--cr-border-soft);
+    border-radius: 10px;
+    background: var(--cr-surface-soft);
+  }
+
+  span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--cr-text-muted);
+    font-size: 14px;
+  }
+
+  strong {
+    color: var(--cr-text);
+    font-size: 18px;
+  }
+}
+.tips-list {
+  display: grid;
+  gap: 12px;
+  padding-left: 0;
+
+  li {
+    list-style: none;
+    color: var(--cr-text-soft);
+    line-height: 1.85;
+    font-size: 15px;
+  }
+
+  strong {
+    color: var(--cr-text);
+  }
+}
+.check-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+
+  span {
+    min-width: 0;
+    padding: 12px 10px;
+    text-align: center;
+    border: 1px solid var(--cr-border-soft);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--cr-primary);
+    font-size: 14px;
+    font-weight: 700;
+  }
+}
 :deep(.section-head){display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;h3{border-left:3px solid var(--cr-primary);padding-left:10px;color:var(--cr-text);}}
 :deep(.section-item){display:flex;justify-content:space-between;padding:14px;border:1px solid var(--cr-border-soft);border-radius:6px;margin-bottom:10px;background:#fafafa;}
 :deep(.item-title){font-weight:600;color:var(--cr-text);margin-bottom:4px;}
@@ -239,6 +420,6 @@ onMounted(load)
 :deep(.preview-item:last-child){border-bottom:0;}
 :deep(.preview-item-title){font-weight:650;color:var(--cr-text);margin-bottom:.25rem;}
 :deep(.preview-item-time),:deep(.preview-empty){color:var(--cr-text-muted);font-size:.8125rem;}
-@media (max-width:48rem){.header{align-items:flex-start;flex-direction:column}.header-actions{justify-content:flex-start}.header-actions :deep(.el-button){margin-left:0;}}
+@media (max-width:48rem){.header{align-items:flex-start;flex-direction:column}.header-actions{justify-content:flex-start}.header-actions :deep(.el-button){margin-left:0;}.resume-tips{position:static;min-height:0;}}
 </style>
 

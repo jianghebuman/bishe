@@ -1,6 +1,6 @@
 <template>
-  <div class="page-container profile-page">
-    <div class="page-card profile-card">
+  <div class="page-container student-screen-page profile-page">
+    <div class="page-card student-screen-card profile-card">
       <div class="header">
         <div>
           <h2>个人信息维护</h2>
@@ -9,18 +9,29 @@
       </div>
       <el-divider />
       <div class="profile-body">
-        <el-upload class="identity-uploader" :show-file-list="false" :http-request="uploadAvatar" accept="image/*">
-          <div class="identity-upload">
-            <div class="identity-preview">
-              <el-avatar :size="96" :src="form.avatar" class="avatar"><el-icon><User /></el-icon></el-avatar>
-              <span class="upload-mark"><el-icon><UploadFilled /></el-icon></span>
+        <div class="profile-aside">
+          <el-upload class="identity-uploader" :show-file-list="false" :http-request="uploadAvatar" accept="image/*">
+            <div class="identity-upload">
+              <div class="identity-preview">
+                <el-avatar :size="96" :src="form.avatar" class="avatar"><el-icon><User /></el-icon></el-avatar>
+                <span class="upload-mark"><el-icon><UploadFilled /></el-icon></span>
+              </div>
+              <div class="identity-copy">
+                <span class="upload-label">{{ form.avatar ? '更换头像' : '上传头像' }}</span>
+                <span class="upload-sub">用于企业查看简历时识别你</span>
+              </div>
             </div>
-            <div class="identity-copy">
-              <span class="upload-label">{{ form.avatar ? '更换头像' : '上传头像' }}</span>
-              <span class="upload-sub">用于企业查看简历时识别你</span>
+          </el-upload>
+          <div class="profile-glance">
+            <h3>资料概览</h3>
+            <div class="glance-grid">
+              <div><span>学院</span><strong>{{ form.college || '待填写' }}</strong></div>
+              <div><span>专业</span><strong>{{ form.major || '待填写' }}</strong></div>
+              <div><span>年级</span><strong>{{ form.grade || '待填写' }}</strong></div>
+              <div><span>学历</span><strong>{{ form.education || '待填写' }}</strong></div>
             </div>
           </div>
-        </el-upload>
+        </div>
         <el-form :model="form" label-width="100px" class="form profile-form">
           <el-row :gutter="20">
             <el-col :xs="24" :sm="12" :xl="8"><el-form-item label="登录账号"><el-input v-model="form.username" disabled /></el-form-item></el-col>
@@ -39,6 +50,11 @@
             <el-button type="primary" :loading="saving" @click="save">保存资料</el-button>
             <el-button @click="load">重置</el-button>
           </el-form-item>
+          <div class="profile-visibility">
+            <div><span>联系方式</span><strong>{{ form.phone || form.email ? '已填写' : '待补充' }}</strong></div>
+            <div><span>个人简介</span><strong>{{ form.intro ? `${String(form.intro).length} 字` : '待补充' }}</strong></div>
+            <div><span>展示身份</span><strong>{{ form.realName || form.username || '学生用户' }}</strong></div>
+          </div>
         </el-form>
       </div>
     </div>
@@ -75,6 +91,9 @@ onMounted(load)
 
 .profile-card {
   padding: clamp(24px, 2vw, 34px);
+  min-height: min(58rem, calc(100dvh - 8rem));
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
@@ -87,10 +106,18 @@ onMounted(load)
 }
 
 .profile-body {
+  flex: 1;
+  min-height: 0;
   display: grid;
-  grid-template-columns: minmax(248px, 300px) minmax(0, 1fr);
+  grid-template-columns: minmax(270px, 330px) minmax(0, 1fr);
   gap: clamp(28px, 3vw, 48px);
-  align-items: start;
+  align-items: stretch;
+}
+
+.profile-aside {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 18px;
 }
 
 .identity-uploader {
@@ -105,7 +132,7 @@ onMounted(load)
 .identity-upload {
   width: 100%;
   min-width: 0;
-  min-height: 278px;
+  min-height: 300px;
   padding: 24px 18px;
   display: flex;
   flex-direction: column;
@@ -121,6 +148,48 @@ onMounted(load)
   &:hover {
     border-color: var(--cr-primary);
     box-shadow: 0 8px 18px rgba(37, 99, 235, .14);
+  }
+}
+
+.profile-glance {
+  min-height: 0;
+  padding: 18px;
+  border: 1px solid var(--cr-border-soft);
+  border-radius: 8px;
+  background: var(--cr-surface-soft);
+
+  h3 {
+    margin-bottom: 14px;
+    color: var(--cr-text);
+    font-size: 15px;
+  }
+}
+
+.glance-grid {
+  display: grid;
+  gap: 14px;
+
+  div {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--cr-border-soft);
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--cr-text-muted);
+    font-size: 12px;
+  }
+
+  strong {
+    display: block;
+    color: var(--cr-text);
+    font-size: 14px;
+    line-height: 1.35;
+    word-break: break-word;
   }
 }
 
@@ -189,6 +258,33 @@ onMounted(load)
   }
 }
 
+.profile-visibility {
+  margin-left: 100px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+
+  div {
+    min-width: 0;
+    padding: 16px 18px;
+    border: 1px solid var(--cr-border-soft);
+    border-radius: 8px;
+    background: #f8fbff;
+  }
+
+  span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--cr-text-muted);
+    font-size: 12px;
+  }
+
+  strong {
+    color: var(--cr-text);
+    font-size: 14px;
+  }
+}
+
 @media (max-width: 1180px) {
   .profile-card {
     padding: 24px;
@@ -204,6 +300,10 @@ onMounted(load)
     gap: 22px;
   }
 
+  .profile-aside {
+    grid-template-rows: none;
+  }
+
   .identity-uploader,
   .identity-upload,
   .identity-uploader :deep(.el-upload) {
@@ -214,19 +314,29 @@ onMounted(load)
     min-width: 0;
     min-height: 220px;
   }
+
+  .glance-grid,
+  .profile-visibility {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profile-visibility {
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 640px) {
-  .profile-page {
-    padding: 12px;
-  }
-
   .profile-card {
     padding: 20px;
   }
 
   .identity-upload {
     min-height: 188px;
+  }
+
+  .glance-grid,
+  .profile-visibility {
+    grid-template-columns: 1fr;
   }
 }
 </style>
