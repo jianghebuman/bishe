@@ -86,6 +86,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 .head h2 { color: var(--cr-text); .el-icon { vertical-align: middle; color: var(--cr-primary); } }
 .head .sub { color: var(--cr-text-muted); margin-top: .375rem; }
+.portal-list-card { --portal-list-card-min-height: calc(100dvh - 15.625rem); }
 .list { display: grid; gap: .625rem; }
 .talk-item { min-height: 9.125rem; background: #fff; border: 0.0625rem solid var(--cr-border-soft); border-radius: var(--cr-radius); padding: .875rem 1rem; display: grid; grid-template-columns: minmax(4rem, 4.5rem) minmax(0, 1fr); gap: .875rem; box-shadow: var(--cr-shadow-soft);
   .date { background: linear-gradient(135deg, var(--cr-primary), var(--cr-accent)); border-radius: var(--cr-radius-sm); color: #fff; text-align: center; padding: .625rem 0;

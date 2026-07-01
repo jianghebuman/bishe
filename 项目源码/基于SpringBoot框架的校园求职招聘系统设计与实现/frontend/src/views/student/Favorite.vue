@@ -229,8 +229,13 @@ onMounted(() => {
 .tags { display: flex; flex-wrap: wrap; gap: .375rem; margin-top: .625rem; }
 .card-footer { display: flex; justify-content: space-between; align-items: center; gap: .75rem; align-self: end; margin-top: auto; padding-top: .75rem; border-top: .0625rem dashed var(--cr-border-soft); color: var(--cr-text-muted); font-size: .75rem; }
 .actions { display: flex; align-items: center; gap: .5rem; }
+.actions :deep(.el-button.is-text) {
+  min-height: 2.5rem;
+  min-width: 3.25rem;
+  padding-inline: .875rem;
+}
 .pagination-wrap {
-  min-height: 2.75rem;
+  min-height: 3rem;
   margin-top: 0;
   padding-top: .75rem;
   align-items: center;

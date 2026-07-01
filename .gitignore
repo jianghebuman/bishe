@@ -49,6 +49,7 @@ pnpm-debug.log*
 .playwright-mcp/
 _browser_skill_cache.txt
 项目源码/基于SpringBoot框架的校园求职招聘系统设计与实现/.run/
+项目源码/基于SpringBoot框架的校园求职招聘系统设计与实现/frontend/visual-check-21st/
 
 # Local environment files
 .env

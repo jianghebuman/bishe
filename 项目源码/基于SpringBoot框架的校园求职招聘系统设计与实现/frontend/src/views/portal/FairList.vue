@@ -84,6 +84,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 .head h2 { color: var(--cr-text); .el-icon { vertical-align: middle; color: var(--cr-primary); } }
 .head .sub { color: var(--cr-text-muted); margin-top: .375rem; }
+.portal-list-card { --portal-list-card-min-height: calc(100dvh - 15.625rem); }
 .grid { display: grid; align-content: start; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22.5rem), 1fr)); gap: .875rem; }
 .fair-card { min-height: 23.625rem; background: #fff; border: 0.0625rem solid var(--cr-border-soft); border-radius: var(--cr-radius); overflow: hidden; box-shadow: var(--cr-shadow-soft); display: flex; flex-direction: column;
   .cover { aspect-ratio: 16 / 5; min-block-size: clamp(5.75rem, 10vw, 7rem); background-size: cover; background-position: center; position: relative;

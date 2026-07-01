@@ -1,6 +1,6 @@
 <template>
-  <div class="page-container">
-    <div class="page-card">
+  <div class="page-container enterprise-list-page">
+    <div class="page-card page-flex-card compact-list-card enterprise-list-card">
       <div class="header">
         <div>
           <h2>HR 管理</h2>

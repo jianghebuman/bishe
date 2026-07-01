@@ -135,6 +135,7 @@ onMounted(async () => {
 .head h2 { color: var(--cr-text); .el-icon { vertical-align: middle; color: var(--cr-primary); } }
 .head .sub { color: var(--cr-text-muted); margin-top: .375rem; }
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 18rem); gap: clamp(1rem, 2vw, 1.25rem); align-items: start; }
+.main { --portal-list-card-min-height: calc(100dvh - 15.625rem); }
 .news-list-wrap { display: grid; }
 .news-row { min-height: 6.375rem; display: flex; align-items: center; gap: .875rem; padding: .75rem 0; border-bottom: 0.0625rem dashed #ebeef5; cursor: pointer;
   &:hover .title { color: var(--cr-primary); }

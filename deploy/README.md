@@ -28,7 +28,7 @@
 mysql -uroot -p < 数据库脚本/campus_recruitment.sql
 ```
 
-当前初始化脚本包含 37 张业务表、434 个字段，并内置企业多 HR 演示数据：`enterprise` 表保存公司主体，`enterprise_hr` 表保存 HR 登录账号，岗位、投递、面试、Offer、人才库等业务数据记录负责 HR。
+当前初始化脚本包含 36 张业务表、425 个字段，并内置企业多 HR 演示数据：`enterprise` 表保存公司主体，`enterprise_hr` 表保存 HR 登录账号，岗位、投递、面试、Offer、人才库等业务数据记录负责 HR。2026-07-02 已移除轮播图功能，脚本不再创建 `banner` 表或 `admin:banner` 权限。
 
 ## 构建后端
 

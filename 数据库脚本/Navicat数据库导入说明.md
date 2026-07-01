@@ -32,10 +32,10 @@
 该脚本包含：
 
 - 自动创建数据库 `campus_recruitment`
-- 37 张业务表（共 434 个字段）
+- 36 张业务表（共 425 个字段）
 - 角色、字典、岗位类别初始化数据
 - 管理员、学生、企业主管 HR、企业普通 HR 测试账号
-- 首页轮播图、公告、宣讲会、招聘会、职位、简历、投递、面试、Offer、人才库、论坛等演示数据
+- 公告、宣讲会、招聘会、职位、简历、投递、面试、Offer、人才库、论坛等演示数据
 - 企业多 HR 模型：`enterprise` 为公司主体，`enterprise_hr` 为 HR 登录账号；岗位、投递、面试、Offer、人才库均记录 `hr_id`
 
 ## 3. 使用 Navicat Premium 17 导入步骤
@@ -137,7 +137,7 @@ DROP DATABASE campus_recruitment;
 ## 7. 脚本同步说明
 
 - 仓库中的权威初始化脚本为 [campus_recruitment.sql](./campus_recruitment.sql)。
-- 2026-06-30 已同步企业收藏表和企业多 HR 模型，当前初始化脚本为 37 张表、434 个字段。
+- 2026-06-30 已同步企业收藏表和企业多 HR 模型；2026-07-02 已移除轮播图功能，当前初始化脚本为 36 张表、425 个字段。
 - 同日已将 `enterprise_hr` 表补入本机 `campus_recruitment` 数据库，并为 `job_post`、`job_apply`、`interview_notice`、`interview_feedback`、`offer_record`、`talent_pool` 增加 `hr_id`。
 - 当前演示数据约包含 64 家企业、77 个企业 HR、72 名学生、80 个岗位、101 条投递、18 条面试通知、20 条 Offer、54 条人才库记录。
 - 本地数据库在系统运行后会新增业务数据，因此 `operation_log`、`system_notice`、`activity_sign`、`job_apply` 等表的记录数可能高于初始化脚本，这是正常现象；若需要回到初始演示数据，请重新导入脚本。

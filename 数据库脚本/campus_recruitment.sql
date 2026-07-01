@@ -11,7 +11,7 @@
   2. 所有表均含 create_time / update_time / deleted(逻辑删除) 公共字段。
   3. 主键统一 bigint 自增。
   4. 密码字段存储 BCrypt 加密串，初始测试账号明文均为 123456。
-  5. 末尾附带字典数据、轮播图、公告、宣讲会、招聘会、职位、简历等样例数据
+  5. 末尾附带字典数据、公告、宣讲会、招聘会、职位、简历等样例数据
      以及三类角色测试账号，导入后即可直接登录体验。
  ============================================================================
 */
@@ -736,23 +736,6 @@ CREATE TABLE `announcement` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公告资讯表';
 
 -- ----------------------------
--- 轮播图表
--- ----------------------------
-DROP TABLE IF EXISTS `banner`;
-CREATE TABLE `banner` (
-  `id`          bigint       NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `title`       varchar(120)          DEFAULT NULL COMMENT '标题',
-  `image_url`   varchar(255) NOT NULL COMMENT '图片地址',
-  `link_url`    varchar(255)          DEFAULT NULL COMMENT '跳转链接',
-  `sort`        int                   DEFAULT 0 COMMENT '排序',
-  `status`      tinyint      NOT NULL DEFAULT 1 COMMENT '状态：1显示0隐藏',
-  `create_time` datetime              DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `deleted`     tinyint      NOT NULL DEFAULT 0 COMMENT '逻辑删除：0否1是',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='轮播图表';
-
--- ----------------------------
 -- 论坛帖子表
 -- ----------------------------
 DROP TABLE IF EXISTS `forum_post`;
@@ -992,12 +975,6 @@ INSERT INTO `favorite_job` (`student_id`,`job_id`) VALUES (1,2),(1,4),(2,1);
 -- 企业收藏
 INSERT INTO `favorite_enterprise` (`student_id`,`enterprise_id`) VALUES (1,1),(1,2),(2,1);
 
--- 轮播图
-INSERT INTO `banner` (`title`,`image_url`,`link_url`,`sort`,`status`) VALUES
-('春季校园双选会岗位上线','/upload/image/seed/banner-campus-fair.jpg','/fairs',1,1),
-('名企宣讲与校招直通','/upload/image/seed/banner-enterprise-talk.jpg','/talks',2,1),
-('就业政策与求职指导','/upload/image/seed/banner-career-guidance.jpg','/news',3,1);
-
 -- 公告资讯
 INSERT INTO `announcement` (`id`,`category_id`,`title`,`summary`,`content`,`author`,`view_count`,`is_top`,`status`,`publish_time`) VALUES
 (1,1,'关于2026届毕业生就业工作的通知','学校就业办发布2026届毕业生就业相关政策与安排。','<p>各位同学：</p><p>为做好2026届毕业生就业工作，现将有关事项通知如下……</p>','就业办',320,1,1,'2026-03-01 10:00:00'),
@@ -1080,7 +1057,6 @@ INSERT INTO `permission` (`id`,`perm_code`,`perm_name`,`perm_type`,`parent_id`,`
 (5,'admin:category','岗位类别','MENU',0,'/admin/category',5),
 (6,'admin:dict','字典管理','MENU',0,'/admin/dict',6),
 (7,'admin:announcement','公告资讯','MENU',0,'/admin/announcement',7),
-(8,'admin:banner','轮播图','MENU',0,'/admin/banner',8),
 (9,'admin:talk','宣讲会','MENU',0,'/admin/talk',9),
 (10,'admin:fair','招聘会','MENU',0,'/admin/fair',10),
 (11,'admin:forum','论坛管理','MENU',0,'/admin/forum',11),
@@ -1111,7 +1087,7 @@ INSERT INTO `permission` (`id`,`perm_code`,`perm_name`,`perm_type`,`parent_id`,`
 (36,'student:chat','在线沟通','MENU',0,'/student/chat',13);
 
 INSERT INTO `role_permission` (`role_id`,`permission_id`) VALUES
-(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),(1,33),
+(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,9),(1,10),(1,11),(1,12),(1,13),(1,33),
 (2,14),(2,15),(2,16),(2,17),(2,18),(2,19),(2,20),(2,21),(2,34),
 (3,22),(3,23),(3,24),(3,25),(3,26),(3,27),(3,28),(3,29),(3,30),(3,31),(3,32),(3,35),(3,36);
 
@@ -1291,11 +1267,6 @@ INSERT INTO `chat_message` (`from_user_id`,`from_role`,`to_user_id`,`to_role`,`j
 (1,'STUDENT',2,'ENTERPRISE',1,NULL,'您好，我想咨询腾讯后端开发工程师岗位，对实习时长有要求吗？',1);
 
 -- 更多内容、活动和互动数据
-INSERT INTO `banner` (`title`,`image_url`,`link_url`,`sort`,`status`) VALUES
-('AI与大数据专场岗位精选','/upload/image/seed/banner-ai-data.jpg','/jobs?keyword=算法',4,1),
-('简历门诊与面试辅导开放预约','/upload/image/seed/banner-resume-clinic.jpg','/news/2',5,1),
-('校园职业发展服务预览','/upload/image/seed/banner-career-guidance.jpg','',99,0);
-
 INSERT INTO `announcement` (`id`,`category_id`,`title`,`summary`,`content`,`author`,`view_count`,`is_top`,`status`,`publish_time`) VALUES
 (9,3,'简历门诊与一对一求职辅导预约开放','针对秋招同学开放简历一对一优化服务。','<p>本周起，校就业指导中心开放简历门诊预约，帮助同学梳理项目亮点与岗位匹配度。</p>','就业指导中心',128,0,1,'2026-03-09 10:00:00'),
 (10,2,'校企联合开展Java后端专场招聘','多家企业面向后端开发岗位集中放出需求。','<p>本轮专场招聘覆盖Java后端、测试开发与中间件开发方向，欢迎相关专业同学投递。</p>','就业办',144,0,1,'2026-03-10 10:00:00'),

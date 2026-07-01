@@ -1,5 +1,18 @@
 USE campus_recruitment;
 
+-- Remove retired banner carousel feature.
+DELETE rp
+FROM `role_permission` rp
+JOIN `permission` p ON p.`id` = rp.`permission_id`
+WHERE p.`perm_code` = 'admin:banner'
+   OR p.`path` = '/admin/banner';
+
+DELETE FROM `permission`
+WHERE `perm_code` = 'admin:banner'
+   OR `path` = '/admin/banner';
+
+DROP TABLE IF EXISTS `banner`;
+
 DELIMITER $$
 DROP PROCEDURE IF EXISTS add_column_if_missing$$
 CREATE PROCEDURE add_column_if_missing(

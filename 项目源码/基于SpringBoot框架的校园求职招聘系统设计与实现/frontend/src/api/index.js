@@ -13,7 +13,6 @@ export const authApi = {
 // ==================== 公共（无需登录） ====================
 export const publicApi = {
   home: () => request.get('/public/home'),
-  banners: () => request.get('/public/banners'),
   schools: () => request.get('/public/schools'),
   jobs: (params) => request.get('/public/jobs', { params }),
   jobDetail: (id) => request.get(`/public/jobs/${id}`),
@@ -193,10 +192,6 @@ export const adminApi = {
   saveAnnouncement: (data) => request.post('/admin/announcement', data),
   updateAnnouncement: (data) => request.put('/admin/announcement', data),
   delAnnouncement: (id) => request.delete(`/admin/announcement/${id}`),
-  // 轮播图
-  banners: () => request.get('/admin/banner'),
-  saveBanner: (data) => request.post('/admin/banner', data),
-  delBanner: (id) => request.delete(`/admin/banner/${id}`),
   // 宣讲会/招聘会
   talks: (params) => request.get('/admin/talk', { params }),
   saveTalk: (data) => request.post('/admin/talk', data),

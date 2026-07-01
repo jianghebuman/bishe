@@ -92,7 +92,6 @@ const routes = [
       { path: 'category', component: () => import('@/views/admin/Category.vue'), meta: { title: '分类管理' } },
       { path: 'dict', component: () => import('@/views/admin/Dict.vue'), meta: { title: '字典管理' } },
       { path: 'announcement', component: () => import('@/views/admin/Announcement.vue'), meta: { title: '公告资讯' } },
-      { path: 'banner', component: () => import('@/views/admin/Banner.vue'), meta: { title: '轮播图' } },
       { path: 'talk', component: () => import('@/views/admin/Talk.vue'), meta: { title: '宣讲会' } },
       { path: 'fair', component: () => import('@/views/admin/Fair.vue'), meta: { title: '招聘会' } },
       { path: 'forum', component: () => import('@/views/admin/ForumManage.vue'), meta: { title: '论坛管理' } },
@@ -108,7 +107,10 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+  scrollBehavior() {
+    return { left: 0, top: 0 }
+  }
 })
 
 const roleHomeMap = {

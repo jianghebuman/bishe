@@ -50,9 +50,6 @@
 .toolbar :deep(.el-button) {
   min-width: 5.5rem;
 }
-.admin-table-card {
-  --portal-list-card-min-height: calc(100dvh - 8.5rem);
-}
 .admin-table-card :deep(.el-table) {
   flex: 1;
   min-height: 18rem;

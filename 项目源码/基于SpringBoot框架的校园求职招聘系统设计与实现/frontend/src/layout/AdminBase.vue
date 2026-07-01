@@ -38,7 +38,7 @@
               </span>
               <span class="top-user-copy">
                 <span class="top-user-role">{{ roleLabel }}</span>
-                <span class="top-user-name">{{ userStore.name || userStore.username }}</span>
+                <span class="top-user-name" :title="userStore.name || userStore.username">{{ userStore.name || userStore.username }}</span>
               </span>
               <el-icon class="top-user-arrow"><ArrowDown /></el-icon>
             </button>
@@ -48,7 +48,7 @@
                   <el-avatar :size="46" :src="userStore.avatar"><el-icon><User /></el-icon></el-avatar>
                   <div>
                     <strong>{{ userStore.name || userStore.username }}</strong>
-                    <span>{{ roleLabel }} · {{ userStore.username }}</span>
+                    <span class="top-user-panel-meta" :title="`${roleLabel} · ${userStore.username}`">{{ roleLabel }} · {{ userStore.username }}</span>
                   </div>
                 </div>
                 <el-dropdown-item command="portal" class="top-user-menu-item">
@@ -71,7 +71,7 @@
           </el-dropdown>
         </div>
       </el-header>
-      <el-main class="main">
+      <el-main ref="mainRef" class="main">
         <router-view />
       </el-main>
     </el-container>
@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, computed, nextTick, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import { School, Fold, Expand, User, ArrowDown, HomeFilled, Lock, SwitchButton } from '@element-plus/icons-vue'
@@ -93,6 +93,7 @@ defineProps({
 })
 const collapse = ref(false)
 const windowWidth = ref(window.innerWidth)
+const mainRef = ref()
 const isCompact = computed(() => windowWidth.value < 768)
 const effectiveCollapse = computed(() => collapse.value || isCompact.value)
 const asideWidth = computed(() => (effectiveCollapse.value ? '64px' : 'clamp(196px, 15vw, 232px)'))
@@ -149,6 +150,11 @@ onBeforeUnmount(() => {
   window.clearInterval(badgeTimer)
 })
 watch(() => userStore.token, refreshBadges)
+watch(() => route.fullPath, async () => {
+  await nextTick()
+  const mainEl = mainRef.value?.$el || mainRef.value
+  mainEl?.scrollTo?.({ top: 0, left: 0 })
+})
 </script>
 
 <style scoped lang="scss">

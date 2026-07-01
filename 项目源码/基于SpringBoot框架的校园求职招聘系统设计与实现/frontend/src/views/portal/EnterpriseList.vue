@@ -137,7 +137,7 @@ onMounted(async () => {
 .head h2 { color: var(--cr-text); .el-icon { vertical-align: middle; color: var(--cr-primary); } }
 .head .sub { color: var(--cr-text-muted); margin-top: .375rem; }
 .favorite-entry { margin-left: 0; flex-shrink: 0; }
-.portal-list-card { --portal-list-card-min-height: calc(100dvh - 16rem); }
+.portal-list-card { --portal-list-card-min-height: calc(100dvh - 15.625rem); }
 .ent-scroll { display: flex; flex-direction: column; }
 .grid { display: grid; align-content: start; grid-template-columns: repeat(auto-fill, minmax(min(100%, 21.25rem), 1fr)); grid-auto-rows: minmax(11.25rem, auto); gap: 1rem; }
 .ent-card { min-height: 11.25rem; background: rgba(255,255,255,.96); border: 0.0625rem solid var(--cr-border-soft); border-radius: var(--cr-radius); padding: clamp(.9375rem, 1.2vw, 1.125rem); display: flex; align-items: stretch; gap: .875rem; cursor: pointer; transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;

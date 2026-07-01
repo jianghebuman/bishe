@@ -1,1 +1,94 @@
-<template><AdminTablePage title="岗位类别管理" desc="维护岗位大类与子类，用于职位筛选和统计" :list="list" :total="list.length" :loading="loading" :query="query" @load="load" @open="open"><template #columns><el-table-column prop="name" label="类别名称"/><el-table-column prop="parentId" label="父级ID" width="100"/><el-table-column prop="sort" label="排序" width="90"/></template><template #rowActions="{row}"><el-button text type="primary" @click="open(row)">编辑</el-button><el-button text type="danger" @click="del(row)">删除</el-button></template><template #dialogs><el-dialog v-model="dialog" title="岗位类别" width="420px"><el-form :model="form" label-width="80px"><el-form-item label="名称"><el-input v-model="form.name"/></el-form-item><el-form-item label="父级ID"><el-input-number v-model="form.parentId" :min="0"/></el-form-item><el-form-item label="排序"><el-input-number v-model="form.sort" :min="0"/></el-form-item></el-form><template #footer><el-button @click="dialog=false">取消</el-button><el-button type="primary" @click="save">保存</el-button></template></el-dialog></template></AdminTablePage></template><script setup>import{reactive,ref,onMounted}from'vue';import{ElMessage,ElMessageBox}from'element-plus';import AdminTablePage from '@/components/AdminTablePage.vue';import{adminApi}from'@/api';const query=reactive({pageNum:1,pageSize:999});const list=ref([]),loading=ref(false),dialog=ref(false);const form=reactive({});const load=async()=>{loading.value=true;try{list.value=(await adminApi.categories()).data||[]}finally{loading.value=false}};const open=row=>{Object.keys(form).forEach(k=>delete form[k]);Object.assign(form,row||{parentId:0,sort:0});dialog.value=true};const save=async()=>{await adminApi.saveCategory(form);ElMessage.success('保存成功');dialog.value=false;load()};const del=row=>ElMessageBox.confirm('确定删除该类别？').then(async()=>{await adminApi.delCategory(row.id);load()});onMounted(load)</script>
+<template>
+  <AdminTablePage
+    title="岗位类别管理"
+    desc="维护岗位大类与子类，用于职位筛选和统计"
+    :list="pagedList"
+    :total="list.length"
+    :loading="loading"
+    :query="query"
+    @load="load"
+    @open="open"
+  >
+    <template #columns>
+      <el-table-column prop="name" label="类别名称" />
+      <el-table-column prop="parentId" label="父级ID" width="100" />
+      <el-table-column prop="sort" label="排序" width="90" />
+    </template>
+
+    <template #rowActions="{ row }">
+      <el-button text type="primary" @click="open(row)">编辑</el-button>
+      <el-button text type="danger" @click="del(row)">删除</el-button>
+    </template>
+
+    <template #dialogs>
+      <el-dialog v-model="dialog" title="岗位类别" width="420px">
+        <el-form :model="form" label-width="80px">
+          <el-form-item label="名称">
+            <el-input v-model="form.name" />
+          </el-form-item>
+          <el-form-item label="父级ID">
+            <el-input-number v-model="form.parentId" :min="0" />
+          </el-form-item>
+          <el-form-item label="排序">
+            <el-input-number v-model="form.sort" :min="0" />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="dialog = false">取消</el-button>
+          <el-button type="primary" @click="save">保存</el-button>
+        </template>
+      </el-dialog>
+    </template>
+  </AdminTablePage>
+</template>
+
+<script setup>
+import { computed, reactive, ref, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import AdminTablePage from '@/components/AdminTablePage.vue'
+import { adminApi } from '@/api'
+
+const query = reactive({ pageNum: 1, pageSize: 10 })
+const list = ref([])
+const loading = ref(false)
+const dialog = ref(false)
+const form = reactive({})
+
+const pagedList = computed(() => {
+  const start = (query.pageNum - 1) * query.pageSize
+  return list.value.slice(start, start + query.pageSize)
+})
+
+const load = async () => {
+  loading.value = true
+  try {
+    list.value = (await adminApi.categories()).data || []
+    const lastPage = Math.max(1, Math.ceil(list.value.length / query.pageSize))
+    if (query.pageNum > lastPage) query.pageNum = lastPage
+  } finally {
+    loading.value = false
+  }
+}
+
+const open = (row) => {
+  Object.keys(form).forEach(k => delete form[k])
+  Object.assign(form, row || { parentId: 0, sort: 0 })
+  dialog.value = true
+}
+
+const save = async () => {
+  await adminApi.saveCategory(form)
+  ElMessage.success('保存成功')
+  dialog.value = false
+  load()
+}
+
+const del = (row) => {
+  ElMessageBox.confirm('确定删除该类别？').then(async () => {
+    await adminApi.delCategory(row.id)
+    load()
+  })
+}
+
+onMounted(load)
+</script>

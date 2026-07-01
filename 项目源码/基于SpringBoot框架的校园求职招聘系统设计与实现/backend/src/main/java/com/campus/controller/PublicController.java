@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.campus.common.PageResult;
 import com.campus.common.Result;
 import com.campus.entity.Announcement;
-import com.campus.entity.Banner;
 import com.campus.entity.CampusTalk;
 import com.campus.entity.Enterprise;
 import com.campus.entity.EnterpriseHr;
@@ -18,7 +17,6 @@ import com.campus.entity.MessageFeedback;
 import com.campus.entity.School;
 import com.campus.entity.SysDict;
 import com.campus.mapper.AnnouncementMapper;
-import com.campus.mapper.BannerMapper;
 import com.campus.mapper.CampusTalkMapper;
 import com.campus.mapper.EnterpriseMapper;
 import com.campus.mapper.EnterpriseHrMapper;
@@ -63,9 +61,6 @@ import java.util.stream.Collectors;
 public class PublicController {
 
     @Autowired
-    private BannerMapper bannerMapper;
-
-    @Autowired
     private JobPostMapper jobPostMapper;
 
     @Autowired
@@ -103,15 +98,6 @@ public class PublicController {
 
     @Autowired
     private SchoolMapper schoolMapper;
-
-    /** 轮播图：仅启用(status=1)，按 sort 升序 */
-    @GetMapping("/banners")
-    public Result<List<Banner>> banners() {
-        LambdaQueryWrapper<Banner> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Banner::getStatus, 1)
-                .orderByAsc(Banner::getSort);
-        return Result.success(bannerMapper.selectList(wrapper));
-    }
 
     /**
      * 职位搜索分页：仅返回 审核通过(auditStatus=1) 且 招聘中(status=1) 的职位，
@@ -396,11 +382,6 @@ public class PublicController {
     @GetMapping("/home")
     public Result<Map<String, Object>> home() {
         Map<String, Object> data = new HashMap<>(8);
-
-        // 轮播图
-        LambdaQueryWrapper<Banner> bannerWrapper = new LambdaQueryWrapper<>();
-        bannerWrapper.eq(Banner::getStatus, 1).orderByAsc(Banner::getSort);
-        data.put("banners", bannerMapper.selectList(bannerWrapper));
 
         // 热门职位：按浏览量、申请量取前 15（审核通过且招聘中），附带企业名称
         LambdaQueryWrapper<JobPost> hotWrapper = new LambdaQueryWrapper<>();

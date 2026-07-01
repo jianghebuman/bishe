@@ -1,5 +1,5 @@
 <template>
-  <div class="portal-layout">
+  <div class="portal-layout" :class="{ 'is-fit-screen': isFitScreenRoute }">
     <el-header class="portal-header">
       <div class="portal-content header-inner">
         <div class="logo" @click="$router.push('/')">
@@ -37,7 +37,7 @@
                 </span>
                 <span class="top-user-copy">
                   <span class="top-user-role">{{ roleLabel }}</span>
-                  <span class="top-user-name">{{ userStore.name || userStore.username }}</span>
+                  <span class="top-user-name" :title="userStore.name || userStore.username">{{ userStore.name || userStore.username }}</span>
                 </span>
                 <el-icon class="top-user-arrow"><ArrowDown /></el-icon>
               </button>
@@ -47,7 +47,7 @@
                     <el-avatar :size="46" :src="userStore.avatar"><el-icon><User /></el-icon></el-avatar>
                     <div>
                       <strong>{{ userStore.name || userStore.username }}</strong>
-                      <span>{{ roleLabel }} · {{ userStore.username }}</span>
+                      <span class="top-user-panel-meta" :title="`${roleLabel} · ${userStore.username}`">{{ roleLabel }} · {{ userStore.username }}</span>
                     </div>
                   </div>
                   <div v-if="canUsePortalMessages" class="top-user-metrics">
@@ -83,10 +83,10 @@
         </div>
       </div>
     </el-header>
-    <el-main class="portal-main">
+    <el-main class="portal-main" :class="{ 'has-footer': showFooter, 'is-fit-screen': isFitScreenRoute }">
       <router-view />
     </el-main>
-    <el-footer class="portal-footer">
+    <el-footer v-if="showFooter" class="portal-footer">
       <div class="portal-content">
         <p>© 2026 校园求职招聘系统 | 基于 Spring Boot 框架的毕业设计</p>
         <p>Tech: Spring Boot · MyBatis-Plus · MySQL · Vue 3 · Element Plus · ECharts</p>
@@ -97,7 +97,7 @@
 
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { School, User, ArrowDown, Bell, ChatLineRound, UserFilled, SwitchButton } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
@@ -105,12 +105,16 @@ import { showLoginPrompt } from '@/utils/loginPrompt'
 import { refreshUnreadCounts } from '@/utils/unreadCounts'
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 const navMenuRef = ref()
 const unreadCount = computed(() => Number(userStore.unreadNoticeCount || 0))
 const chatUnreadCount = computed(() => Number(userStore.unreadChatCount || 0))
 const roleLabel = computed(() => ({ STUDENT: '学生用户', ENTERPRISE: '企业用户', ADMIN: '超级管理员' }[userStore.role] || '系统用户'))
 const canUsePortalMessages = computed(() => ['STUDENT', 'ENTERPRISE'].includes(userStore.role))
+const showFooter = computed(() => route.path === '/')
+const fitScreenPaths = new Set(['/jobs', '/enterprises', '/seekers', '/talks', '/fairs', '/news', '/forum', '/notice', '/chat'])
+const isFitScreenRoute = computed(() => fitScreenPaths.has(route.path))
 let badgeTimer
 
 const noticePath = '/notice'
@@ -148,6 +152,12 @@ const refreshBadges = async () => {
   }
 }
 
+const resetPageScroll = () => {
+  window.scrollTo({ top: 0, left: 0 })
+  document.documentElement.scrollTop = 0
+  document.body.scrollTop = 0
+}
+
 const onCommand = (cmd) => {
   if (cmd === 'logout') {
     ElMessageBox.confirm('退出后需要重新输入账号密码登录。', '退出登录', {
@@ -174,10 +184,22 @@ onMounted(() => {
 })
 onBeforeUnmount(() => window.clearInterval(badgeTimer))
 watch(() => userStore.token, refreshBadges)
+watch(() => route.fullPath, () => {
+  resetPageScroll()
+  nextTick(resetPageScroll)
+})
 </script>
 
 <style scoped lang="scss">
 .portal-layout { min-height: 100dvh; display: flex; flex-direction: column; }
+.portal-layout.is-fit-screen {
+  height: 100dvh;
+  overflow: hidden;
+}
+.portal-layout.is-fit-screen .portal-header,
+.portal-layout.is-fit-screen .portal-main {
+  flex-shrink: 0;
+}
 .portal-header {
   position: sticky;
   top: 0;
@@ -334,7 +356,12 @@ watch(() => userStore.token, refreshBadges)
 .user-area { display: flex; align-items: center; gap: 0.625rem; min-width: max-content; justify-content: flex-end; }
 :deep(.el-tooltip__trigger:focus-visible) { outline: none; }
 :deep(.el-tooltip__trigger:focus) { outline: none; }
-.portal-main { flex: 1; background: transparent; padding: clamp(0.875rem, 2vw, 1.625rem) 0; }
+.portal-main { flex: 1; background: transparent; padding: clamp(0.875rem, 2vw, 1.625rem) 0 0; }
+.portal-main.has-footer { padding-bottom: clamp(0.875rem, 2vw, 1.625rem); }
+.portal-main.is-fit-screen {
+  min-height: 0;
+  overflow: hidden;
+}
 .portal-footer {
   position: relative;
   overflow: hidden;

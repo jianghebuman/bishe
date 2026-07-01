@@ -16,7 +16,6 @@ import {
   Microphone,
   Notebook,
   OfficeBuilding,
-  PictureRounded,
   SuitcaseLine,
   UserFilled
 } from '@element-plus/icons-vue'
@@ -29,7 +28,6 @@ const menus = [
   { path: '/admin/category', title: '岗位类别', icon: Grid },
   { path: '/admin/dict', title: '字典管理', icon: Notebook },
   { path: '/admin/announcement', title: '公告资讯', icon: Bell },
-  { path: '/admin/banner', title: '轮播图', icon: PictureRounded },
   { path: '/admin/talk', title: '宣讲会', icon: Microphone },
   { path: '/admin/fair', title: '招聘会', icon: Calendar },
   { path: '/admin/forum', title: '论坛管理', icon: ChatDotRound },

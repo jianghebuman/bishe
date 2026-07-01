@@ -109,7 +109,7 @@ onMounted(load)
 </script>
 
 <style scoped lang="scss">
-.notice-list-card { --portal-list-card-min-height: calc(100dvh - 11rem); }
+.notice-list-card { --portal-list-card-min-height: calc(100dvh - 11.625rem); }
 .header { display:flex; justify-content:space-between; align-items:center; h2{margin-bottom:6px;} p{color:var(--cr-text-muted);} }
 .notice-scroll { display:flex; flex-direction:column; }
 .notice-item { flex:1; min-height:6.25rem; display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px dashed var(--cr-border-soft); cursor:pointer; transition:background .2s; &:hover{background:var(--cr-surface-soft)} &.unread .title::after{content:'未读';font-size:12px;background:var(--cr-danger);color:#fff;border-radius:8px;padding:1px 6px;margin-left:8px;} }

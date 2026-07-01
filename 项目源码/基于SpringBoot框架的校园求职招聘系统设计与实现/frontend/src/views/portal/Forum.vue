@@ -161,7 +161,7 @@ onMounted(async () => {
 .toolbar :deep(.el-radio-group) { min-width: 0; overflow-x: auto; }
 .toolbar-search { min-width: 0; }
 .content { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, 18rem); gap: clamp(1rem, 2vw, 1.25rem); align-items: stretch; }
-.main-list { --portal-list-card-min-height: calc(100dvh - 22rem); }
+.main-list { --portal-list-card-min-height: calc(100dvh - 21.625rem); }
 .forum-scroll { display: flex; flex-direction: column; }
 .post-list { display: grid; }
 .side { display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1rem, 2vw, 1.25rem); min-height: 0; height: 100%; }

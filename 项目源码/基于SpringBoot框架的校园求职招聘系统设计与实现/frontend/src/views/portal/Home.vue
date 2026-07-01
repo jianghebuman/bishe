@@ -2,11 +2,9 @@
   <div class="home portal-content">
     <section class="hero-shell">
       <BackgroundPaths3d class="hero-paths-3d" variant="light" :density="20" />
+      <Meteors3d class="hero-meteors-3d" :number="24" :min-delay="0.15" :max-delay="8" :min-duration="5" :max-duration="12" :travel="680" />
       <div class="cr-aurora-layer hero-aurora" aria-hidden="true"></div>
       <div class="cr-light-rays-layer hero-rays" aria-hidden="true"><i></i><i></i><i></i></div>
-      <div class="meteor-layer hero-meteors" aria-hidden="true">
-        <span v-for="meteor in heroMeteors" :key="meteor.left" :style="meteor"></span>
-      </div>
       <div class="hero-copy">
         <p class="hero-kicker text-animate-line" style="--text-delay: .02s">Campus recruitment hub</p>
         <h1 class="animated-gradient-text text-animate-word" style="--text-delay: .08s">校园求职招聘系统</h1>
@@ -50,50 +48,72 @@
       </div>
       <div class="hero-board">
         <div class="board-grid" aria-hidden="true">
-          <span v-for="i in 40" :key="i"></span>
+          <span v-for="i in 30" :key="i"></span>
         </div>
-        <div class="board-card board-card-main">
-          <span class="board-label">今日推荐</span>
-          <strong>{{ firstJob?.title || '前端开发工程师' }}</strong>
-          <p>{{ firstJob?.companyName || '优质企业' }} · {{ firstJob?.city || '杭州' }}</p>
-          <div class="salary-range">{{ formatSalary(firstJob) }}</div>
-        </div>
-        <div class="board-card board-card-side">
-          <span class="board-label">招聘活动</span>
-          <strong>{{ home.talks?.length || 0 }} 场宣讲</strong>
-          <p>{{ nextTalk?.title || '校企宣讲与招聘会同步更新' }}</p>
-        </div>
-        <div class="board-card board-card-mini">
-          <div class="mini-card-topline">
-            <span class="mini-card-kicker">匹配流程</span>
-            <strong>3 步完成</strong>
-          </div>
-          <div class="mini-card-summary">
-            从岗位筛选到在线沟通，流程清晰直达。
-          </div>
-          <div class="meteor-layer mini-meteors" aria-hidden="true">
-            <span v-for="meteor in miniMeteors" :key="`${meteor.top}-${meteor.left}`" :style="meteor"></span>
-          </div>
-          <div class="flow-steps">
-            <div class="flow-step">
-              <span class="step-index">01</span>
-              <div class="step-copy">
-                <b>岗位筛选</b>
-                <small>聚焦匹配岗位</small>
-              </div>
+        <div class="showcase-panel">
+          <div class="showcase-background">
+            <svg class="showcase-noise-texture" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <filter id="home-showcase-noise">
+                <feTurbulence type="fractalNoise" baseFrequency="0.42" numOctaves="6" stitchTiles="stitch" />
+                <feColorMatrix type="saturate" values="0" />
+                <feComponentTransfer>
+                  <feFuncR type="linear" slope="0.16" />
+                  <feFuncG type="linear" slope="0.16" />
+                  <feFuncB type="linear" slope="0.16" />
+                </feComponentTransfer>
+              </filter>
+              <rect width="100%" height="100%" filter="url(#home-showcase-noise)" opacity="0.64" />
+            </svg>
+            <BackgroundPaths3d class="showcase-paths-3d" variant="light" :density="18" />
+            <Meteors3d class="showcase-meteors-3d" :number="10" :min-delay="0.4" :max-delay="7" :min-duration="4" :max-duration="9" :travel="240" />
+            <div class="showcase-depth-grid" aria-hidden="true"></div>
+            <div class="showcase-flow-lines" aria-hidden="true"></div>
+            <div class="showcase-badge">
+              <span>本周热度</span>
+              <strong>{{ home.hotJobs?.length || 0 }} 个岗位</strong>
             </div>
-            <div class="flow-step">
-              <span class="step-index">02</span>
-              <div class="step-copy">
-                <b>简历投递</b>
-                <small>一键提交申请</small>
-              </div>
+          </div>
+          <div class="board-card board-card-main">
+            <span class="board-label">今日推荐</span>
+            <strong>{{ firstJob?.title || '多模态算法工程师' }}</strong>
+            <p>{{ firstJob?.companyName || '星火人工智能科技有限公司' }} · {{ firstJob?.city || '北京' }}</p>
+            <div class="salary-range">{{ formatSalary(firstJob) }}</div>
+          </div>
+          <div class="board-card board-card-side">
+            <span class="board-label">招聘活动</span>
+            <strong>{{ home.talks?.length || 0 }} 场宣讲</strong>
+            <p>{{ nextTalk?.title || '量海数据 BI 与分析宣讲会' }}</p>
+          </div>
+          <div class="board-card board-card-mini">
+            <div class="mini-card-topline">
+              <span class="mini-card-kicker">匹配流程</span>
+              <strong>3 步完成</strong>
             </div>
-            <div class="flow-step">
-              <span class="step-index">03</span>
-              <div class="step-copy">
-                <b>在线沟通</b>
-                <small>快速接收反馈</small>
+            <div class="mini-card-summary">
+              从岗位筛选到在线沟通，流程清晰直达。
+            </div>
+            <Meteors3d class="mini-meteors" :number="7" :min-delay="0.2" :max-delay="6" :min-duration="3" :max-duration="7" :travel="170" />
+            <div class="flow-steps">
+              <div class="flow-step">
+                <span class="step-index">01</span>
+                <div class="step-copy">
+                  <b>岗位筛选</b>
+                  <small>聚焦匹配岗位</small>
+                </div>
+              </div>
+              <div class="flow-step">
+                <span class="step-index">02</span>
+                <div class="step-copy">
+                  <b>简历投递</b>
+                  <small>一键提交申请</small>
+                </div>
+              </div>
+              <div class="flow-step">
+                <span class="step-index">03</span>
+                <div class="step-copy">
+                  <b>在线沟通</b>
+                  <small>快速接收反馈</small>
+                </div>
               </div>
             </div>
           </div>
@@ -255,6 +275,7 @@ import { Calendar, ChatLineRound, Compass, OfficeBuilding, Right, Search, Ticket
 import { publicApi } from '@/api'
 import { useUserStore } from '@/store/user'
 import BackgroundPaths3d from '@/components/BackgroundPaths3d.vue'
+import Meteors3d from '@/components/Meteors3d.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -269,19 +290,6 @@ const quickActions = [
   { label: '宣讲日历', hint: '近期活动', to: '/talks', icon: Calendar },
   { label: '在线沟通', hint: '消息入口', to: '/chat', icon: ChatLineRound }
 ]
-const heroMeteors = [
-  { top: '-8%', left: '58%', '--meteor-travel': '-34rem', animationDelay: '.2s', animationDuration: '8s' },
-  { top: '2%', left: '74%', '--meteor-travel': '-30rem', animationDelay: '1.8s', animationDuration: '9.5s' },
-  { top: '15%', left: '92%', '--meteor-travel': '-36rem', animationDelay: '3.1s', animationDuration: '10s' },
-  { top: '32%', left: '84%', '--meteor-travel': '-26rem', animationDelay: '4.6s', animationDuration: '8.5s' },
-  { top: '49%', left: '96%', '--meteor-travel': '-32rem', animationDelay: '6.2s', animationDuration: '11s' }
-]
-const miniMeteors = [
-  { top: '8%', left: '80%', '--meteor-travel': '-9rem', animationDelay: '.4s', animationDuration: '5.5s' },
-  { top: '36%', left: '96%', '--meteor-travel': '-8rem', animationDelay: '2.2s', animationDuration: '6.5s' },
-  { top: '68%', left: '72%', '--meteor-travel': '-7rem', animationDelay: '3.8s', animationDuration: '6s' }
-]
-
 const formatDate = (d) => d ? d.substring(0, 10) : ''
 const goSearch = () => router.push({ path: '/jobs', query: { keyword: kw.value, city: city.value } })
 const goProfileAction = () => {
@@ -395,24 +403,28 @@ onMounted(async () => {
 }
 
 .hero-shell {
+  --hero-ink: #0b1728;
+  --hero-panel: #10233a;
   position: relative;
   overflow: hidden;
-  min-height: min(42rem, calc(100dvh - 8.5rem));
+  min-height: min(44rem, calc(100dvh - 7.25rem));
   display: grid;
-  grid-template-columns: minmax(38rem, 1fr) minmax(24rem, .9fr);
+  grid-template-columns: minmax(34rem, 0.98fr) minmax(29rem, 0.9fr);
   align-items: center;
-  gap: clamp(1.5rem, 4vw, 4rem);
-  padding: clamp(2rem, 5vw, 5rem);
-  border: 1px solid rgba(203, 216, 231, .78);
-  border-radius: var(--cr-radius);
+  gap: clamp(2rem, 4vw, 4.75rem);
+  padding: clamp(2rem, 4.6vw, 5.5rem);
+  border: 1px solid rgba(203, 216, 231, .72);
+  border-radius: 1rem;
   background:
     var(--cr-noise-texture),
-    linear-gradient(115deg, rgba(255,255,255,.98) 0%, rgba(247,251,255,.94) 45%, rgba(231,242,245,.92) 100%),
-    linear-gradient(90deg, rgba(15, 118, 110, .09) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(36, 84, 214, .06) 1px, transparent 1px);
-  background-size: 180px 180px, auto, 2.25rem 2.25rem, 2.25rem 2.25rem;
+    radial-gradient(circle at 77% 18%, rgba(36, 84, 214, .18), transparent 27rem),
+    radial-gradient(circle at 13% 84%, rgba(15, 118, 110, .11), transparent 30rem),
+    linear-gradient(108deg, rgba(255,255,255,.98) 0%, rgba(245,249,255,.96) 48%, rgba(225,239,246,.93) 100%);
+  background-size: 180px 180px, auto, auto, auto;
   background-blend-mode: soft-light, normal, normal, normal;
-  box-shadow: var(--cr-shadow);
+  box-shadow:
+    0 1.5rem 4rem rgba(16, 24, 39, .12),
+    inset 0 1px 0 rgba(255, 255, 255, .88);
 }
 
 .hero-rays {
@@ -433,48 +445,18 @@ onMounted(async () => {
 }
 
 .hero-paths-3d {
-  --paths-3d-opacity: 0.36;
+  --paths-3d-opacity: 0.24;
   --paths-3d-blend: multiply;
   inset: -7% -4% -5% -12%;
 }
 
-.meteor-layer {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.meteor-layer span {
-  --meteor-angle: 215deg;
-  --meteor-travel: -28rem;
-  position: absolute;
-  width: .1875rem;
-  height: .1875rem;
-  border-radius: 999rem;
-  background: rgba(36, 84, 214, .48);
-  box-shadow: 0 0 0 .0625rem rgba(255,255,255,.18), 0 0 1rem rgba(36,84,214,.18);
-  opacity: 0;
-  transform: rotate(var(--meteor-angle)) translateX(0);
-  animation: meteor-flight linear infinite;
-}
-
-.meteor-layer span::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 4.75rem;
-  height: .0625rem;
-  transform: translateY(-50%);
-  border-radius: 999rem;
-  background: linear-gradient(90deg, rgba(36,84,214,.34), transparent);
-}
-
-.hero-meteors {
+.hero-meteors-3d {
   z-index: 0;
-  opacity: .5;
-  mix-blend-mode: multiply;
+  opacity: .58;
+  mix-blend-mode: screen;
+  --meteor-color: rgba(96, 165, 250, .7);
+  --meteor-tail-color: rgba(37, 99, 235, .42);
+  --meteor-glow: rgba(37, 99, 235, .22);
 }
 
 .hero-shell::before,
@@ -485,16 +467,18 @@ onMounted(async () => {
 }
 
 .hero-shell::before {
-  inset: 0 auto 0 0;
-  width: 0.5rem;
-  background: linear-gradient(180deg, var(--cr-primary), var(--cr-accent));
+  inset: 1rem auto 1rem 1rem;
+  width: .25rem;
+  border-radius: 999rem;
+  background: linear-gradient(180deg, var(--cr-accent), var(--cr-primary));
+  box-shadow: 0 0 1.75rem rgba(15, 118, 110, .28);
 }
 
 .hero-shell::after {
-  inset: auto clamp(1.5rem, 4vw, 4rem) clamp(1.5rem, 4vw, 4rem) auto;
-  width: min(26rem, 34vw);
+  inset: auto clamp(1.5rem, 4vw, 4rem) clamp(1.25rem, 3.4vw, 3rem) auto;
+  width: min(31rem, 35vw);
   height: 0.0625rem;
-  background: linear-gradient(90deg, transparent, rgba(16, 24, 39, 0.28));
+  background: linear-gradient(90deg, transparent, rgba(16, 24, 39, 0.18));
 }
 
 .hero-copy,
@@ -506,17 +490,19 @@ onMounted(async () => {
 .hero-kicker,
 .section-heading p {
   color: var(--cr-accent);
-  font-size: .8125rem;
-  font-weight: 800;
+  font-size: .78rem;
+  font-weight: 900;
   letter-spacing: 0;
 }
 
 .hero-copy h1 {
-  margin: .875rem 0 1rem;
-  max-width: 52rem;
-  font-size: clamp(3rem, 4.9vw, 5.5rem);
-  line-height: 1.02;
-  font-weight: 900;
+  margin: .75rem 0 1.125rem;
+  max-width: 49rem;
+  color: var(--hero-ink);
+  font-size: clamp(3.35rem, 5.4vw, 6.375rem);
+  line-height: .96;
+  font-weight: 950;
+  letter-spacing: 0;
 }
 
 .hero-copy h1 span {
@@ -547,7 +533,7 @@ onMounted(async () => {
 
 .animated-gradient-text {
   --gradient-size: 280%;
-  background: linear-gradient(90deg, var(--cr-primary), var(--cr-accent), #2e6de8, var(--cr-primary));
+  background: linear-gradient(90deg, #143b96, #2563eb 42%, #0f766e 76%, #143b96);
   background-size: var(--gradient-size) 100%;
   background-clip: text;
   -webkit-background-clip: text;
@@ -594,28 +580,31 @@ onMounted(async () => {
 }
 
 .hero-subtitle {
-  max-width: 42rem;
+  max-width: 43rem;
   color: var(--cr-text-soft);
-  font-size: clamp(1rem, 1.4vw, 1.25rem);
-  line-height: 1.8;
+  font-size: clamp(1rem, 1.28vw, 1.18rem);
+  line-height: 1.9;
 }
 
 .hero-search {
   --shine-border-duration: 16s;
-  --shine-border-opacity: .62;
-  margin-top: clamp(1.25rem, 2.4vw, 2rem);
-  width: min(48rem, 100%);
+  --shine-border-opacity: .38;
+  margin-top: clamp(1.5rem, 2.8vw, 2.375rem);
+  width: min(49rem, 100%);
   position: relative;
   isolation: isolate;
   overflow: hidden;
   display: grid;
   grid-template-columns: minmax(7rem, .25fr) minmax(13rem, 1fr) auto;
-  gap: .625rem;
+  gap: .75rem;
   padding: .625rem;
-  border: 1px solid rgba(203, 216, 231, .9);
-  border-radius: var(--cr-radius);
-  background: rgba(255,255,255,.86);
-  box-shadow: var(--cr-shadow-soft), var(--cr-shadow-line);
+  border: 1px solid rgba(188, 203, 221, .9);
+  border-radius: .875rem;
+  background: rgba(255,255,255,.9);
+  box-shadow:
+    0 1rem 2.25rem rgba(15, 23, 42, .1),
+    inset 0 1px 0 rgba(255, 255, 255, .9);
+  backdrop-filter: blur(1rem) saturate(150%);
 }
 
 .hero-search::before,
@@ -647,40 +636,46 @@ onMounted(async () => {
 
 .hero-search :deep(.el-input__wrapper),
 .hero-search :deep(.el-select__wrapper) {
-  min-height: 2.875rem;
-  border-radius: var(--cr-radius-sm);
+  min-height: 3rem;
+  border-radius: .625rem;
   box-shadow: none;
-  background: #f6f8fb;
+  background: #f5f8fc;
 }
 
 .search-button,
 .primary-pill,
 .ghost-pill {
-  border-radius: var(--cr-radius-sm);
+  border-radius: .625rem;
   white-space: nowrap;
+  transition: transform .16s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease, color .18s ease;
 }
 
 .search-button {
-  min-inline-size: 7.25rem;
-  background: var(--cr-primary);
-  border-color: var(--cr-primary);
+  min-inline-size: 7.5rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .16), transparent 44%),
+    linear-gradient(135deg, var(--cr-primary), #1743b6);
+  border-color: transparent;
+  box-shadow: 0 .75rem 1.5rem rgba(36, 84, 214, .24);
 }
 
 .search-button:hover,
 .primary-pill:hover {
-  background: var(--cr-primary-strong);
-  border-color: var(--cr-primary-strong);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .18), transparent 44%),
+    linear-gradient(135deg, var(--cr-primary-strong), #12358f);
+  border-color: transparent;
 }
 
 .hero-actions {
-  margin-top: 1rem;
+  margin-top: 1.125rem;
   display: flex;
   flex-wrap: wrap;
   gap: .75rem;
 }
 
 .hero-dock {
-  margin-top: 1rem;
+  margin-top: 1.125rem;
 }
 
 .hero-dock .cr-dock-button {
@@ -689,77 +684,306 @@ onMounted(async () => {
 
 .primary-pill {
   min-width: 8.5rem;
-  background: var(--cr-primary);
-  border-color: var(--cr-primary);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .16), transparent 45%),
+    linear-gradient(135deg, var(--cr-primary), #1947bd);
+  border-color: transparent;
+  box-shadow: 0 .8rem 1.5rem rgba(36, 84, 214, .22);
 }
 
 .ghost-pill {
+  --el-button-text-color: #10243d;
+  --el-button-bg-color: transparent;
+  --el-button-border-color: rgba(36,84,214,.18);
+  --el-button-hover-text-color: var(--cr-primary);
+  --el-button-hover-bg-color: transparent;
+  --el-button-hover-border-color: rgba(36,84,214,.42);
+  --el-button-active-text-color: var(--cr-primary-strong);
+  --el-button-active-bg-color: transparent;
+  --el-button-active-border-color: rgba(36,84,214,.5);
   min-width: 9.5rem;
-  border-color: rgba(23,32,51,.13);
-  color: var(--cr-text);
+  border-color: rgba(36,84,214,.18);
+  color: #10243d;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(245,249,255,.9));
+  box-shadow:
+    0 .45rem 1rem rgba(15,23,42,.08),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.ghost-pill:hover,
+.ghost-pill:focus-visible,
+.hero-actions .ghost-pill:hover,
+.hero-actions .ghost-pill:focus-visible {
+  color: var(--cr-primary);
+  border-color: rgba(36,84,214,.42);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,1), rgba(236,244,255,.96));
+  box-shadow:
+    0 .8rem 1.5rem rgba(36,84,214,.16),
+    inset 0 1px 0 rgba(255,255,255,.94);
+  transform: translateY(-1px);
+}
+
+.ghost-pill:focus-visible {
+  outline: 3px solid rgba(36,84,214,.18);
+  outline-offset: 2px;
+}
+
+.ghost-pill:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 .35rem .85rem rgba(36,84,214,.12),
+    inset 0 1px 0 rgba(255,255,255,.85);
+}
+
+.hero-actions .ghost-pill:active {
+  transform: translateY(1px);
 }
 
 .hero-board {
-  min-height: 33rem;
+  min-height: 35rem;
+  align-self: stretch;
+  display: grid;
+  align-items: center;
+  perspective: 1200px;
 }
 
 .board-grid {
   position: absolute;
-  inset: 1.5rem 0 0 2rem;
+  inset: 1.75rem -1rem 1rem 4rem;
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: .625rem;
-  opacity: .48;
+  grid-template-columns: repeat(6, 1fr);
+  gap: .75rem;
+  opacity: .42;
 }
 
 .board-grid span {
   aspect-ratio: 1;
-  border-radius: var(--cr-radius-sm);
-  background: rgba(36,84,214,.08);
+  border-radius: .625rem;
+  background: linear-gradient(180deg, rgba(36,84,214,.12), rgba(15,118,110,.06));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.64);
+}
+
+.showcase-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 48rem);
+  min-height: 32rem;
+  justify-self: end;
+  padding: 1rem;
+  border: 1px solid rgba(203, 216, 231, .78);
+  border-radius: 1rem;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.82), rgba(236,246,252,.58)),
+    rgba(255,255,255,.38);
+  box-shadow:
+    0 1.5rem 3.25rem rgba(16, 24, 39, .13),
+    inset 0 1px 0 rgba(255, 255, 255, .86);
+  backdrop-filter: blur(1rem) saturate(140%);
+  transform-style: preserve-3d;
+}
+
+.showcase-background {
+  position: absolute;
+  inset: 1rem;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: .875rem;
+  isolation: isolate;
+  pointer-events: none;
+  background:
+    linear-gradient(118deg, rgba(255,255,255,.82) 0%, transparent 34%, rgba(125,211,252,.2) 68%, transparent 100%),
+    linear-gradient(142deg, rgba(36,84,214,.26) 0%, rgba(236,248,255,.82) 38%, rgba(15,118,110,.16) 72%, rgba(255,255,255,.88) 100%),
+    linear-gradient(180deg, #f8fcff 0%, #e8f4fc 52%, #f5fbff 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, .64),
+    inset 0 1px 0 rgba(255, 255, 255, .9),
+    inset 0 -3rem 6rem rgba(36, 84, 214, .08);
+  transform: translateZ(.5rem);
+}
+
+.showcase-background::before,
+.showcase-background::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  content: "";
+  pointer-events: none;
+}
+
+.showcase-background::before {
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.28) 0 1px, transparent 1px 5rem),
+    repeating-linear-gradient(0deg, rgba(36,84,214,.08) 0 1px, transparent 1px 5rem),
+    linear-gradient(90deg, rgba(255,255,255,.64), transparent 30%, rgba(255,255,255,.26) 76%, transparent),
+    linear-gradient(180deg, transparent 46%, rgba(12, 30, 48, .13));
+  mix-blend-mode: screen;
+  opacity: .82;
+}
+
+.showcase-background::after {
+  background:
+    linear-gradient(112deg, transparent 0 24%, rgba(255,255,255,.82) 32%, transparent 43%),
+    linear-gradient(112deg, transparent 0 56%, rgba(14,165,233,.34) 64%, transparent 76%),
+    linear-gradient(155deg, transparent 0 40%, rgba(15,118,110,.18) 52%, transparent 68%);
+  background-size: 190% 100%, 230% 100%, 100% 100%;
+  mask-image: linear-gradient(108deg, transparent 3%, #000 16%, #000 86%, transparent 100%);
+  animation: showcase-light-sweep 10s ease-in-out infinite;
+  opacity: .72;
+}
+
+.showcase-noise-texture {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  opacity: .58;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.showcase-paths-3d {
+  --paths-3d-opacity: .24;
+  --paths-3d-blend: multiply;
+  z-index: 2;
+  inset: -12% -8% -18% -12%;
+}
+
+.showcase-meteors-3d {
+  z-index: 3;
+  opacity: .46;
+  mix-blend-mode: screen;
+  --meteor-color: rgba(59, 130, 246, .72);
+  --meteor-tail-color: rgba(15, 118, 110, .5);
+  --meteor-glow: rgba(14, 165, 233, .24);
+}
+
+.showcase-depth-grid {
+  position: absolute;
+  inset: 4.75rem 2rem 1.5rem 8.5rem;
+  z-index: 2;
+  border-radius: .625rem;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.46), transparent 30%),
+    repeating-linear-gradient(90deg, rgba(15, 23, 42, .07) 0 1px, transparent 1px 3.75rem),
+    repeating-linear-gradient(0deg, rgba(15, 23, 42, .05) 0 1px, transparent 1px 3.75rem);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.44),
+    inset 0 0 3rem rgba(255,255,255,.34);
+  transform: perspective(36rem) rotateX(58deg) rotateZ(-7deg) translateY(2.4rem);
+  transform-origin: center bottom;
+  opacity: .5;
+}
+
+.showcase-flow-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 75% 12%, rgba(255,255,255,.46), transparent 34%),
+    linear-gradient(112deg, transparent 0 48%, rgba(255,255,255,.48) 57%, transparent 70%);
+  background-size: 100% 100%, 220% 100%;
+  animation: showcase-light-sweep 12s ease-in-out infinite reverse;
+  opacity: .58;
+}
+
+.showcase-badge {
+  position: absolute;
+  right: 1.15rem;
+  top: 1.15rem;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .85rem;
+  width: min(15.5rem, 36%);
+  min-width: 12.5rem;
+  min-height: 4.7rem;
+  padding: .9rem 1rem .9rem 1.1rem;
+  border: 1px solid rgba(191,211,235,.88);
+  border-radius: .875rem;
+  background:
+    var(--cr-noise-texture),
+    radial-gradient(circle at 100% 0%, rgba(36,84,214,.14), transparent 48%),
+    linear-gradient(180deg, rgba(255,255,255,.94), rgba(239,248,255,.82));
+  background-size: 180px 180px, auto, auto;
+  color: var(--cr-text);
+  box-shadow:
+    0 .95rem 2rem rgba(15, 23, 42, .13),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  backdrop-filter: blur(.9rem) saturate(145%);
+}
+
+.showcase-badge span {
+  color: var(--cr-text-muted);
+  font-size: .78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.showcase-badge strong {
+  color: var(--cr-primary);
+  font-size: clamp(1.2rem, 1.65vw, 1.55rem);
+  line-height: 1.15;
+  white-space: nowrap;
 }
 
 .board-card {
   position: absolute;
-  border: 1px solid rgba(203,216,231,.9);
-  border-radius: var(--cr-radius);
+  z-index: 4;
+  border: 1px solid rgba(203,216,231,.86);
+  border-radius: .875rem;
   background:
     var(--cr-noise-texture),
-    rgba(255,255,255,.97);
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(246,250,255,.94));
   background-size: 180px 180px, auto;
   background-blend-mode: soft-light, normal;
-  box-shadow: var(--cr-shadow-soft), var(--cr-shadow-line);
-  backdrop-filter: blur(.75rem);
+  box-shadow:
+    0 1rem 2.25rem rgba(15, 23, 42, .12),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  backdrop-filter: blur(.85rem) saturate(150%);
+  transform: translateZ(3rem);
 }
 
 .board-card-main {
   --shine-border-duration: 18s;
-  --shine-border-opacity: .46;
+  --shine-border-opacity: .32;
   top: 3.25rem;
-  right: 0;
-  width: min(28rem, 88%);
-  padding: 1.5rem;
+  left: 1.25rem;
+  width: min(24.5rem, 58%);
+  padding: 1.35rem;
 }
 
 .board-card-side {
-  bottom: 2.5rem;
-  left: 0;
-  width: min(23rem, 78%);
-  padding: 1.25rem;
+  bottom: 3rem;
+  left: 1.75rem;
+  width: min(20.75rem, 54%);
+  padding: 1.15rem;
 }
 
 .board-card-mini {
-  right: 2.5rem;
-  bottom: 0;
-  width: 16.75rem;
+  right: 1.35rem;
+  bottom: 1rem;
+  width: 17.75rem;
   padding: 1.15rem 1.15rem 1.05rem;
   display: grid;
   gap: .85rem;
+  border-color: rgba(191, 211, 235, .88);
   background:
-    radial-gradient(circle at 86% 100%, rgba(34, 211, 238, .16), transparent 38%),
-    radial-gradient(circle at 0% 0%, rgba(36, 84, 214, .28), transparent 42%),
-    linear-gradient(180deg, #172a46, var(--cr-sidebar-2));
-  color: #fff;
+    var(--cr-noise-texture),
+    radial-gradient(circle at 92% 8%, rgba(36, 84, 214, .16), transparent 36%),
+    radial-gradient(circle at 0% 100%, rgba(15, 118, 110, .12), transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,.95), rgba(238,247,255,.9));
+  background-size: 180px 180px, auto, auto, auto;
+  color: var(--cr-text);
   overflow: hidden;
+  box-shadow:
+    0 1.1rem 2.5rem rgba(15, 23, 42, .14),
+    inset 0 1px 0 rgba(255,255,255,.9);
+  transform: translateZ(5rem);
 }
 
 .mini-card-topline {
@@ -774,43 +998,39 @@ onMounted(async () => {
 .mini-card-kicker {
   display: inline-flex;
   align-items: center;
-  color: rgba(226, 237, 248, .82);
+  color: var(--cr-primary);
   font-size: .75rem;
   font-weight: 800;
   letter-spacing: 0;
 }
 
 .board-card-mini .mini-card-topline strong {
-  color: #fff;
+  color: var(--cr-text);
   font-size: 1.45rem;
   line-height: 1.05;
   font-weight: 900;
-  text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .18);
+  text-shadow: none;
 }
 
 .mini-card-summary {
   position: relative;
   z-index: 1;
   max-width: 12rem;
-  color: rgba(226, 237, 248, .72);
+  color: var(--cr-text-soft);
   font-size: .8125rem;
   line-height: 1.5;
 }
 
 .mini-meteors {
+  position: absolute;
+  inset: 0;
   z-index: 0;
   border-radius: inherit;
-  opacity: .42;
-}
-
-.mini-meteors span {
-  background: rgba(125, 211, 252, .58);
-  box-shadow: 0 0 .65rem rgba(125,211,252,.22);
-}
-
-.mini-meteors span::after {
-  width: 2.75rem;
-  background: linear-gradient(90deg, rgba(125,211,252,.5), transparent);
+  opacity: .28;
+  mix-blend-mode: multiply;
+  --meteor-color: rgba(36, 84, 214, .58);
+  --meteor-tail-color: rgba(15, 118, 110, .38);
+  --meteor-glow: rgba(14, 165, 233, .18);
 }
 
 .board-label {
@@ -826,7 +1046,7 @@ onMounted(async () => {
 .board-card strong {
   display: block;
   color: var(--cr-text);
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-size: clamp(1.22rem, 1.75vw, 1.55rem);
   line-height: 1.25;
 }
 
@@ -837,9 +1057,9 @@ onMounted(async () => {
 }
 
 .salary-range {
-  margin-top: 1.25rem;
+  margin-top: 1rem;
   color: var(--cr-danger);
-  font-size: 1.75rem;
+  font-size: 1.65rem;
   font-weight: 900;
 }
 
@@ -857,7 +1077,7 @@ onMounted(async () => {
   left: 1.25rem;
   width: .0625rem;
   content: "";
-  background: linear-gradient(180deg, rgba(125,211,252,.78), rgba(255,255,255,.12));
+  background: linear-gradient(180deg, rgba(36,84,214,.34), rgba(15,118,110,.12));
 }
 
 .flow-step {
@@ -869,9 +1089,12 @@ onMounted(async () => {
   min-height: 3rem;
   padding: .7rem .8rem .7rem .45rem;
   border-radius: var(--cr-radius-sm);
-  border: 1px solid rgba(255,255,255,.08);
-  background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.07));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+  border: 1px solid rgba(191,211,235,.76);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.86), rgba(236,247,255,.68));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.82),
+    0 .45rem 1rem rgba(36,84,214,.08);
 }
 
 .step-index {
@@ -900,13 +1123,13 @@ onMounted(async () => {
 }
 
 .step-copy b {
-  color: #fff;
+  color: var(--cr-text);
   font-size: .9625rem;
   line-height: 1.15;
 }
 
 .step-copy small {
-  color: rgba(226, 237, 248, .68);
+  color: var(--cr-text-muted);
   font-size: .75rem;
   line-height: 1.2;
 }
@@ -1475,23 +1698,6 @@ onMounted(async () => {
   }
 }
 
-@keyframes meteor-flight {
-  0% {
-    opacity: 0;
-    transform: rotate(var(--meteor-angle)) translateX(0);
-  }
-  12% {
-    opacity: .72;
-  }
-  54% {
-    opacity: .48;
-  }
-  100% {
-    opacity: 0;
-    transform: rotate(var(--meteor-angle)) translateX(var(--meteor-travel));
-  }
-}
-
 @keyframes shine-border-flow {
   0% {
     background-position: 0% 0%;
@@ -1504,6 +1710,21 @@ onMounted(async () => {
   }
 }
 
+@keyframes showcase-light-sweep {
+  0%,
+  100% {
+    background-position: -80% 0, 120% 0;
+    opacity: .42;
+  }
+  45%,
+  58% {
+    opacity: .82;
+  }
+  50% {
+    background-position: 150% 0, -100% 0;
+  }
+}
+
 @media (min-width: 75rem) {
   .job-grid {
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -1512,7 +1733,7 @@ onMounted(async () => {
 
 @media (min-width: 100rem) {
   .hero-shell {
-    grid-template-columns: minmax(46rem, .96fr) minmax(32rem, 1fr);
+    grid-template-columns: minmax(48rem, .96fr) minmax(36rem, 1fr);
     padding: clamp(4rem, 5vw, 6.5rem);
   }
 
@@ -1529,19 +1750,25 @@ onMounted(async () => {
     min-height: 38rem;
   }
 
+  .showcase-panel {
+    min-height: 34rem;
+    width: min(100%, 50rem);
+  }
+
   .board-card-main {
-    top: 4rem;
-    right: 2rem;
+    top: 3.75rem;
+    left: 1.75rem;
   }
 
   .board-card-side {
-    bottom: 4.25rem;
-    left: 1.5rem;
+    bottom: 3.5rem;
+    left: 2rem;
   }
 
   .board-card-mini {
-    right: 5rem;
-    width: 16.25rem;
+    right: 1.75rem;
+    bottom: 1.25rem;
+    width: 17.75rem;
   }
 
   .ent-grid {
@@ -1555,8 +1782,13 @@ onMounted(async () => {
   }
 
   .hero-shell {
-    min-height: min(46rem, calc(100dvh - 8rem));
-    grid-template-columns: minmax(52rem, .95fr) minmax(38rem, 1fr);
+    min-height: min(49rem, calc(100dvh - 8rem));
+    grid-template-columns: minmax(58rem, .96fr) minmax(46rem, 1fr);
+  }
+
+  .showcase-panel {
+    width: min(100%, 60rem);
+    justify-self: start;
   }
 
   .job-grid {
@@ -1646,6 +1878,32 @@ onMounted(async () => {
     width: 13.75rem;
     padding: .875rem;
     gap: .7rem;
+  }
+
+  .showcase-background {
+    inset: .75rem;
+  }
+
+  .showcase-depth-grid {
+    inset: 4.5rem .75rem .75rem 3.5rem;
+  }
+
+  .showcase-badge {
+    top: .75rem;
+    right: .75rem;
+    min-width: 10.75rem;
+    width: 42%;
+    min-height: 3.75rem;
+    padding: .7rem .8rem .7rem .95rem;
+    gap: .55rem;
+  }
+
+  .showcase-badge span {
+    font-size: .68rem;
+  }
+
+  .showcase-badge strong {
+    font-size: 1rem;
   }
 
   .board-card-mini .mini-card-topline strong {
@@ -1749,7 +2007,13 @@ onMounted(async () => {
     animation: none;
   }
 
-  .meteor-layer {
+  .showcase-flow-lines {
+    animation: none;
+  }
+
+  .hero-meteors-3d,
+  .showcase-meteors-3d,
+  .mini-meteors {
     display: none;
   }
 
