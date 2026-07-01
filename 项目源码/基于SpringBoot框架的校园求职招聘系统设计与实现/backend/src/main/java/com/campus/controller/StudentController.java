@@ -51,6 +51,7 @@ public class StudentController {
         Student update = new Student();
         update.setId(studentId);
         update.setRealName(form.getRealName());
+        update.setSchool(form.getSchool());
         update.setStudentNo(form.getStudentNo());
         update.setGender(form.getGender());
         update.setCollege(form.getCollege());

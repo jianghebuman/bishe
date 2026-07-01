@@ -1,10 +1,18 @@
 <template>
   <div class="home portal-content">
     <section class="hero-shell">
+      <BackgroundPaths3d class="hero-paths-3d" variant="light" :density="20" />
+      <div class="cr-aurora-layer hero-aurora" aria-hidden="true"></div>
+      <div class="cr-light-rays-layer hero-rays" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="meteor-layer hero-meteors" aria-hidden="true">
+        <span v-for="meteor in heroMeteors" :key="meteor.left" :style="meteor"></span>
+      </div>
       <div class="hero-copy">
-        <p class="hero-kicker">Campus recruitment hub</p>
-        <h1>校园求职招聘系统</h1>
-        <p class="hero-subtitle">连接学生、企业与就业活动，把岗位检索、简历投递、宣讲招聘和在线沟通放进同一个清晰入口。</p>
+        <p class="hero-kicker text-animate-line" style="--text-delay: .02s">Campus recruitment hub</p>
+        <h1 class="animated-gradient-text text-animate-word" style="--text-delay: .08s">校园求职招聘系统</h1>
+        <p class="hero-subtitle text-animate-line" style="--text-delay: .24s">
+          连接学生、企业与就业活动，把<span class="text-highlighter">岗位检索</span>、<span class="text-highlighter">简历投递</span>、<span class="text-highlighter">宣讲招聘</span>和<span class="text-highlighter">在线沟通</span>放进同一个清晰入口。
+        </p>
         <form class="hero-search" @submit.prevent="goSearch">
           <el-select v-model="city" placeholder="城市" size="large" class="city-select">
             <el-option label="全部城市" value="" />
@@ -43,10 +51,27 @@
           <p>{{ nextTalk?.title || '校企宣讲与招聘会同步更新' }}</p>
         </div>
         <div class="board-card board-card-mini">
-          <span>匹配流程</span>
-          <b>岗位筛选</b>
-          <b>简历投递</b>
-          <b>在线沟通</b>
+          <div class="meteor-layer mini-meteors" aria-hidden="true">
+            <span v-for="meteor in miniMeteors" :key="`${meteor.top}-${meteor.left}`" :style="meteor"></span>
+          </div>
+          <div class="flow-card-head">
+            <span>匹配流程</span>
+            <strong>3 步完成</strong>
+          </div>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <i>01</i>
+              <b>岗位筛选</b>
+            </div>
+            <div class="flow-step">
+              <i>02</i>
+              <b>简历投递</b>
+            </div>
+            <div class="flow-step">
+              <i>03</i>
+              <b>在线沟通</b>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -58,32 +83,33 @@
       </div>
     </section>
 
-    <section v-if="home.banners?.length" class="banner-section">
-      <el-carousel height="clamp(14rem, 28dvh, 34rem)" class="banner">
-        <el-carousel-item v-for="b in home.banners" :key="b.id">
-          <div class="banner-item" :style="{ backgroundImage: `url(${b.imageUrl})` }">
-            <div class="banner-title">{{ b.title }}</div>
-          </div>
-        </el-carousel-item>
-      </el-carousel>
-    </section>
-
-    <section class="section feature-section">
-      <div class="section-heading">
-        <p>核心功能</p>
-        <h2>把校园招聘常用动作集中处理</h2>
+    <section class="activity-marquee section" aria-label="校园招聘动态">
+      <div class="marquee-head text-animate-on-view">
+        <span>校招现场</span>
+        <strong><span class="text-highlighter text-highlighter-soft">岗位、企业、宣讲</span>持续更新</strong>
       </div>
-      <div class="feature-grid">
-        <div v-for="feature in features" :key="feature.title" class="feature-card">
-          <div class="feature-icon">{{ feature.mark }}</div>
-          <h3>{{ feature.title }}</h3>
-          <p>{{ feature.description }}</p>
+      <div class="marquee-viewport">
+        <div class="marquee-track">
+          <div v-for="copy in 2" :key="copy" class="marquee-group" :aria-hidden="copy === 2">
+            <router-link
+              v-for="(item, index) in marqueeItems"
+              :key="`${copy}-${index}-${item.type}`"
+              :to="item.to"
+              class="marquee-chip"
+              :tabindex="copy === 2 ? -1 : 0"
+              :aria-label="`查看${item.type}：${item.title}`"
+            >
+              <span>{{ item.type }}</span>
+              <strong>{{ item.title }}</strong>
+              <em>{{ item.meta }}</em>
+            </router-link>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="section jobs-section">
-      <div class="section-heading with-link">
+      <div class="section-heading with-link text-animate-on-view">
         <div>
           <p>热门岗位</p>
           <h2>近期浏览与投递较高的机会</h2>
@@ -113,7 +139,7 @@
     </section>
 
     <section class="section enterprise-section">
-      <div class="section-heading with-link">
+      <div class="section-heading with-link text-animate-on-view">
         <div>
           <p>推荐企业</p>
           <h2>认证企业持续发布校园岗位</h2>
@@ -178,19 +204,26 @@ import { useRouter } from 'vue-router'
 import { Search, OfficeBuilding } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
 import { useUserStore } from '@/store/user'
+import BackgroundPaths3d from '@/components/BackgroundPaths3d.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
-const home = reactive({ banners: [], hotJobs: [], recommendEnterprises: [], talks: [], fairs: [], announcements: [] })
+const home = reactive({ hotJobs: [], recommendEnterprises: [], talks: [], fairs: [], announcements: [] })
 const kw = ref('')
 const city = ref('')
 const cities = ref([])
 
-const features = [
-  { mark: '企', title: '企业招聘管理', description: '企业完成认证后发布岗位、管理投递与面试安排，减少线下沟通成本。' },
-  { mark: '岗', title: '职位精准检索', description: '按城市、岗位、学历与类型筛选机会，学生能更快找到合适岗位。' },
-  { mark: '简', title: '简历与投递跟踪', description: '在线维护简历、查看投递记录和面试通知，流程状态一目了然。' },
-  { mark: '聊', title: '校企在线沟通', description: '通知和在线沟通联动，让学生与企业及时确认关键招聘信息。' }
+const heroMeteors = [
+  { top: '-8%', left: '58%', '--meteor-travel': '-34rem', animationDelay: '.2s', animationDuration: '8s' },
+  { top: '2%', left: '74%', '--meteor-travel': '-30rem', animationDelay: '1.8s', animationDuration: '9.5s' },
+  { top: '15%', left: '92%', '--meteor-travel': '-36rem', animationDelay: '3.1s', animationDuration: '10s' },
+  { top: '32%', left: '84%', '--meteor-travel': '-26rem', animationDelay: '4.6s', animationDuration: '8.5s' },
+  { top: '49%', left: '96%', '--meteor-travel': '-32rem', animationDelay: '6.2s', animationDuration: '11s' }
+]
+const miniMeteors = [
+  { top: '8%', left: '80%', '--meteor-travel': '-9rem', animationDelay: '.4s', animationDuration: '5.5s' },
+  { top: '36%', left: '96%', '--meteor-travel': '-8rem', animationDelay: '2.2s', animationDuration: '6.5s' },
+  { top: '68%', left: '72%', '--meteor-travel': '-7rem', animationDelay: '3.8s', animationDuration: '6s' }
 ]
 
 const formatDate = (d) => d ? d.substring(0, 10) : ''
@@ -214,6 +247,32 @@ const stats = computed(() => [
   { value: `${(home.talks?.length || 0) + (home.fairs?.length || 0)}+`, label: '招聘活动' },
   { value: `${home.announcements?.length || 0}+`, label: '就业资讯' }
 ])
+const fallbackMarqueeItems = [
+  { type: '热招岗位', title: '前端开发工程师', meta: '杭州 · 18-28K', to: '/jobs' },
+  { type: '认证企业', title: '星火人工智能科技有限公司', meta: '人工智能 · 校招中', to: '/enterprises' },
+  { type: '校园宣讲', title: '量海数据 BI 与分析宣讲会', meta: '本周更新', to: '/talks' },
+  { type: '招聘会', title: '春季校园双选会', meta: '多企业参与', to: '/fairs' },
+  { type: '就业资讯', title: '简历投递与面试节奏指南', meta: '学生推荐', to: '/news' }
+]
+const marqueeItems = computed(() => {
+  const items = []
+  home.hotJobs?.slice(0, 5).forEach((j) => {
+    items.push({ type: '热招岗位', title: j.title || '优质岗位', meta: `${j.city || '不限城市'} · ${formatSalary(j)}`, to: j.id ? `/job/${j.id}` : '/jobs' })
+  })
+  home.recommendEnterprises?.slice(0, 4).forEach((e) => {
+    items.push({ type: '认证企业', title: e.companyName || '认证企业', meta: `${e.industry || '综合行业'} · 校招中`, to: e.id ? `/enterprise/${e.id}` : '/enterprises' })
+  })
+  home.talks?.slice(0, 3).forEach((t) => {
+    items.push({ type: '校园宣讲', title: t.title || '校园宣讲会', meta: formatDate(t.talkTime) || '时间待定', to: t.id ? `/talk/${t.id}` : '/talks' })
+  })
+  home.fairs?.slice(0, 2).forEach((f) => {
+    items.push({ type: '招聘会', title: f.title || '大型招聘会', meta: formatDate(f.fairTime) || '时间待定', to: f.id ? `/fair/${f.id}` : '/fairs' })
+  })
+  home.announcements?.slice(0, 3).forEach((n) => {
+    items.push({ type: '就业资讯', title: n.title || '就业资讯', meta: '最新发布', to: n.id ? `/news/${n.id}` : '/news' })
+  })
+  return (items.length ? items : fallbackMarqueeItems).slice(0, 14)
+})
 
 const formatSalary = (job) => {
   if (!job || (!job.salaryMin && !job.salaryMax)) return '薪资面议'
@@ -250,12 +309,78 @@ onMounted(async () => {
   align-items: center;
   gap: clamp(1.5rem, 4vw, 4rem);
   padding: clamp(2rem, 5vw, 5rem);
-  border: 1px solid rgba(23, 32, 51, .08);
-  border-radius: 1.375rem;
+  border: 1px solid rgba(203, 216, 231, .78);
+  border-radius: var(--cr-radius);
   background:
-    linear-gradient(135deg, rgba(255,255,255,.98), rgba(245,248,252,.92)),
-    radial-gradient(circle at 14% 16%, rgba(8,145,178,.16), transparent 30%);
-  box-shadow: 0 1.5rem 4rem rgba(22, 38, 68, .1);
+    var(--cr-noise-texture),
+    linear-gradient(115deg, rgba(255,255,255,.98) 0%, rgba(247,251,255,.94) 45%, rgba(231,242,245,.92) 100%),
+    linear-gradient(90deg, rgba(15, 118, 110, .09) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(36, 84, 214, .06) 1px, transparent 1px);
+  background-size: 180px 180px, auto, 2.25rem 2.25rem, 2.25rem 2.25rem;
+  background-blend-mode: soft-light, normal, normal, normal;
+  box-shadow: var(--cr-shadow);
+}
+
+.hero-rays {
+  --cr-rays-color: rgba(82, 162, 255, 0.24);
+  --cr-rays-opacity: 0.42;
+  --cr-rays-length: 75%;
+}
+
+.hero-aurora {
+  --cr-aurora-opacity: 0.3;
+  --cr-aurora-primary: rgba(36, 84, 214, 0.28);
+  --cr-aurora-secondary: rgba(15, 118, 110, 0.24);
+  --cr-aurora-tertiary: rgba(34, 211, 238, 0.16);
+  --cr-aurora-blur: 1.5rem;
+  --cr-aurora-x: 82%;
+  --cr-aurora-y: 8%;
+  inset: -30% -18% -8% -14%;
+}
+
+.hero-paths-3d {
+  --paths-3d-opacity: 0.36;
+  --paths-3d-blend: multiply;
+  inset: -7% -4% -5% -12%;
+}
+
+.meteor-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.meteor-layer span {
+  --meteor-angle: 215deg;
+  --meteor-travel: -28rem;
+  position: absolute;
+  width: .1875rem;
+  height: .1875rem;
+  border-radius: 999rem;
+  background: rgba(36, 84, 214, .48);
+  box-shadow: 0 0 0 .0625rem rgba(255,255,255,.18), 0 0 1rem rgba(36,84,214,.18);
+  opacity: 0;
+  transform: rotate(var(--meteor-angle)) translateX(0);
+  animation: meteor-flight linear infinite;
+}
+
+.meteor-layer span::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 4.75rem;
+  height: .0625rem;
+  transform: translateY(-50%);
+  border-radius: 999rem;
+  background: linear-gradient(90deg, rgba(36,84,214,.34), transparent);
+}
+
+.hero-meteors {
+  z-index: 0;
+  opacity: .5;
+  mix-blend-mode: multiply;
 }
 
 .hero-shell::before,
@@ -266,19 +391,16 @@ onMounted(async () => {
 }
 
 .hero-shell::before {
-  inset: -35% -8% auto auto;
-  width: 35rem;
-  height: 35rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(37,99,235,.16), transparent 62%);
+  inset: 0 auto 0 0;
+  width: 0.5rem;
+  background: linear-gradient(180deg, var(--cr-primary), var(--cr-accent));
 }
 
 .hero-shell::after {
-  inset: auto 4% -16% auto;
-  width: 18rem;
-  height: 18rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(8,145,178,.18), transparent 68%);
+  inset: auto clamp(1.5rem, 4vw, 4rem) clamp(1.5rem, 4vw, 4rem) auto;
+  width: min(26rem, 34vw);
+  height: 0.0625rem;
+  background: linear-gradient(90deg, transparent, rgba(16, 24, 39, 0.28));
 }
 
 .hero-copy,
@@ -292,17 +414,89 @@ onMounted(async () => {
   color: var(--cr-accent);
   font-size: .8125rem;
   font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
+  letter-spacing: 0;
 }
 
 .hero-copy h1 {
   margin: .875rem 0 1rem;
   max-width: 52rem;
-  color: #101418;
-  font-size: clamp(3rem, 4.9vw, 5.75rem);
-  line-height: .98;
+  font-size: clamp(3rem, 4.9vw, 5.5rem);
+  line-height: 1.02;
   font-weight: 900;
+}
+
+.hero-copy h1 span {
+  display: inline-block;
+}
+
+.text-animate-word,
+.text-animate-line,
+.text-animate-on-view {
+  --text-delay: 0s;
+  opacity: 0;
+  transform: translateY(.8rem);
+  filter: blur(.5rem);
+  animation: text-blur-in-up .72s cubic-bezier(.2, .75, .2, 1) forwards;
+  animation-delay: var(--text-delay);
+  will-change: opacity, transform, filter;
+}
+
+.text-animate-line,
+.text-animate-on-view {
+  display: block;
+}
+
+.text-animate-on-view {
+  animation-timeline: view();
+  animation-range: entry 0% cover 28%;
+}
+
+.animated-gradient-text {
+  --gradient-size: 280%;
+  background: linear-gradient(90deg, var(--cr-primary), var(--cr-accent), #2e6de8, var(--cr-primary));
+  background-size: var(--gradient-size) 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: text-gradient-flow 7.5s linear infinite;
+  -webkit-text-fill-color: transparent;
+}
+
+.animated-gradient-text.text-animate-word {
+  animation:
+    text-blur-in-up .72s cubic-bezier(.2, .75, .2, 1) var(--text-delay) forwards,
+    text-gradient-flow 7.5s linear infinite;
+}
+
+.text-highlighter {
+  position: relative;
+  z-index: 0;
+  display: inline-block;
+  color: color-mix(in srgb, var(--cr-text) 88%, var(--cr-accent));
+  font-weight: 800;
+}
+
+.text-highlighter::after {
+  position: absolute;
+  z-index: -1;
+  right: -.12em;
+  bottom: .04em;
+  left: -.12em;
+  height: .45em;
+  content: "";
+  border-radius: 999rem 70% 82% 65%;
+  background: linear-gradient(90deg, rgba(15, 118, 110, .20), rgba(36, 84, 214, .16));
+  transform: rotate(-1.1deg) scaleX(.98);
+  transform-origin: left center;
+  animation: marker-swipe .72s ease-out both;
+}
+
+.text-highlighter-soft {
+  font-weight: 900;
+}
+
+.text-highlighter-soft::after {
+  height: .5em;
+  opacity: .72;
 }
 
 .hero-subtitle {
@@ -313,16 +507,42 @@ onMounted(async () => {
 }
 
 .hero-search {
+  --shine-border-duration: 16s;
+  --shine-border-opacity: .62;
   margin-top: clamp(1.25rem, 2.4vw, 2rem);
   width: min(48rem, 100%);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: grid;
   grid-template-columns: minmax(7rem, .25fr) minmax(13rem, 1fr) auto;
   gap: .625rem;
   padding: .625rem;
-  border: 1px solid rgba(23, 32, 51, .08);
-  border-radius: 1rem;
-  background: rgba(255,255,255,.9);
-  box-shadow: 0 .875rem 2rem rgba(22, 38, 68, .08);
+  border: 1px solid rgba(203, 216, 231, .9);
+  border-radius: var(--cr-radius);
+  background: rgba(255,255,255,.86);
+  box-shadow: var(--cr-shadow-soft), var(--cr-shadow-line);
+}
+
+.hero-search::before,
+.board-card-main::before,
+.job-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: var(--shine-border-width, 1px);
+  border-radius: inherit;
+  background-image: radial-gradient(circle, transparent 0 36%, rgba(15, 118, 110, .78), rgba(36, 84, 214, .68), transparent 66%);
+  background-position: 0% 0%;
+  background-size: 300% 300%;
+  opacity: var(--shine-border-opacity, .55);
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: shine-border-flow var(--shine-border-duration, 14s) linear infinite;
 }
 
 .city-select,
@@ -334,7 +554,7 @@ onMounted(async () => {
 .hero-search :deep(.el-input__wrapper),
 .hero-search :deep(.el-select__wrapper) {
   min-height: 2.875rem;
-  border-radius: .75rem;
+  border-radius: var(--cr-radius-sm);
   box-shadow: none;
   background: #f6f8fb;
 }
@@ -342,20 +562,20 @@ onMounted(async () => {
 .search-button,
 .primary-pill,
 .ghost-pill {
-  border-radius: 999rem;
+  border-radius: var(--cr-radius-sm);
   white-space: nowrap;
 }
 
 .search-button {
   min-inline-size: 7.25rem;
-  background: #101418;
-  border-color: #101418;
+  background: var(--cr-primary);
+  border-color: var(--cr-primary);
 }
 
 .search-button:hover,
 .primary-pill:hover {
-  background: #24282d;
-  border-color: #24282d;
+  background: var(--cr-primary-strong);
+  border-color: var(--cr-primary-strong);
 }
 
 .hero-actions {
@@ -367,8 +587,8 @@ onMounted(async () => {
 
 .primary-pill {
   min-width: 8.5rem;
-  background: #101418;
-  border-color: #101418;
+  background: var(--cr-primary);
+  border-color: var(--cr-primary);
 }
 
 .ghost-pill {
@@ -387,25 +607,31 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   gap: .625rem;
-  opacity: .45;
+  opacity: .48;
 }
 
 .board-grid span {
   aspect-ratio: 1;
-  border-radius: .5rem;
-  background: rgba(37,99,235,.08);
+  border-radius: var(--cr-radius-sm);
+  background: rgba(36,84,214,.08);
 }
 
 .board-card {
   position: absolute;
-  border: 1px solid rgba(23,32,51,.08);
-  border-radius: 1rem;
-  background: rgba(255,255,255,.92);
-  box-shadow: 0 1rem 2.75rem rgba(22, 38, 68, .12);
+  border: 1px solid rgba(203,216,231,.9);
+  border-radius: var(--cr-radius);
+  background:
+    var(--cr-noise-texture),
+    rgba(255,255,255,.97);
+  background-size: 180px 180px, auto;
+  background-blend-mode: soft-light, normal;
+  box-shadow: var(--cr-shadow-soft), var(--cr-shadow-line);
   backdrop-filter: blur(.75rem);
 }
 
 .board-card-main {
+  --shine-border-duration: 18s;
+  --shine-border-opacity: .46;
   top: 3.25rem;
   right: 0;
   width: min(28rem, 88%);
@@ -422,21 +648,63 @@ onMounted(async () => {
 .board-card-mini {
   right: 2.5rem;
   bottom: 0;
-  width: 12rem;
-  padding: 1rem;
+  width: 15.5rem;
+  padding: 1.125rem;
   display: grid;
-  gap: .5rem;
-  background: #101418;
+  gap: 1rem;
+  background:
+    radial-gradient(circle at 86% 100%, rgba(34, 211, 238, .16), transparent 38%),
+    radial-gradient(circle at 0% 0%, rgba(36, 84, 214, .28), transparent 42%),
+    linear-gradient(180deg, #16263d, var(--cr-sidebar-2));
   color: #fff;
+  overflow: hidden;
 }
 
-.board-label,
-.board-card-mini span {
+.mini-meteors {
+  z-index: 0;
+  border-radius: inherit;
+  opacity: .42;
+}
+
+.mini-meteors span {
+  background: rgba(125, 211, 252, .58);
+  box-shadow: 0 0 .65rem rgba(125,211,252,.22);
+}
+
+.mini-meteors span::after {
+  width: 2.75rem;
+  background: linear-gradient(90deg, rgba(125,211,252,.5), transparent);
+}
+
+.board-label {
+  position: relative;
+  z-index: 1;
   display: block;
   margin-bottom: .625rem;
   color: var(--cr-text-muted);
   font-size: .75rem;
   font-weight: 700;
+}
+
+.flow-card-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.flow-card-head span {
+  color: rgba(226, 237, 248, .74);
+  font-size: .75rem;
+  font-weight: 800;
+}
+
+.flow-card-head strong {
+  color: #fff;
+  font-size: 1.125rem;
+  line-height: 1;
 }
 
 .board-card strong {
@@ -459,20 +727,77 @@ onMounted(async () => {
   font-weight: 900;
 }
 
-.board-card-mini b {
-  padding: .625rem .75rem;
-  border-radius: .75rem;
-  background: rgba(255,255,255,.1);
-  font-size: .875rem;
+.flow-steps {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: .625rem;
+}
+
+.flow-steps::before {
+  position: absolute;
+  top: 1.1rem;
+  bottom: 1.1rem;
+  left: 1rem;
+  width: .0625rem;
+  content: "";
+  background: linear-gradient(180deg, rgba(125,211,252,.7), rgba(255,255,255,.12));
+}
+
+.flow-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  align-items: center;
+  gap: .75rem;
+  min-height: 2.75rem;
+  padding: .625rem .75rem .625rem .625rem;
+  border-radius: var(--cr-radius-sm);
+  border: 1px solid rgba(255,255,255,.08);
+  background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.07));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.flow-step i {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999rem;
+  background: linear-gradient(135deg, rgba(125,211,252,.95), rgba(36,84,214,.95));
+  color: #fff;
+  font-size: .6875rem;
+  font-style: normal;
+  font-weight: 900;
+  box-shadow: 0 .5rem 1rem rgba(8, 145, 178, .22);
+}
+
+.flow-step b {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-size: .9375rem;
+  line-height: 1.1;
 }
 
 .stats-strip,
 .section,
 .list-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   border: 1px solid var(--cr-border-soft);
-  border-radius: 1.125rem;
-  background: rgba(255,255,255,.94);
-  box-shadow: var(--cr-shadow-soft);
+  border-radius: var(--cr-radius);
+  background:
+    var(--cr-noise-texture),
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,251,255,.94)),
+    #fff;
+  background-size: 180px 180px, auto, auto;
+  background-blend-mode: normal, normal, normal;
+  box-shadow: var(--cr-shadow-soft), var(--cr-shadow-line);
 }
 
 .stats-strip {
@@ -504,43 +829,115 @@ onMounted(async () => {
   font-weight: 700;
 }
 
-.banner-section {
-  display: block;
+.activity-marquee {
+  display: grid;
+  grid-template-columns: minmax(11rem, 0.18fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1rem, 2vw, 2rem);
+  padding: clamp(.875rem, 1.6vw, 1.25rem);
 }
 
-.banner {
-  border-radius: 1.125rem;
-  overflow: hidden;
-  border: 1px solid var(--cr-border-soft);
-  box-shadow: var(--cr-shadow-soft);
+.marquee-head {
+  display: grid;
+  gap: .25rem;
 }
 
-.banner-item {
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-
-.banner-item::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(12,24,45,.72), rgba(12,24,45,.24) 52%, rgba(12,24,45,.08));
-}
-
-.banner-title {
-  position: absolute;
-  z-index: 1;
-  bottom: clamp(1rem, 3dvh, 3rem);
-  left: clamp(1rem, 4vw, 4rem);
-  max-width: min(54rem, calc(100% - 2rem));
-  color: #fff;
-  font-size: clamp(1.25rem, 2.3vw, 3rem);
-  line-height: 1.18;
+.marquee-head span {
+  color: var(--cr-accent);
+  font-size: .75rem;
   font-weight: 800;
-  text-shadow: 0 .125rem .5rem rgba(0,0,0,.42);
+}
+
+.marquee-head strong {
+  color: var(--cr-text);
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  line-height: 1.35;
+}
+
+.marquee-viewport {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  padding-block: .25rem;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee-track {
+  --marquee-gap: .75rem;
+  --marquee-duration: 52s;
+  display: flex;
+  width: max-content;
+  gap: var(--marquee-gap);
+}
+
+.marquee-viewport:hover .marquee-group,
+.marquee-viewport:focus-within .marquee-group {
+  animation-play-state: paused;
+}
+
+.marquee-group {
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--marquee-gap);
+  min-width: max-content;
+  animation: home-marquee var(--marquee-duration) linear infinite;
+}
+
+.marquee-chip {
+  flex: 0 0 auto;
+  width: clamp(15rem, 18vw, 22rem);
+  min-height: 4.75rem;
+  display: grid;
+  align-content: center;
+  gap: .1875rem;
+  padding: .875rem 1rem;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid rgba(203, 216, 231, .82);
+  border-radius: var(--cr-radius);
+  background:
+    var(--cr-noise-texture),
+    linear-gradient(135deg, rgba(255,255,255,.94), rgba(243,248,252,.9)),
+    #fff;
+  background-size: 180px 180px, auto, auto;
+  background-blend-mode: normal, normal, normal;
+  cursor: pointer;
+  box-shadow: var(--cr-shadow-line);
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.marquee-chip:hover,
+.marquee-chip:focus-visible {
+  border-color: rgba(36, 84, 214, .32);
+  box-shadow: var(--cr-shadow-soft), var(--cr-shadow-line);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.marquee-chip span {
+  color: var(--cr-accent);
+  font-size: .6875rem;
+  font-weight: 800;
+}
+
+.marquee-chip strong {
+  color: var(--cr-text);
+  font-size: .9375rem;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.marquee-chip em {
+  color: var(--cr-text-muted);
+  font-size: .75rem;
+  font-style: normal;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .section {
@@ -566,74 +963,69 @@ onMounted(async () => {
 }
 
 .more {
+  min-height: 2.25rem;
+  padding: 0 .875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: .0625rem solid rgba(203, 216, 231, .78);
+  border-radius: 999rem;
+  background: rgba(255, 255, 255, .66);
   color: var(--cr-text-muted);
   font-size: .875rem;
-  font-weight: 700;
+  font-weight: 780;
+  line-height: 1;
   white-space: nowrap;
+  box-shadow: var(--cr-shadow-line);
+  transition: transform .16s ease, color .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
 }
 
 .more:hover {
   color: var(--cr-primary);
+  border-color: rgba(36, 84, 214, .24);
+  background: rgba(36, 84, 214, .08);
+  box-shadow: 0 .5rem 1rem rgba(36, 84, 214, .12), var(--cr-shadow-line);
+  transform: translateY(-.0625rem);
 }
 
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.feature-card,
 .job-card,
 .ent-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   border: 1px solid var(--cr-border-soft);
-  border-radius: 1rem;
-  background: var(--cr-surface);
+  border-radius: var(--cr-radius);
+  background:
+    var(--cr-noise-texture),
+    linear-gradient(180deg, rgba(255,255,255,.97), rgba(248,251,255,.94)),
+    var(--cr-surface);
+  background-size: 180px 180px, auto, auto;
+  background-blend-mode: soft-light, normal, normal;
   transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
 }
 
-.feature-card {
-  padding: 1.25rem;
-}
-
-.feature-card:hover,
 .job-card:hover,
 .ent-card:hover {
   border-color: rgba(16,20,24,.2);
-  box-shadow: 0 .875rem 1.75rem rgba(22, 38, 68, .08);
+  box-shadow: var(--cr-shadow-soft);
   transform: translateY(-.125rem);
 }
 
-.feature-icon,
 .company-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: .875rem;
-  background: #101418;
+  border-radius: var(--cr-radius-sm);
+  background: linear-gradient(135deg, var(--cr-primary), var(--cr-accent));
   color: #fff;
   font-weight: 900;
 }
 
-.feature-icon {
-  width: 3rem;
-  height: 3rem;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-}
-
-.feature-card h3,
 .job-card h3,
 .ent-card h3 {
   color: var(--cr-text);
   font-size: 1rem;
   line-height: 1.4;
-}
-
-.feature-card p {
-  margin-top: .5rem;
-  color: var(--cr-text-soft);
-  line-height: 1.7;
-  font-size: .875rem;
 }
 
 .job-grid {
@@ -643,9 +1035,15 @@ onMounted(async () => {
 }
 
 .job-card {
+  --shine-border-duration: 14s;
+  --shine-border-opacity: 0;
   min-height: 13.25rem;
   padding: 1.125rem;
   cursor: pointer;
+}
+
+.job-card:hover {
+  --shine-border-opacity: .58;
 }
 
 .empty-card {
@@ -656,7 +1054,7 @@ onMounted(async () => {
   gap: .375rem;
   text-align: center;
   border: 1px dashed var(--cr-border);
-  border-radius: 1rem;
+  border-radius: var(--cr-radius);
   background: #f8fbff;
   color: var(--cr-text-muted);
 }
@@ -684,7 +1082,7 @@ onMounted(async () => {
 .company-mark {
   width: 2.25rem;
   height: 2.25rem;
-  border-radius: 50%;
+  border-radius: var(--cr-radius-sm);
 }
 
 .salary {
@@ -703,7 +1101,7 @@ onMounted(async () => {
 
 .job-tags span {
   padding: .3125rem .625rem;
-  border-radius: 999rem;
+  border-radius: var(--cr-radius-sm);
   background: #f3f6fa;
   color: var(--cr-text-soft);
   font-size: .75rem;
@@ -779,8 +1177,8 @@ onMounted(async () => {
 .dot {
   width: .375rem;
   height: .375rem;
-  background: #101418;
-  border-radius: 50%;
+  background: var(--cr-accent);
+  border-radius: 999rem;
   margin-right: .625rem;
   flex: 0 0 auto;
 }
@@ -812,6 +1210,69 @@ onMounted(async () => {
   font-size: .875rem;
   border-radius: .875rem;
   background: #f8fbff;
+}
+
+@keyframes home-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% - var(--marquee-gap)));
+  }
+}
+
+@keyframes text-gradient-flow {
+  to {
+    background-position: var(--gradient-size) 0;
+  }
+}
+
+@keyframes marker-swipe {
+  from {
+    opacity: 0;
+    transform: rotate(-1.1deg) scaleX(.18);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-1.1deg) scaleX(.98);
+  }
+}
+
+@keyframes text-blur-in-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes meteor-flight {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--meteor-angle)) translateX(0);
+  }
+  12% {
+    opacity: .72;
+  }
+  54% {
+    opacity: .48;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--meteor-angle)) translateX(var(--meteor-travel));
+  }
+}
+
+@keyframes shine-border-flow {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
 }
 
 @media (min-width: 75rem) {
@@ -851,11 +1312,7 @@ onMounted(async () => {
 
   .board-card-mini {
     right: 5rem;
-    width: 13rem;
-  }
-
-  .feature-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 16.25rem;
   }
 
   .ent-grid {
@@ -878,7 +1335,6 @@ onMounted(async () => {
     gap: 1.25rem;
   }
 
-  .feature-grid,
   .ent-grid,
   .info-grid {
     gap: 1.25rem;
@@ -900,7 +1356,6 @@ onMounted(async () => {
     min-height: 24rem;
   }
 
-  .feature-grid,
   .info-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -959,13 +1414,43 @@ onMounted(async () => {
 
   .board-card-mini {
     right: .5rem;
-    width: 9.5rem;
+    width: 12.5rem;
+    padding: .875rem;
+    gap: .75rem;
+  }
+
+  .flow-card-head strong {
+    font-size: .9375rem;
+  }
+
+  .flow-step {
+    grid-template-columns: 1.75rem minmax(0, 1fr);
+    min-height: 2.4rem;
+    gap: .5rem;
+    padding: .5rem;
+  }
+
+  .flow-step i {
+    width: 1.75rem;
+    height: 1.75rem;
   }
 
   .stats-strip,
-  .feature-grid,
+  .activity-marquee,
   .info-grid {
     grid-template-columns: 1fr;
+  }
+
+  .activity-marquee {
+    gap: .875rem;
+  }
+
+  .marquee-viewport {
+    margin-inline: -.25rem;
+  }
+
+  .marquee-chip {
+    width: clamp(14rem, 70vw, 20rem);
   }
 
   .stat-item {
@@ -981,31 +1466,53 @@ onMounted(async () => {
     align-items: flex-start;
   }
 
-  .banner :deep(.el-carousel__container) {
-    height: clamp(10.5rem, 52vw, 13.5rem) !important;
-  }
-
-  .banner-item::after {
-    background: linear-gradient(180deg, rgba(12,24,45,.06), rgba(12,24,45,.24) 48%, rgba(12,24,45,.78));
-  }
-
-  .banner-title {
-    right: .875rem;
-    bottom: .875rem;
-    left: .875rem;
-    max-width: none;
-    font-size: clamp(1.0625rem, 5vw, 1.375rem);
-    line-height: 1.22;
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
 }
 
 @media (max-width: 30rem) {
   .hero-actions :deep(.el-button) {
     flex: 1 1 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-animate-word,
+  .text-animate-line,
+  .text-animate-on-view {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    animation: none;
+  }
+
+  .animated-gradient-text {
+    animation: none;
+  }
+
+  .text-highlighter::after {
+    animation: none;
+  }
+
+  .hero-search::before,
+  .board-card-main::before,
+  .job-card::before {
+    animation: none;
+  }
+
+  .meteor-layer {
+    display: none;
+  }
+
+  .marquee-track {
+    width: auto;
+  }
+
+  .marquee-group {
+    flex-wrap: wrap;
+    animation: none;
+  }
+
+  .marquee-group[aria-hidden="true"] {
+    display: none;
   }
 }
 </style>

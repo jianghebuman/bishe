@@ -3,6 +3,7 @@
     <el-row :gutter="16" class="dashboard-row">
       <el-col v-for="k in kpis" :key="k.title" :xs="24" :sm="12" :md="12" :lg="6">
         <div class="kpi" :style="{ '--c': k.color }">
+          <div class="cr-light-rays-layer kpi-rays" aria-hidden="true"><i></i><i></i></div>
           <div>
             <div class="num">{{ k.value }}</div>
             <div class="label">{{ k.title }}</div>
@@ -49,7 +50,22 @@
       <el-col :xs="24" :lg="12">
         <div class="panel">
           <div class="panel-title">投递状态分布</div>
-          <div ref="statusRef" class="chart"></div>
+          <div class="chart status-donut-board">
+            <div v-if="statusRows.length" class="donut-visual" :style="statusDonutStyle">
+              <div class="donut-center">
+                <strong>{{ statusTotal }}</strong>
+                <span>总投递</span>
+              </div>
+            </div>
+            <div v-else class="empty-chart">暂无投递状态数据</div>
+            <div class="chart-legend">
+              <div v-for="item in statusRows" :key="item.name" class="legend-item">
+                <i :style="{ background: item.color }"></i>
+                <span>{{ item.name }}</span>
+                <strong>{{ item.value }}</strong>
+              </div>
+            </div>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -58,7 +74,15 @@
         <div class="panel">
           <div class="panel-title">各专业投递占比</div>
           <div class="donut-board">
-            <div ref="majorRef" class="chart chart-donut"></div>
+            <div class="chart chart-donut">
+              <div v-if="majorRows.length" class="donut-visual" :style="majorDonutStyle">
+                <div class="donut-center">
+                  <strong>{{ majorTotal }}</strong>
+                  <span>投递人数</span>
+                </div>
+              </div>
+              <div v-else class="empty-chart">暂无专业投递数据</div>
+            </div>
             <div class="donut-rank">
               <div class="donut-rank-head">
                 <span>专业排行</span>
@@ -163,16 +187,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import * as echarts from 'echarts'
+import { ref, computed, onMounted } from 'vue'
 import { DocumentChecked, Histogram, OfficeBuilding, UserFilled } from '@element-plus/icons-vue'
 import { adminApi } from '@/api'
 
 const data = ref({})
-const statusRef = ref()
-const majorRef = ref()
-let charts = []
-let resizeObserver
 
 const funnelColors = ['#2563eb', '#0891b2', '#7c3aed', '#e45757']
 const chartPalette = ['#2563eb', '#0891b2', '#7c3aed', '#e45757', '#16a34a', '#f59e0b', '#475569', '#db2777']
@@ -257,86 +276,29 @@ const majorRank = computed(() => (
     color: chartPalette[index % chartPalette.length]
   }))
 ))
-
-const resizeCharts = () => charts.forEach((chart) => chart.resize())
-
-const observeChartResize = () => {
-  resizeObserver?.disconnect()
-  if (!window.ResizeObserver) return
-
-  resizeObserver = new ResizeObserver(resizeCharts)
-  ;[statusRef.value, majorRef.value]
-    .filter(Boolean)
-    .forEach((el) => resizeObserver.observe(el))
-}
-
-const init = () => {
-  charts.forEach((chart) => chart.dispose())
-  charts = []
-
-  const commonTool = { feature: { saveAsImage: {}, restore: {}, dataView: {} } }
-  const status = echarts.init(statusRef.value)
-  status.setOption({
-    tooltip: { trigger: 'item' },
-    legend: { bottom: 0, type: 'scroll' },
-    toolbox: commonTool,
-    series: [{ type: 'pie', radius: ['42%', '68%'], center: ['50%', '43%'], data: data.value.applyStatus || [] }]
+const donutStyle = (rows, total) => {
+  let cursor = 0
+  const safeTotal = total || 1
+  const slices = rows.map((item) => {
+    const start = cursor
+    cursor += (item.value / safeTotal) * 100
+    return `${item.color} ${start}% ${cursor}%`
   })
-  charts.push(status)
-
-  const majorData = majorRows.value
-  const majorTotalValue = majorTotal.value
-  const major = echarts.init(majorRef.value)
-  major.setOption({
-    color: chartPalette,
-    tooltip: { trigger: 'item', formatter: '{b}<br/>{c} 人 ({d}%)' },
-    toolbox: commonTool,
-    title: majorTotalValue ? {
-      text: `${majorTotalValue}`,
-      subtext: '投递人数',
-      left: 'center',
-      top: '42%',
-      textAlign: 'center',
-      textStyle: { color: '#15243b', fontSize: 26, fontWeight: 700 },
-      subtextStyle: { color: '#64748b', fontSize: 12 }
-    } : undefined,
-    graphic: majorTotalValue ? [] : [{
-      type: 'text',
-      left: 'center',
-      top: 'middle',
-      style: { text: '暂无专业投递数据', fill: '#94a3b8', fontSize: 14 }
-    }],
-    series: [{
-      type: 'pie',
-      name: '投递人数',
-      radius: ['50%', '72%'],
-      center: ['50%', '48%'],
-      minAngle: 8,
-      padAngle: 2,
-      avoidLabelOverlap: true,
-      itemStyle: { borderColor: '#fff', borderRadius: 4, borderWidth: 2 },
-      label: { show: false },
-      labelLine: { show: false },
-      data: majorData
-    }]
-  })
-  charts.push(major)
-
-  observeChartResize()
+  if (cursor < 100) {
+    slices.push(`#e8eef6 ${cursor}% 100%`)
+  }
+  return { background: `conic-gradient(${slices.join(', ')})` }
 }
+const statusRows = computed(() => (data.value.applyStatus || [])
+  .map((item, index) => ({ name: item.name, value: Number(item.value) || 0, color: chartPalette[index % chartPalette.length] }))
+  .filter((item) => item.value > 0)
+)
+const statusTotal = computed(() => statusRows.value.reduce((sum, item) => sum + item.value, 0))
+const statusDonutStyle = computed(() => donutStyle(statusRows.value, statusTotal.value))
+const majorDonutStyle = computed(() => donutStyle(majorRank.value, majorTotal.value))
 
 onMounted(async () => {
   data.value = (await adminApi.statistics()).data || {}
-  await nextTick()
-  init()
-  window.addEventListener('resize', resizeCharts)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', resizeCharts)
-  resizeObserver?.disconnect()
-  charts.forEach((chart) => chart.dispose())
-  charts = []
 })
 </script>
 
@@ -352,16 +314,26 @@ onBeforeUnmount(() => {
 .kpi {
   position: relative;
   height: 120px;
-  border-radius: 12px;
+  border-radius: var(--cr-radius);
   padding: 22px 24px;
   color: #fff;
   background:
+    var(--cr-noise-texture),
     linear-gradient(135deg, color-mix(in srgb, var(--c) 88%, white), #15243b);
+  background-size: 180px 180px, auto;
+  background-blend-mode: soft-light, normal;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--cr-shadow-soft);
+  box-shadow: var(--cr-shadow-soft), var(--cr-shadow-line);
   overflow: hidden;
+}
+
+.kpi-rays {
+  --cr-rays-color: rgba(255, 255, 255, 0.22);
+  --cr-rays-opacity: 0.36;
+  --cr-rays-blur: 1.25rem;
+  --cr-rays-length: 68%;
 }
 
 .kpi::after {
@@ -411,25 +383,48 @@ onBeforeUnmount(() => {
 .panel {
   min-width: 0;
   height: 100%;
-  background: #fff;
+  background:
+    var(--cr-noise-texture),
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,251,255,.94)),
+    #fff;
+  background-size: 180px 180px, auto, auto;
+  background-blend-mode: soft-light, normal, normal;
   border: 1px solid var(--cr-border-soft);
   border-radius: var(--cr-radius);
   padding: 18px;
-  box-shadow: var(--cr-shadow-soft);
+  box-shadow: var(--cr-shadow-soft), var(--cr-shadow-line);
 }
 
 .panel-title {
-  font-weight: 600;
+  position: relative;
+  font-weight: 820;
   color: var(--cr-text);
-  border-left: 3px solid var(--cr-primary);
-  padding-left: 10px;
+  padding-left: 12px;
   line-height: 1.2;
+}
+
+.panel-title::before {
+  position: absolute;
+  top: 0.1rem;
+  bottom: 0.1rem;
+  left: 0;
+  width: 0.25rem;
+  content: "";
+  border-radius: 999rem;
+  background: linear-gradient(180deg, var(--cr-primary), var(--cr-accent));
 }
 
 .chart {
   width: 100%;
   height: clamp(300px, 31vw, 380px);
   min-height: 300px;
+}
+
+.status-donut-board {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.8fr) minmax(12rem, 1fr);
+  align-items: center;
+  gap: 18px;
 }
 
 .donut-board {
@@ -443,6 +438,85 @@ onBeforeUnmount(() => {
 .chart-donut {
   height: clamp(270px, 25vw, 340px);
   min-height: 270px;
+  display: grid;
+  place-items: center;
+}
+
+.donut-visual {
+  position: relative;
+  width: min(14rem, 76%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(203, 216, 231, 0.8), var(--cr-shadow-soft);
+}
+
+.donut-visual::after {
+  position: absolute;
+  inset: 23%;
+  content: "";
+  border-radius: inherit;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(203, 216, 231, 0.72);
+}
+
+.donut-center {
+  position: absolute;
+  inset: 28%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  align-content: center;
+}
+
+.donut-center strong {
+  color: var(--cr-text);
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
+  line-height: 1;
+}
+
+.donut-center span {
+  margin-top: 4px;
+  color: var(--cr-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.chart-legend {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.legend-item {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: #f8fbff;
+}
+
+.legend-item i {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.legend-item span {
+  min-width: 0;
+  color: var(--cr-text);
+  font-size: 13px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legend-item strong {
+  color: var(--cr-text-soft);
+  font-size: 15px;
 }
 
 .donut-rank {
@@ -554,7 +628,7 @@ onBeforeUnmount(() => {
 .leader-row {
   min-width: 0;
   display: grid;
-  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-columns: 42px minmax(0, 1fr);
   gap: 12px;
   align-items: center;
   padding: 9px 12px;
@@ -569,8 +643,8 @@ onBeforeUnmount(() => {
 }
 
 .leader-rank {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 9px;
   display: inline-flex;
   align-items: center;
@@ -834,6 +908,12 @@ onBeforeUnmount(() => {
     height: 320px;
   }
 
+  .status-donut-board {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 0;
+  }
+
   .donut-board {
     min-height: 0;
     grid-template-columns: 1fr;
@@ -843,6 +923,10 @@ onBeforeUnmount(() => {
   .chart-donut {
     height: 280px;
     min-height: 280px;
+  }
+
+  .donut-visual {
+    width: min(13rem, 68vw);
   }
 
   .donut-rank {

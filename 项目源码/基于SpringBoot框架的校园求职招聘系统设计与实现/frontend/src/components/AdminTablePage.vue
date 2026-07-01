@@ -9,27 +9,35 @@
 <script setup>defineProps({title:String,desc:String,list:Array,total:Number,loading:Boolean,query:Object,showAdd:{type:Boolean,default:true},actionWidth:{type:Number,default:220}});const emit=defineEmits(['load','open']);const load=()=>emit('load');const open=()=>emit('open')</script>
 <style scoped>
 .header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 0.875rem;
   flex-wrap: wrap;
+  padding: 0.125rem 0 0;
 }
 .header h2 {
   margin-bottom: 0.375rem;
   color: var(--cr-text);
-  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+  font-size: clamp(1.35rem, 1.8vw, 1.625rem);
+  font-weight: 850;
+  line-height: 1.2;
 }
 .header p {
   color: var(--cr-text-muted);
   line-height: 1.6;
 }
 .toolbar {
+  padding: 0.875rem;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.625rem;
   margin-bottom: 1rem;
+  border: 0.0625rem solid var(--cr-border-soft);
+  border-radius: var(--cr-radius-sm);
+  background: rgba(247, 251, 255, 0.78);
 }
 .toolbar :deep(.el-input),
 .toolbar :deep(.el-select) {
@@ -37,6 +45,10 @@
   min-width: min(100%, 10rem);
   width: auto !important;
   max-width: 100%;
+}
+.header :deep(.el-button),
+.toolbar :deep(.el-button) {
+  min-width: 5.5rem;
 }
 .admin-table-card {
   --portal-list-card-min-height: calc(100dvh - 8.5rem);

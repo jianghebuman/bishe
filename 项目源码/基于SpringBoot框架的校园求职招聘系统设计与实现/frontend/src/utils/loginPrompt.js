@@ -4,6 +4,7 @@ import { ElNotification } from 'element-plus'
 const showPortalPrompt = ({ title, message, type = 'info', actionText, onAction }) => {
   let notice
   const children = [
+    h('div', { class: 'login-required-kicker' }, type === 'success' ? '操作已完成' : '需要登录'),
     h('div', { class: 'login-required-text' }, message)
   ]
   if (actionText) {
@@ -23,7 +24,7 @@ const showPortalPrompt = ({ title, message, type = 'info', actionText, onAction 
     type,
     duration: 6000,
     showClose: true,
-    customClass: 'login-required-notice',
+    customClass: `portal-notice login-required-notice is-${type} cr-border-beam-surface`,
     position: 'top-right'
   })
 }

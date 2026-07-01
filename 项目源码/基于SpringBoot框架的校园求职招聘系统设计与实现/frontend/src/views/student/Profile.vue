@@ -25,6 +25,7 @@
           <div class="profile-glance">
             <h3>资料概览</h3>
             <div class="glance-grid">
+              <div><span>学校</span><strong>{{ form.school || '待填写' }}</strong></div>
               <div><span>学院</span><strong>{{ form.college || '待填写' }}</strong></div>
               <div><span>专业</span><strong>{{ form.major || '待填写' }}</strong></div>
               <div><span>年级</span><strong>{{ form.grade || '待填写' }}</strong></div>
@@ -36,6 +37,7 @@
           <el-row :gutter="20">
             <el-col :xs="24" :sm="12" :xl="8"><el-form-item label="登录账号"><el-input v-model="form.username" disabled /></el-form-item></el-col>
             <el-col :xs="24" :sm="12" :xl="8"><el-form-item label="姓名"><el-input v-model="form.realName" /></el-form-item></el-col>
+            <el-col :xs="24" :sm="12" :xl="8"><el-form-item label="学校"><el-input v-model="form.school" /></el-form-item></el-col>
             <el-col :xs="24" :sm="12" :xl="8"><el-form-item label="学号"><el-input v-model="form.studentNo" /></el-form-item></el-col>
             <el-col :xs="24" :sm="12" :xl="8"><el-form-item label="性别"><el-radio-group v-model="form.gender"><el-radio :label="1">男</el-radio><el-radio :label="2">女</el-radio><el-radio :label="0">保密</el-radio></el-radio-group></el-form-item></el-col>
             <el-col :xs="24" :sm="12" :xl="8"><el-form-item label="学院"><el-input v-model="form.college" /></el-form-item></el-col>

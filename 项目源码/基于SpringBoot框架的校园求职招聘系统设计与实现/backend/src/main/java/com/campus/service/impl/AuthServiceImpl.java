@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -119,6 +120,7 @@ public class AuthServiceImpl implements AuthService {
         s.setUsername(dto.getUsername());
         s.setPassword(passwordEncoder.encode(dto.getPassword()));
         s.setRealName(dto.getRealName());
+        s.setSchool(dto.getSchool());
         s.setStudentNo(dto.getStudentNo());
         s.setCollege(dto.getCollege());
         s.setMajor(dto.getMajor());
@@ -130,11 +132,16 @@ public class AuthServiceImpl implements AuthService {
         try {
             studentService.save(s);
         } catch (DuplicateKeyException e) {
+            String msg = e.getMessage() == null ? "" : e.getMessage();
+            if (msg.contains("uk_student_school_no")) {
+                throw new BusinessException("同一学校下学号已存在");
+            }
             throw new BusinessException("账号已存在");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void enterpriseRegister(EnterpriseRegisterDTO dto) {
         Enterprise e = new Enterprise();
         e.setCompanyName(dto.getCompanyName());

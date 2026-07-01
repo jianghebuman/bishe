@@ -16,6 +16,9 @@
     <main class="register-stage">
       <section class="register-shell" aria-label="账号注册">
         <aside class="register-brief">
+          <BackgroundPaths3d class="auth-paths-3d" variant="dark" :density="16" />
+          <div class="cr-aurora-layer auth-aurora" aria-hidden="true"></div>
+          <div class="cr-light-rays-layer auth-rays" aria-hidden="true"><i></i><i></i><i></i></div>
           <div class="window-strip">
             <span></span>
             <span></span>
@@ -105,7 +108,12 @@
                 <el-form-item label="姓名" prop="realName">
                   <el-input v-model="stuForm.realName" placeholder="输入真实姓名" size="large" />
                 </el-form-item>
-                <el-form-item label="学号">
+                <el-form-item label="学校" prop="school">
+                  <el-select v-model="stuForm.school" filterable placeholder="选择所在学校" size="large">
+                    <el-option v-for="item in schoolOptions" :key="item.id || item.name" :label="item.name" :value="item.name" />
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="学号" prop="studentNo">
                   <el-input v-model="stuForm.studentNo" placeholder="输入学号" size="large" />
                 </el-form-item>
                 <el-form-item label="学院">
@@ -241,7 +249,7 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
@@ -261,7 +269,8 @@ import {
   Tickets,
   User
 } from '@element-plus/icons-vue'
-import { authApi } from '@/api'
+import { authApi, publicApi } from '@/api'
+import BackgroundPaths3d from '@/components/BackgroundPaths3d.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -269,6 +278,7 @@ const role = ref(route.query.role === 'ENTERPRISE' ? 'ENTERPRISE' : 'STUDENT')
 const loading = ref(false)
 const stuRef = ref()
 const entRef = ref()
+const schoolOptions = ref([])
 
 const roleOptions = [
   { value: 'STUDENT', label: '学生注册', icon: School },
@@ -287,7 +297,7 @@ const copyMap = {
     checklist: {
       title: '学生注册准备',
       caption: '建议一次填准',
-      items: ['常用手机号与邮箱', '学院、专业、年级信息', '后续可继续完善在线简历']
+      items: ['学校、学号等学籍信息', '学院、专业、年级信息', '后续可继续完善在线简历']
     },
     flow: [
       { icon: User, title: '建立个人账号', desc: '填写基础身份信息' },
@@ -322,6 +332,7 @@ const stuForm = reactive({
   username: '',
   password: '',
   realName: '',
+  school: '',
   studentNo: '',
   college: '',
   major: '',
@@ -372,6 +383,8 @@ const stuRules = {
   username: required('请输入账号'),
   password: passwordRule,
   realName: required('请输入姓名'),
+  school: required('请选择学校'),
+  studentNo: required('请输入学号'),
   phone: [
     { required: true, message: '请输入手机号', trigger: 'blur' },
     { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号', trigger: 'blur' }
@@ -403,6 +416,11 @@ const normalizeCreditCode = (value) => {
   entForm.creditCode = value.toUpperCase().replace(/[^0-9A-Z]/g, '').slice(0, 18)
 }
 
+const loadSchools = async () => {
+  const res = await publicApi.schools().catch(() => ({ data: [] }))
+  schoolOptions.value = res.data || []
+}
+
 const registerStudent = () => {
   stuRef.value.validate(async (valid) => {
     if (!valid) return
@@ -411,6 +429,7 @@ const registerStudent = () => {
       await authApi.registerStudent(stuForm)
       ElMessage.success('注册成功，请登录')
       router.push('/login')
+    } catch (_error) {
     } finally {
       loading.value = false
     }
@@ -425,11 +444,14 @@ const registerEnterprise = () => {
       await authApi.registerEnterprise(entForm)
       ElMessage.success('企业账号已创建，请登录后完善企业认证')
       router.push('/login')
+    } catch (_error) {
     } finally {
       loading.value = false
     }
   })
 }
+
+onMounted(loadSchools)
 </script>
 
 <style scoped lang="scss">
@@ -533,6 +555,8 @@ const registerEnterprise = () => {
 
 .register-brief {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   min-height: 100%;
@@ -543,6 +567,37 @@ const registerEnterprise = () => {
     linear-gradient(0deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
     #15243b;
   background-size: 32px 32px;
+}
+
+.auth-rays {
+  --cr-rays-color: rgba(105, 218, 255, 0.26);
+  --cr-rays-opacity: 0.5;
+  --cr-rays-blur: 1.5rem;
+  --cr-rays-length: 72%;
+  mix-blend-mode: screen;
+}
+
+.auth-aurora {
+  --cr-aurora-opacity: 0.42;
+  --cr-aurora-blend: screen;
+  --cr-aurora-primary: rgba(64, 127, 255, 0.32);
+  --cr-aurora-secondary: rgba(20, 184, 166, 0.24);
+  --cr-aurora-tertiary: rgba(125, 211, 252, 0.18);
+  --cr-aurora-blur: 1.75rem;
+  --cr-aurora-x: 72%;
+  --cr-aurora-y: 10%;
+  inset: -34% -28% -10% -22%;
+}
+
+.auth-paths-3d {
+  --paths-3d-opacity: 0.34;
+  --paths-3d-blend: screen;
+  inset: -4% -12% -4% -16%;
+}
+
+.register-brief > :not(.auth-rays):not(.auth-aurora):not(.auth-paths-3d) {
+  position: relative;
+  z-index: 1;
 }
 
 .window-strip {
@@ -593,11 +648,17 @@ const registerEnterprise = () => {
   margin-top: clamp(2rem, 4dvh, 3.5rem);
 
   div {
+    position: relative;
+    overflow: hidden;
     min-height: 6.75rem;
     padding: 1rem;
     border: 1px solid rgba(238, 246, 255, 0.16);
     border-radius: 0.75rem;
-    background: rgba(238, 246, 255, 0.06);
+    background:
+      var(--cr-noise-texture),
+      rgba(238, 246, 255, 0.06);
+    background-size: 180px 180px, auto;
+    background-blend-mode: soft-light, normal;
   }
 
   b {
@@ -622,7 +683,11 @@ const registerEnterprise = () => {
   padding: 1.125rem;
   border: 1px solid rgba(238, 246, 255, 0.14);
   border-radius: 0.75rem;
-  background: rgba(8, 145, 178, 0.08);
+  background:
+    var(--cr-noise-texture),
+    rgba(8, 145, 178, 0.08);
+  background-size: 180px 180px, auto;
+  background-blend-mode: soft-light, normal;
   box-shadow: inset 3px 0 0 rgba(8, 145, 178, 0.86);
 }
 
@@ -715,7 +780,11 @@ const registerEnterprise = () => {
   flex-direction: column;
   justify-content: center;
   padding: clamp(2rem, 3.4vw, 5rem);
-  background: #ffffff;
+  background:
+    var(--cr-noise-texture),
+    #ffffff;
+  background-size: 180px 180px, auto;
+  background-blend-mode: soft-light, normal;
 }
 
 .role-switcher {
@@ -975,6 +1044,42 @@ const registerEnterprise = () => {
   }
 }
 
+@media (min-width: 1800px) and (max-height: 1300px) {
+  .register-shell {
+    min-height: calc(100dvh - 7.5rem);
+  }
+
+  .register-brief,
+  .register-panel {
+    padding: clamp(2rem, 2.6vw, 3.5rem);
+  }
+
+  .window-strip {
+    margin-bottom: clamp(1.75rem, 4dvh, 3.5rem);
+  }
+
+  .register-brief h1 {
+    font-size: clamp(2.5rem, 3vw, 3rem);
+  }
+
+  .brief-highlights {
+    margin-top: clamp(1.5rem, 3dvh, 2.25rem);
+  }
+
+  .brief-checklist {
+    margin-top: clamp(1rem, 2dvh, 1.5rem);
+  }
+
+  .brief-flow {
+    margin-top: clamp(1rem, 2.5dvh, 2rem);
+    gap: 0.5rem;
+  }
+
+  .flow-item {
+    padding: 0.625rem 0;
+  }
+}
+
 @media (max-width: 980px) {
   .register-shell {
     grid-template-columns: 1fr;
@@ -1084,6 +1189,238 @@ const registerEnterprise = () => {
     a {
       white-space: nowrap;
     }
+  }
+}
+
+/* visual refresh overrides */
+.register-page {
+  color: var(--cr-text);
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.10), transparent 34%),
+    linear-gradient(315deg, rgba(36, 84, 214, 0.10), transparent 40%),
+    linear-gradient(90deg, rgba(36, 84, 214, 0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(36, 84, 214, 0.05) 1px, transparent 1px),
+    var(--cr-bg);
+  font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+}
+
+.register-page::before {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.70), transparent 42%),
+    linear-gradient(180deg, transparent 0%, rgba(36, 84, 214, 0.07) 100%);
+}
+
+.brand-icon,
+.role-chip.active,
+.primary-action {
+  background: linear-gradient(135deg, var(--cr-primary), var(--cr-accent));
+  border-color: var(--cr-primary);
+}
+
+.brand-icon,
+.ghost-link,
+.brief-kicker,
+.brief-highlights div,
+.brief-checklist,
+.role-chip,
+.register-form :deep(.el-input__wrapper),
+.register-form :deep(.el-select__wrapper),
+.form-section,
+.primary-action {
+  border-radius: var(--cr-radius-sm);
+}
+
+.register-shell {
+  border-color: rgba(203, 216, 231, 0.9);
+  border-radius: var(--cr-radius);
+  box-shadow: 0 34px 70px rgba(16, 24, 39, 0.16), var(--cr-shadow-line);
+}
+
+.register-brief {
+  background:
+    var(--cr-noise-texture),
+    linear-gradient(135deg, rgba(15, 118, 110, 0.24), transparent 34%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    var(--cr-sidebar);
+  background-size: 180px 180px, auto, 32px 32px, 32px 32px, auto;
+  background-blend-mode: soft-light, normal, normal, normal, normal;
+}
+
+.register-panel {
+  background:
+    var(--cr-noise-texture),
+    linear-gradient(180deg, #ffffff, #f8fbff);
+  background-size: 180px 180px, auto;
+  background-blend-mode: soft-light, normal;
+}
+
+.brief-kicker {
+  background: #8de2db;
+}
+
+.role-chip,
+.ghost-link,
+.section-heading small,
+.agree-field :deep(.el-checkbox),
+.panel-footer {
+  color: var(--cr-text-soft);
+}
+
+.register-form :deep(.el-form-item__label),
+.register-form :deep(.el-input__inner),
+.section-heading span {
+  color: var(--cr-text);
+}
+
+.panel-footer a {
+  color: var(--cr-primary);
+}
+
+.register-form :deep(.el-input__wrapper.is-focus),
+.register-form :deep(.el-select__wrapper.is-focused) {
+  box-shadow: inset 0 0 0 1px var(--cr-primary), var(--cr-ring);
+}
+
+.primary-action {
+  min-height: 56px;
+  padding: 0 20px 0 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  line-height: 1;
+  box-shadow: 0 12px 26px rgba(36, 84, 214, 0.24);
+}
+
+.primary-action .el-icon {
+  font-size: 18px;
+}
+
+.primary-action:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--cr-primary-strong), var(--cr-accent));
+  box-shadow: 0 16px 30px rgba(36, 84, 214, 0.28);
+}
+
+/* Material 3 inspired identity switch */
+.role-switcher {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 4px;
+  margin-bottom: 26px;
+  padding: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(36, 84, 214, 0.14);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(239, 246, 255, 0.92)),
+    rgba(232, 240, 253, 0.86);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    inset 0 -1px 0 rgba(36, 84, 214, 0.08),
+    0 10px 24px rgba(16, 24, 39, 0.07);
+}
+
+.role-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: clamp(48px, 2.55vw, 56px);
+  height: 100%;
+  padding: 0 14px;
+  overflow: hidden;
+  color: #58677f;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  box-shadow: none;
+  cursor: pointer;
+  font-size: clamp(13px, 0.72vw, 15px);
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+
+  svg {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    padding: 3px;
+    border-radius: 999px;
+    background: rgba(36, 84, 214, 0.08);
+    color: currentColor;
+    box-sizing: border-box;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  span {
+    display: inline-block;
+    min-width: 0;
+    line-height: 1;
+    transform: translateY(0.5px);
+  }
+}
+
+.role-chip:hover {
+  color: var(--cr-text);
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(36, 84, 214, 0.12);
+  transform: translateY(0);
+}
+
+.role-chip.active {
+  color: #ffffff;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 42%),
+    linear-gradient(135deg, var(--cr-primary), var(--cr-accent));
+  border-color: rgba(255, 255, 255, 0.36);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(7, 89, 133, 0.48),
+    0 8px 18px rgba(36, 84, 214, 0.22);
+}
+
+.role-chip.active svg {
+  background: rgba(255, 255, 255, 0.22);
+  transform: scale(1.04);
+}
+
+.role-chip:active {
+  transform: scale(0.985);
+}
+
+.role-chip:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 0 0 5px rgba(36, 84, 214, 0.28);
+}
+
+@media (max-width: 640px) {
+  .role-switcher {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 18px;
+  }
+
+  .role-chip {
+    min-height: 46px;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .role-chip,
+  .role-chip svg {
+    transition: none;
   }
 }
 </style>

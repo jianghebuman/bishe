@@ -15,6 +15,7 @@ import com.campus.entity.JobCategory;
 import com.campus.entity.JobFair;
 import com.campus.entity.JobPost;
 import com.campus.entity.MessageFeedback;
+import com.campus.entity.School;
 import com.campus.entity.SysDict;
 import com.campus.mapper.AnnouncementMapper;
 import com.campus.mapper.BannerMapper;
@@ -28,6 +29,7 @@ import com.campus.mapper.JobFairMapper;
 import com.campus.mapper.JobPostMapper;
 import com.campus.mapper.MessageFeedbackMapper;
 import com.campus.mapper.NewsCategoryMapper;
+import com.campus.mapper.SchoolMapper;
 import com.campus.mapper.SysDictMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -98,6 +100,9 @@ public class PublicController {
 
     @Autowired
     private NewsCategoryMapper newsCategoryMapper;
+
+    @Autowired
+    private SchoolMapper schoolMapper;
 
     /** 轮播图：仅启用(status=1)，按 sort 升序 */
     @GetMapping("/banners")
@@ -181,6 +186,16 @@ public class PublicController {
         LambdaQueryWrapper<JobCategory> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByAsc(JobCategory::getSort);
         return Result.success(jobCategoryMapper.selectList(wrapper));
+    }
+
+    /** 学校基础数据：学生注册和资料维护使用 */
+    @GetMapping("/schools")
+    public Result<List<School>> schools() {
+        LambdaQueryWrapper<School> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(School::getStatus, 1)
+                .orderByAsc(School::getSort)
+                .orderByAsc(School::getId);
+        return Result.success(schoolMapper.selectList(wrapper));
     }
 
     /** 按类型取字典，按 sort 升序 */

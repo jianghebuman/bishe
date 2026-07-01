@@ -100,6 +100,10 @@ onMounted(async () => {
       .label { color: var(--cr-text-muted); font-size: .6875rem; }
     }
   }
-  .sign-button { height: 2rem; font-size: .875rem; }
+  .sign-button {
+    min-height: 2.625rem;
+    font-size: .9375rem;
+    font-weight: 800;
+  }
 }
 </style>

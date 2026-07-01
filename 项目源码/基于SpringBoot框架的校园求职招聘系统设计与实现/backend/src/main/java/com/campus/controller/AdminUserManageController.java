@@ -60,6 +60,7 @@ public class AdminUserManageController {
         LambdaQueryWrapper<Student> wrapper = new LambdaQueryWrapper<Student>()
                 .and(hasKw, w -> w.like(Student::getRealName, keyword)
                         .or().like(Student::getUsername, keyword)
+                        .or().like(Student::getSchool, keyword)
                         .or().like(Student::getStudentNo, keyword))
                 .orderByDesc(Student::getCreateTime);
         studentService.page(page, wrapper);

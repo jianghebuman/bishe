@@ -20,6 +20,9 @@ public class StudentExcel {
     @ExcelProperty("姓名")
     private String realName;
 
+    @ExcelProperty("学校")
+    private String school;
+
     @ExcelProperty("学号")
     private String studentNo;
 

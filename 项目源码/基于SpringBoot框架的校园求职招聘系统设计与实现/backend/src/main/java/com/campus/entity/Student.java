@@ -26,6 +26,8 @@ public class Student implements Serializable {
 
     private String realName;
 
+    private String school;
+
     private String studentNo;
 
     private Integer gender;

@@ -7,6 +7,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  * 企业注册请求
@@ -20,6 +21,7 @@ public class EnterpriseRegisterDTO {
     private String username;
 
     @NotBlank(message = "密码不能为空")
+    @Size(min = 6, message = "密码至少6位")
     private String password;
 
     @NotBlank(message = "企业名称不能为空")

@@ -32,16 +32,40 @@
         </div>
         <div class="flex" style="align-items: center; gap: 16px;">
           <el-dropdown trigger="click" popper-class="top-user-dropdown" @command="onCmd">
-            <span class="top-user-entry">
-              <el-avatar :size="40" :src="userStore.avatar"><el-icon><User /></el-icon></el-avatar>
-              <span class="top-user-name">{{ userStore.name || userStore.username }}</span>
-              <el-icon><ArrowDown /></el-icon>
-            </span>
+            <button class="top-user-entry cr-border-beam-surface" type="button">
+              <span class="top-user-avatar-wrap">
+                <el-avatar :size="40" :src="userStore.avatar"><el-icon><User /></el-icon></el-avatar>
+              </span>
+              <span class="top-user-copy">
+                <span class="top-user-role">{{ roleLabel }}</span>
+                <span class="top-user-name">{{ userStore.name || userStore.username }}</span>
+              </span>
+              <el-icon class="top-user-arrow"><ArrowDown /></el-icon>
+            </button>
             <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="portal">返回主界面</el-dropdown-item>
-                <el-dropdown-item command="pwd">修改密码</el-dropdown-item>
-                <el-dropdown-item command="logout" divided>退出登录</el-dropdown-item>
+              <el-dropdown-menu class="top-user-panel cr-border-beam-surface">
+                <div class="top-user-panel-head">
+                  <el-avatar :size="46" :src="userStore.avatar"><el-icon><User /></el-icon></el-avatar>
+                  <div>
+                    <strong>{{ userStore.name || userStore.username }}</strong>
+                    <span>{{ roleLabel }} · {{ userStore.username }}</span>
+                  </div>
+                </div>
+                <el-dropdown-item command="portal" class="top-user-menu-item">
+                  <el-icon><HomeFilled /></el-icon>
+                  <span>返回主界面</span>
+                  <small>浏览公开招聘门户</small>
+                </el-dropdown-item>
+                <el-dropdown-item command="pwd" class="top-user-menu-item">
+                  <el-icon><Lock /></el-icon>
+                  <span>修改密码</span>
+                  <small>更新当前账号安全设置</small>
+                </el-dropdown-item>
+                <el-dropdown-item command="logout" class="top-user-menu-item is-danger">
+                  <el-icon><SwitchButton /></el-icon>
+                  <span>退出登录</span>
+                  <small>结束当前会话</small>
+                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -58,7 +82,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
-import { School, Fold, Expand, User, ArrowDown } from '@element-plus/icons-vue'
+import { School, Fold, Expand, User, ArrowDown, HomeFilled, Lock, SwitchButton } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
 import { refreshUnreadCounts } from '@/utils/unreadCounts'
 
@@ -76,6 +100,7 @@ const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
 const unreadCount = computed(() => Number(userStore.unreadNoticeCount || 0))
+const roleLabel = computed(() => ({ STUDENT: '学生用户', ENTERPRISE: '企业用户', ADMIN: '超级管理员' }[userStore.role] || '系统用户'))
 let badgeTimer
 
 const isNoticeMenu = (menu) => menu.path?.endsWith('/notice')
@@ -90,7 +115,15 @@ const refreshBadges = async () => {
 
 const onCmd = (cmd) => {
   if (cmd === 'logout') {
-    ElMessageBox.confirm('确定退出？', '提示', { type: 'warning' }).then(() => {
+    ElMessageBox.confirm('退出后需要重新输入账号密码登录。', '退出登录', {
+      type: 'warning',
+      customClass: 'cr-confirm-box',
+      confirmButtonClass: 'cr-confirm-primary',
+      cancelButtonClass: 'cr-confirm-secondary',
+      confirmButtonText: '退出登录',
+      cancelButtonText: '取消',
+      closeOnClickModal: false
+    }).then(() => {
       userStore.logout(); router.push('/login')
     }).catch(() => {})
   } else if (cmd === 'portal') {
@@ -119,21 +152,58 @@ watch(() => userStore.token, refreshBadges)
 </script>
 
 <style scoped lang="scss">
-.admin-layout { min-height: 100dvh; height: 100dvh; min-width: 0; background: var(--cr-bg); }
+.admin-layout {
+  min-height: 100dvh;
+  height: 100dvh;
+  min-width: 0;
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.08), transparent 32%),
+    linear-gradient(315deg, rgba(36, 84, 214, 0.10), transparent 42%),
+    var(--cr-bg);
+}
 .aside {
   background:
-    linear-gradient(180deg, rgba(37, 99, 235, 0.18), transparent 30%),
-    var(--cr-sidebar);
+    linear-gradient(160deg, rgba(15, 118, 110, 0.28), transparent 32%),
+    linear-gradient(24deg, rgba(36, 84, 214, 0.24), transparent 52%),
+    linear-gradient(180deg, var(--cr-sidebar), var(--cr-sidebar-2));
   transition: width .2s;
   overflow: hidden;
   flex-shrink: 0;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 1rem 0 2.5rem rgba(16, 24, 39, 0.10);
 }
-.logo { height: 62px; display: flex; align-items: center; gap: 10px; padding: 0 20px; color: #fff; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,.1); white-space: nowrap; }
-.logo .el-icon { color: #7dd3fc; }
+.logo {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  color: #fff;
+  font-weight: 850;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  white-space: nowrap;
+  letter-spacing: 0;
+}
+.logo .el-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(135deg, var(--cr-primary), var(--cr-accent));
+  border-radius: var(--cr-radius-sm);
+  box-shadow: 0 0.75rem 1.375rem rgba(0, 0, 0, 0.18);
+}
 .menu { border-right: none; }
 :deep(.el-menu) { background: transparent !important; }
-:deep(.el-menu-item) { margin: 4px 10px; border-radius: 10px; height: 44px; line-height: 44px; }
+:deep(.el-menu-item) {
+  margin: 5px 10px;
+  height: 44px;
+  line-height: 44px;
+  border-radius: var(--cr-radius-sm);
+  font-weight: 730;
+}
 :deep(.el-menu-item .el-icon) {
   width: 28px;
   height: 28px;
@@ -151,7 +221,7 @@ watch(() => userStore.token, refreshBadges)
 :deep(.el-menu-item.is-active) {
   background: linear-gradient(90deg, var(--cr-primary), var(--cr-accent)) !important;
   color: #fff !important;
-  box-shadow: 0 10px 18px rgba(37, 99, 235, 0.22);
+  box-shadow: 0 0.875rem 1.75rem rgba(36, 84, 214, 0.24);
 }
 :deep(.el-menu-item.is-active .el-icon) {
   background: rgba(255, 255, 255, 0.18);
@@ -175,8 +245,32 @@ watch(() => userStore.token, refreshBadges)
 :deep(.el-menu--collapse .el-menu-item .el-icon) {
   margin-right: 0;
 }
-.topbar { background: rgba(255,255,255,.92); border-bottom: 1px solid var(--cr-border-soft); box-shadow: 0 8px 20px rgba(22, 38, 68, .05); padding: 0 clamp(12px, 1.6vw, 22px); height: 70px; min-width: 0; gap: 12px; backdrop-filter: blur(12px); }
-.collapse-trigger { cursor: pointer; flex: 0 0 auto; }
+.topbar {
+  height: 70px;
+  min-width: 0;
+  gap: 12px;
+  padding: 0 clamp(12px, 1.6vw, 22px);
+  background: rgba(255,255,255,.82);
+  border-bottom: 1px solid rgba(203, 216, 231, 0.72);
+  box-shadow: 0 0.75rem 1.75rem rgba(16, 24, 39, .06);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+.collapse-trigger {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--cr-radius-sm);
+  background: rgba(36, 84, 214, 0.08);
+  color: var(--cr-primary);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.collapse-trigger:hover {
+  background: var(--cr-primary);
+  color: #fff;
+}
 .topbar .flex { min-width: 0; }
 .topbar :deep(.el-breadcrumb) { min-width: 0; display: flex; align-items: center; flex-wrap: nowrap; }
 .topbar :deep(.el-breadcrumb__item) { min-width: 0; }

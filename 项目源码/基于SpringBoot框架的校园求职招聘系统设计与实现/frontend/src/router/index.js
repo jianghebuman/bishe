@@ -111,10 +111,22 @@ const router = createRouter({
   routes
 })
 
+const roleHomeMap = {
+  STUDENT: '/student/dashboard',
+  ENTERPRISE: '/enterprise/dashboard',
+  ADMIN: '/admin/dashboard'
+}
+
+const getRoleHome = (role) => roleHomeMap[role] || '/'
+
 // 全局前置守卫：登录与角色校验
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title ? to.meta.title + ' - 校园求职招聘系统' : '校园求职招聘系统'
   const userStore = useUserStore()
+  if (to.path === '/login' && userStore.isLogin) {
+    next(getRoleHome(userStore.role))
+    return
+  }
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const role = to.matched.find(record => record.meta.role)?.meta.role
   const roles = to.matched.find(record => record.meta.roles)?.meta.roles

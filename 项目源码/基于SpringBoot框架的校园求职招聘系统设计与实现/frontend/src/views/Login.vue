@@ -16,6 +16,9 @@
     <main class="login-stage">
       <section class="login-window" aria-label="校园求职招聘系统登录">
         <aside class="career-board">
+          <BackgroundPaths3d class="auth-paths-3d" variant="dark" :density="16" />
+          <div class="cr-aurora-layer auth-aurora" aria-hidden="true"></div>
+          <div class="cr-light-rays-layer auth-rays" aria-hidden="true"><i></i><i></i><i></i></div>
           <div class="window-strip">
             <span></span>
             <span></span>
@@ -163,6 +166,7 @@ import {
 } from '@element-plus/icons-vue'
 import { authApi } from '@/api'
 import { useUserStore } from '@/store/user'
+import BackgroundPaths3d from '@/components/BackgroundPaths3d.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -212,6 +216,11 @@ const rules = {
   username: [{ required: true, message: '请输入账号', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 }
+const roleHomeMap = {
+  STUDENT: '/student/dashboard',
+  ENTERPRISE: '/enterprise/dashboard',
+  ADMIN: '/admin/dashboard'
+}
 
 const onLogin = () => {
   formRef.value.validate(async (valid) => {
@@ -221,10 +230,8 @@ const onLogin = () => {
       const res = await authApi.login(form)
       userStore.setUser(res.data)
       ElMessage.success('登录成功')
-      const role = res.data.role
-      if (role === 'STUDENT') router.push('/student')
-      else if (role === 'ENTERPRISE') router.push('/enterprise')
-      else router.push('/admin')
+      await router.replace(roleHomeMap[userStore.role] || '/')
+    } catch (_error) {
     } finally {
       loading.value = false
     }
@@ -333,6 +340,8 @@ const onLogin = () => {
 
 .career-board {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   padding: clamp(2rem, 3.4vw, 5rem);
@@ -344,6 +353,32 @@ const onLogin = () => {
   background-size: 32px 32px;
 }
 
+.auth-rays {
+  --cr-rays-color: rgba(105, 218, 255, 0.26);
+  --cr-rays-opacity: 0.5;
+  --cr-rays-blur: 1.5rem;
+  --cr-rays-length: 72%;
+  mix-blend-mode: screen;
+}
+
+.auth-aurora {
+  --cr-aurora-opacity: 0.42;
+  --cr-aurora-blend: screen;
+  --cr-aurora-primary: rgba(64, 127, 255, 0.32);
+  --cr-aurora-secondary: rgba(20, 184, 166, 0.24);
+  --cr-aurora-tertiary: rgba(125, 211, 252, 0.18);
+  --cr-aurora-blur: 1.75rem;
+  --cr-aurora-x: 72%;
+  --cr-aurora-y: 10%;
+  inset: -34% -28% -10% -22%;
+}
+
+.auth-paths-3d {
+  --paths-3d-opacity: 0.34;
+  --paths-3d-blend: screen;
+  inset: -4% -12% -4% -16%;
+}
+
 .career-board::after {
   position: absolute;
   right: 32px;
@@ -353,6 +388,11 @@ const onLogin = () => {
   content: "";
   border-right: 1px solid rgba(238, 246, 255, 0.26);
   border-bottom: 1px solid rgba(238, 246, 255, 0.26);
+}
+
+.career-board > :not(.auth-rays):not(.auth-aurora):not(.auth-paths-3d) {
+  position: relative;
+  z-index: 1;
 }
 
 .window-strip {
@@ -404,11 +444,17 @@ const onLogin = () => {
   margin-top: clamp(2rem, 5dvh, 4.5rem);
 
   div {
+    position: relative;
+    overflow: hidden;
     min-height: 7rem;
     padding: 1rem;
     border: 1px solid rgba(238, 246, 255, 0.16);
     border-radius: 0.75rem;
-    background: rgba(238, 246, 255, 0.06);
+    background:
+      var(--cr-noise-texture),
+      rgba(238, 246, 255, 0.06);
+    background-size: 180px 180px, auto;
+    background-blend-mode: soft-light, normal;
   }
 
   b {
@@ -431,7 +477,11 @@ const onLogin = () => {
   padding: 1.125rem;
   border: 1px solid rgba(238, 246, 255, 0.14);
   border-radius: 0.75rem;
-  background: rgba(8, 145, 178, 0.08);
+  background:
+    var(--cr-noise-texture),
+    rgba(8, 145, 178, 0.08);
+  background-size: 180px 180px, auto;
+  background-blend-mode: soft-light, normal;
   box-shadow: inset 3px 0 0 rgba(8, 145, 178, 0.86);
 }
 
@@ -527,7 +577,11 @@ const onLogin = () => {
   flex-direction: column;
   justify-content: center;
   padding: clamp(2rem, 3.4vw, 5rem);
-  background: #ffffff;
+  background:
+    var(--cr-noise-texture),
+    #ffffff;
+  background-size: 180px 180px, auto;
+  background-blend-mode: soft-light, normal;
 }
 
 .auth-heading {
@@ -792,6 +846,46 @@ const onLogin = () => {
   }
 }
 
+@media (min-width: 1800px) and (max-height: 1300px) {
+  .login-window {
+    min-height: calc(100dvh - 7.5rem);
+  }
+
+  .career-board,
+  .auth-panel {
+    padding: clamp(2rem, 2.6vw, 3.5rem);
+  }
+
+  .window-strip {
+    margin-bottom: clamp(1.75rem, 4dvh, 3.5rem);
+  }
+
+  .career-board h1 {
+    font-size: clamp(3rem, 3.4vw, 3.625rem);
+  }
+
+  .board-metrics {
+    margin-top: clamp(1.5rem, 3dvh, 2.5rem);
+  }
+
+  .board-focus {
+    margin-top: clamp(1rem, 2dvh, 1.5rem);
+  }
+
+  .entry-stack {
+    margin-top: clamp(1rem, 2.5dvh, 2rem);
+    gap: 0.5rem;
+  }
+
+  .entry-row {
+    padding: 0.625rem 0;
+  }
+
+  .auth-next {
+    margin-top: clamp(1.25rem, 2.5dvh, 2rem);
+  }
+}
+
 @media (max-width: 920px) {
   .login-stage {
     align-items: flex-start;
@@ -919,6 +1013,244 @@ const onLogin = () => {
 
   .next-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* visual refresh overrides */
+.login-container {
+  color: var(--cr-text);
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.10), transparent 34%),
+    linear-gradient(315deg, rgba(36, 84, 214, 0.10), transparent 40%),
+    linear-gradient(90deg, rgba(36, 84, 214, 0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(36, 84, 214, 0.05) 1px, transparent 1px),
+    var(--cr-bg);
+  font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+}
+
+.login-container::before {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.70), transparent 42%),
+    linear-gradient(180deg, transparent 0%, rgba(36, 84, 214, 0.07) 100%);
+}
+
+.brand-icon,
+.role-chip.active,
+.primary-action {
+  background: linear-gradient(135deg, var(--cr-primary), var(--cr-accent));
+  border-color: var(--cr-primary);
+}
+
+.brand-icon,
+.ghost-link,
+.board-kicker,
+.board-metrics div,
+.board-focus,
+.entry-code,
+.auth-badge,
+.role-chip,
+.auth-form :deep(.el-input__wrapper),
+.next-grid span,
+.primary-action {
+  border-radius: var(--cr-radius-sm);
+}
+
+.login-window {
+  border-color: rgba(203, 216, 231, 0.9);
+  border-radius: var(--cr-radius);
+  box-shadow: 0 34px 70px rgba(16, 24, 39, 0.16), var(--cr-shadow-line);
+}
+
+.career-board {
+  background:
+    var(--cr-noise-texture),
+    linear-gradient(135deg, rgba(15, 118, 110, 0.24), transparent 34%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    var(--cr-sidebar);
+  background-size: 180px 180px, auto, 32px 32px, 32px 32px, auto;
+  background-blend-mode: soft-light, normal, normal, normal, normal;
+}
+
+.auth-panel {
+  background:
+    var(--cr-noise-texture),
+    linear-gradient(180deg, #ffffff, #f8fbff);
+  background-size: 180px 180px, auto;
+  background-blend-mode: soft-light, normal;
+}
+
+.board-kicker {
+  background: #8de2db;
+}
+
+.auth-heading h2,
+.auth-form :deep(.el-form-item__label),
+.auth-form :deep(.el-input__inner),
+.next-heading {
+  color: var(--cr-text);
+}
+
+.auth-heading p,
+.role-chip,
+.next-grid span,
+.ghost-link {
+  color: var(--cr-text-soft);
+}
+
+.auth-badge,
+.auth-links a {
+  color: var(--cr-primary);
+}
+
+.auth-badge {
+  background: var(--cr-primary-soft);
+  border-color: rgba(36, 84, 214, 0.14);
+}
+
+.auth-form :deep(.el-input__wrapper.is-focus) {
+  box-shadow: inset 0 0 0 1px var(--cr-primary), var(--cr-ring);
+}
+
+.primary-action {
+  min-height: 56px;
+  padding: 0 20px 0 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  line-height: 1;
+  box-shadow: 0 12px 26px rgba(36, 84, 214, 0.24);
+}
+
+.primary-action .el-icon {
+  font-size: 18px;
+}
+
+.primary-action:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--cr-primary-strong), var(--cr-accent));
+  box-shadow: 0 16px 30px rgba(36, 84, 214, 0.28);
+}
+
+/* Material 3 inspired identity switch */
+.role-switcher {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 4px;
+  margin-bottom: 28px;
+  padding: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(36, 84, 214, 0.14);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(239, 246, 255, 0.92)),
+    rgba(232, 240, 253, 0.86);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    inset 0 -1px 0 rgba(36, 84, 214, 0.08),
+    0 10px 24px rgba(16, 24, 39, 0.07);
+}
+
+.role-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: clamp(48px, 2.55vw, 56px);
+  height: 100%;
+  padding: 0 12px;
+  overflow: hidden;
+  color: #58677f;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  box-shadow: none;
+  cursor: pointer;
+  font-size: clamp(13px, 0.72vw, 15px);
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+
+  svg {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    padding: 3px;
+    border-radius: 999px;
+    background: rgba(36, 84, 214, 0.08);
+    color: currentColor;
+    box-sizing: border-box;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  span {
+    display: inline-block;
+    min-width: 0;
+    line-height: 1;
+    transform: translateY(0.5px);
+  }
+}
+
+.role-chip:hover {
+  color: var(--cr-text);
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(36, 84, 214, 0.12);
+  transform: translateY(0);
+}
+
+.role-chip.active {
+  color: #ffffff;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 42%),
+    linear-gradient(135deg, var(--cr-primary), var(--cr-accent));
+  border-color: rgba(255, 255, 255, 0.36);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(7, 89, 133, 0.48),
+    0 8px 18px rgba(36, 84, 214, 0.22);
+}
+
+.role-chip.active svg {
+  background: rgba(255, 255, 255, 0.22);
+  transform: scale(1.04);
+}
+
+.role-chip:active {
+  transform: scale(0.985);
+}
+
+.role-chip:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 0 0 5px rgba(36, 84, 214, 0.28);
+}
+
+@media (max-width: 560px) {
+  .role-switcher {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 18px;
+  }
+
+  .role-chip {
+    min-height: 46px;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .role-chip,
+  .role-chip svg {
+    transition: none;
   }
 }
 </style>

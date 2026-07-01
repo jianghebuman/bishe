@@ -6,7 +6,7 @@
           <el-avatar :src="student?.avatar" class="avatar"><el-icon><User /></el-icon></el-avatar>
           <div>
             <h2>{{ post.title }}</h2>
-            <p>{{ student?.realName || '求职者' }} · {{ student?.college || '-' }} · {{ student?.major || '-' }}</p>
+            <p>{{ student?.realName || '求职者' }} · {{ student?.school || '-' }} · {{ student?.college || '-' }} · {{ student?.major || '-' }}</p>
           </div>
         </div>
         <div class="head-actions">
@@ -47,6 +47,7 @@
         </div>
         <div class="page-card side">
           <h3 class="block-title">基本信息</h3>
+          <p><b>学校：</b>{{ student?.school || '-' }}</p>
           <p><b>学历：</b>{{ student?.education || resume?.education || '-' }}</p>
           <p><b>学院：</b>{{ student?.college || resume?.college || '-' }}</p>
           <p><b>专业：</b>{{ student?.major || resume?.major || '-' }}</p>
@@ -58,6 +59,7 @@
         <el-descriptions :column="2" border v-if="studentDetail">
           <el-descriptions-item label="姓名">{{ studentDetail.realName || '-' }}</el-descriptions-item>
           <el-descriptions-item label="性别">{{ genderLabel(studentDetail.gender) }}</el-descriptions-item>
+          <el-descriptions-item label="学校">{{ studentDetail.school || '-' }}</el-descriptions-item>
           <el-descriptions-item label="学号">{{ studentDetail.studentNo || '-' }}</el-descriptions-item>
           <el-descriptions-item label="年级">{{ studentDetail.grade || '-' }}</el-descriptions-item>
           <el-descriptions-item label="学院">{{ studentDetail.college || '-' }}</el-descriptions-item>

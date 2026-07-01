@@ -14,6 +14,7 @@ export const authApi = {
 export const publicApi = {
   home: () => request.get('/public/home'),
   banners: () => request.get('/public/banners'),
+  schools: () => request.get('/public/schools'),
   jobs: (params) => request.get('/public/jobs', { params }),
   jobDetail: (id) => request.get(`/public/jobs/${id}`),
   jobCategories: () => request.get('/public/job-categories'),

@@ -11,7 +11,7 @@
   2. 所有表均含 create_time / update_time / deleted(逻辑删除) 公共字段。
   3. 主键统一 bigint 自增。
   4. 密码字段存储 BCrypt 加密串，初始测试账号明文均为 123456。
-  5. 末尾附带字典数据、轮播图、公告、宣讲会、招聘会、职位、简历等演示数据
+  5. 末尾附带字典数据、轮播图、公告、宣讲会、招聘会、职位、简历等样例数据
      以及三类角色测试账号，导入后即可直接登录体验。
  ============================================================================
 */
@@ -102,6 +102,23 @@ CREATE TABLE `admin_user` (
 -- 2. 学生 / 企业 用户
 -- ============================================================================
 
+
+-- ----------------------------
+-- 学校基础数据表
+-- ----------------------------
+DROP TABLE IF EXISTS `school`;
+CREATE TABLE `school` (
+  `id`          bigint      NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `name`        varchar(80) NOT NULL COMMENT '学校名称',
+  `sort`        int                  DEFAULT 0 COMMENT '排序',
+  `status`      tinyint     NOT NULL DEFAULT 1 COMMENT '状态：1启用0停用',
+  `create_time` datetime             DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime             DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted`     tinyint     NOT NULL DEFAULT 0 COMMENT '逻辑删除：0否1是',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_school_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学校基础数据表';
+
 -- ----------------------------
 -- 学生表
 -- ----------------------------
@@ -111,7 +128,8 @@ CREATE TABLE `student` (
   `username`      varchar(50)  NOT NULL COMMENT '登录账号',
   `password`      varchar(100) NOT NULL COMMENT '密码(BCrypt)',
   `real_name`     varchar(50)           DEFAULT NULL COMMENT '姓名',
-  `student_no`    varchar(30)           DEFAULT NULL COMMENT '学号',
+  `school`        varchar(80)  NOT NULL COMMENT '学校',
+  `student_no`    varchar(30)  NOT NULL COMMENT '学号',
   `gender`        tinyint               DEFAULT 0 COMMENT '性别：0未知1男2女',
   `college`       varchar(80)           DEFAULT NULL COMMENT '学院',
   `major`         varchar(80)           DEFAULT NULL COMMENT '专业',
@@ -127,7 +145,9 @@ CREATE TABLE `student` (
   `update_time`   datetime              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted`       tinyint      NOT NULL DEFAULT 0 COMMENT '逻辑删除：0否1是',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_student_username` (`username`)
+  UNIQUE KEY `uk_student_username` (`username`),
+  UNIQUE KEY `uk_student_school_no` (`school`,`student_no`),
+  KEY `idx_student_school` (`school`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学生表';
 
 -- ----------------------------
@@ -850,6 +870,14 @@ INSERT INTO `role` (`id`,`role_code`,`role_name`,`description`) VALUES
 (2,'ENTERPRISE','企业HR','企业招聘方'),
 (3,'STUDENT','学生','求职者');
 
+-- 学校
+INSERT INTO `school` (`id`,`name`,`sort`,`status`) VALUES
+(1,'江南应用科技大学',1,1),
+(2,'星海数据学院',2,1),
+(3,'华东数字传媒学院',3,1),
+(4,'南城财经科技大学',4,1),
+(5,'星河文旅运营管理学院',5,1);
+
 -- 管理员账号（密码均为 123456 的 BCrypt 串）
 -- BCrypt: $2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO
 INSERT INTO `admin_user` (`id`,`username`,`password`,`real_name`,`phone`,`email`,`role_id`,`status`) VALUES
@@ -857,10 +885,10 @@ INSERT INTO `admin_user` (`id`,`username`,`password`,`real_name`,`phone`,`email`
 (2,'jiuyeban','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','就业办老师','13800000001','jyb@campus.com',1,1);
 
 -- 学生账号（密码 123456）
-INSERT INTO `student` (`id`,`username`,`password`,`real_name`,`student_no`,`gender`,`college`,`major`,`grade`,`education`,`phone`,`email`,`status`) VALUES
-(1,'student','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','张三','2021001001',1,'计算机学院','计算机科学与技术','2021级','本科','13900000001','zhangsan@stu.com',1),
-(2,'lisi','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','李四','2021001002',2,'计算机学院','软件工程','2021级','本科','13900000002','lisi@stu.com',1),
-(3,'wangwu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','王五','2021002001',1,'经济管理学院','市场营销','2021级','本科','13900000003','wangwu@stu.com',1);
+INSERT INTO `student` (`id`,`username`,`password`,`real_name`,`school`,`student_no`,`gender`,`college`,`major`,`grade`,`education`,`phone`,`email`,`status`) VALUES
+(1,'student','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','张三','江南应用科技大学','2021001001',1,'计算机学院','计算机科学与技术','2021级','本科','13900000001','zhangsan@stu.com',1),
+(2,'lisi','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','李四','江南应用科技大学','2021001002',2,'计算机学院','软件工程','2021级','本科','13900000002','lisi@stu.com',1),
+(3,'wangwu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','王五','南城财经科技大学','2021002001',1,'经济管理学院','市场营销','2021级','本科','13900000003','wangwu@stu.com',1);
 
 -- 企业账号（密码 123456）
 INSERT INTO `enterprise` (`id`,`username`,`password`,`company_name`,`credit_code`,`industry`,`scale`,`nature`,`address`,`city`,`intro`,`welfare`,`contact_name`,`contact_phone`,`email`,`audit_status`,`status`) VALUES
@@ -954,7 +982,7 @@ INSERT INTO `job_apply` (`id`,`student_id`,`resume_id`,`job_id`,`enterprise_id`,
 INSERT INTO `interview_notice` (`id`,`apply_id`,`student_id`,`enterprise_id`,`job_id`,`interview_time`,`interview_type`,`location`,`contact`,`remark`,`student_status`) VALUES
 (1,1,1,1,1,'2026-03-20 14:00:00',1,'北京市海淀区字节跳动总部B座3层','王经理 010-88888888','请携带简历及身份证，提前10分钟到场',1);
 
--- Offer 演示
+-- Offer 样例
 INSERT INTO `offer_record` (`id`,`apply_id`,`student_id`,`enterprise_id`,`job_id`,`position`,`salary`,`work_city`,`report_time`,`content`,`offer_status`) VALUES
 (1,1,1,1,1,'Java开发工程师','14K','北京','2026-07-01','恭喜您通过我司面试，期待您的加入！',0);
 
@@ -1040,7 +1068,7 @@ INSERT INTO `operation_log` (`user_id`,`user_type`,`user_name`,`log_type`,`modul
 (1,'ADMIN','admin','OPERATION','企业管理','审核通过企业：字节跳动','127.0.0.1',1,52);
 
 -- ============================================================================
--- 8. 扩展演示数据：覆盖更多状态、分页、审核、活动、人才库与日志
+-- 8. 扩展样例数据：覆盖更多状态、分页、审核、活动、人才库与日志
 -- ============================================================================
 
 -- 权限菜单与角色授权
@@ -1092,13 +1120,13 @@ INSERT INTO `admin_user` (`id`,`username`,`password`,`real_name`,`phone`,`email`
 (3,'auditor','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','审核专员','13800000002','auditor@campus.com',1,1),
 (4,'disabled_admin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','停用管理员','13800000003','disabled.admin@campus.com',1,0);
 
-INSERT INTO `student` (`id`,`username`,`password`,`real_name`,`student_no`,`gender`,`college`,`major`,`grade`,`education`,`phone`,`email`,`intro`,`status`) VALUES
-(4,'zhaoliu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','赵六','2021003001',2,'人工智能学院','人工智能','2021级','本科','13900000004','zhaoliu@stu.com','关注机器学习、数据挖掘和算法工程。',1),
-(5,'sunqi','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','孙七','2022001001',1,'电子信息学院','电子信息工程','2022级','本科','13900000005','sunqi@stu.com','有嵌入式和测试开发项目经验。',1),
-(6,'zhouba','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','周八','2020004001',2,'经济管理学院','工商管理','2020级','本科','13900000006','zhouba@stu.com','希望从事产品运营与人力资源方向。',1),
-(7,'wuyue','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','吴越','2021005001',1,'艺术设计学院','视觉传达设计','2021级','本科','13900000007','wuyue@stu.com','擅长UI设计、交互原型与视觉表达。',1),
-(8,'qianjiu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','钱九','2022006001',2,'计算机学院','软件工程','2022级','本科','13900000008','qianjiu@stu.com','准备寻找暑期实习岗位。',1),
-(9,'disabled_stu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','停用学生','2021009999',1,'计算机学院','计算机科学与技术','2021级','本科','13900000999','disabled.stu@stu.com','用于验证禁用账号。',0);
+INSERT INTO `student` (`id`,`username`,`password`,`real_name`,`school`,`student_no`,`gender`,`college`,`major`,`grade`,`education`,`phone`,`email`,`intro`,`status`) VALUES
+(4,'zhaoliu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','赵六','星海数据学院','2021003001',2,'人工智能学院','人工智能','2021级','本科','13900000004','zhaoliu@stu.com','关注机器学习、数据挖掘和算法工程。',1),
+(5,'sunqi','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','孙七','江南应用科技大学','2022001001',1,'电子信息学院','电子信息工程','2022级','本科','13900000005','sunqi@stu.com','有嵌入式和测试开发项目经验。',1),
+(6,'zhouba','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','周八','南城财经科技大学','2020004001',2,'经济管理学院','工商管理','2020级','本科','13900000006','zhouba@stu.com','希望从事产品运营与人力资源方向。',1),
+(7,'wuyue','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','吴越','华东数字传媒学院','2021005001',1,'艺术设计学院','视觉传达设计','2021级','本科','13900000007','wuyue@stu.com','擅长UI设计、交互原型与视觉表达。',1),
+(8,'qianjiu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','钱九','江南应用科技大学','2022006001',2,'计算机学院','软件工程','2022级','本科','13900000008','qianjiu@stu.com','准备寻找暑期实习岗位。',1),
+(9,'disabled_stu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','停用学生','江南应用科技大学','2021009999',1,'计算机学院','计算机科学与技术','2021级','本科','13900000999','disabled.stu@stu.com','用于验证禁用账号。',0);
 
 INSERT INTO `enterprise` (`id`,`username`,`password`,`company_name`,`credit_code`,`industry`,`scale`,`nature`,`address`,`city`,`intro`,`welfare`,`contact_name`,`contact_phone`,`email`,`website`,`audit_status`,`status`) VALUES
 (4,'alibaba','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','阿里云计算有限公司','913301001234567894','互联网','1000人以上','民营企业','杭州市余杭区文一西路','杭州','阿里云提供云计算、大数据和人工智能服务。','五险一金,年终奖,弹性工作,股票期权','陈HR','0571-26888888','campus@aliyun.com','https://www.aliyun.com',2,1),
@@ -1106,7 +1134,7 @@ INSERT INTO `enterprise` (`id`,`username`,`password`,`company_name`,`credit_code
 (6,'eduonline','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','启航在线教育科技有限公司','915101001234567896','教育培训','100-499人','民营企业','成都市高新区天府大道','成都','专注高校在线课程、职业教育和就业能力提升。','五险一金,节日福利,带薪年假','何经理','028-66667777','hr@eduonline.com','https://www.eduonline.com',2,1),
 (7,'fintech','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','海纳金融科技有限公司','913100001234567897','金融','500-999人','民营企业','上海市陆家嘴金融城','上海','提供智能风控、量化交易和企业金融科技解决方案。','五险一金,年终奖,绩效奖金','赵总监','021-88889999','hr@fintech.com','https://www.fintech.com',1,1),
 (8,'greenmaker','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','绿动智能制造有限公司','914201001234567898','制造业','500-999人','民营企业','武汉市东湖高新区','武汉','聚焦智能制造、工业互联网和绿色能源设备。','五险一金,绩效奖金,节日福利','宋经理','027-77778888','hr@greenmaker.com','https://www.greenmaker.com',3,1),
-(9,'oldcorp','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','停用演示企业有限公司','913201001234567899','计算机软件','20-99人','民营企业','南京市软件大道','南京','用于验证企业禁用状态。','五险一金','停用联系人','025-11112222','disabled@oldcorp.com','',2,0);
+;
 
 INSERT INTO `enterprise_audit` (`id`,`enterprise_id`,`license_no`,`license_img`,`extra_img`,`audit_status`,`audit_remark`,`auditor_id`,`audit_time`,`verify_source`,`verify_source_url`,`verify_time`,`verify_company_name`,`verify_credit_code`,`verify_status`,`verify_result`,`verify_remark`,`verify_snapshot_hash`) VALUES
 (1,1,'911100001234567890','/upload/audit/bytedance_license.png','/upload/audit/bytedance_extra.png',2,'营业执照与授权材料完整，认证通过',1,'2026-02-25 10:00:00','国家企业信用信息公示系统','https://www.gsxt.gov.cn/','2026-02-25 09:58:00','字节跳动科技有限公司','911100001234567890','存续',1,'权威来源返回的企业名称、统一社会信用代码与提交信息一致',NULL),
@@ -1117,7 +1145,7 @@ INSERT INTO `enterprise_audit` (`id`,`enterprise_id`,`license_no`,`license_img`,
 (6,6,'915101001234567896','/upload/audit/eduonline_license.png','/upload/audit/eduonline_extra.png',2,'教育培训企业材料齐全，认证通过',1,'2026-02-26 16:20:00','国家企业信用信息公示系统','https://www.gsxt.gov.cn/','2026-02-26 16:15:00','启航在线教育科技有限公司','915101001234567896','存续',1,'权威来源返回的企业名称、统一社会信用代码与提交信息一致',NULL),
 (7,7,'913100001234567897','/upload/audit/fintech_license.png','/upload/audit/fintech_extra.png',1,'新提交认证，等待审核',NULL,NULL,'国家企业信用信息公示系统','https://www.gsxt.gov.cn/','2026-02-27 09:30:00','海纳金融科技有限公司','913100001234567897','存续',1,'权威来源返回的企业名称、统一社会信用代码与提交信息一致',NULL),
 (8,8,'914201001234567898','/upload/audit/greenmaker_license.png','/upload/audit/greenmaker_extra.png',3,'授权材料信息与企业资料不一致，请重新上传',3,'2026-02-27 15:00:00','国家企业信用信息公示系统','https://www.gsxt.gov.cn/','2026-02-27 14:40:00','绿动智能制造有限公司','914201001234567898','存续',1,'权威来源返回的企业名称、统一社会信用代码与提交信息一致',NULL),
-(9,9,'913201001234567899','/upload/audit/oldcorp_license.png','/upload/audit/oldcorp_extra.png',2,'历史认证材料完整，认证通过；账号当前为禁用演示状态',1,'2026-02-27 16:00:00','国家企业信用信息公示系统','https://www.gsxt.gov.cn/','2026-02-27 15:45:00','停用演示企业有限公司','913201001234567899','存续',1,'权威来源返回的企业名称、统一社会信用代码与提交信息一致',NULL);
+;
 
 -- 更多分类和字典
 INSERT INTO `job_category` (`id`,`name`,`parent_id`,`sort`) VALUES
@@ -1335,7 +1363,7 @@ INSERT INTO `operation_log` (`user_id`,`user_type`,`user_name`,`log_type`,`modul
 (4,'ENTERPRISE','alibaba','OPERATION','职位管理','发布岗位：机器学习算法工程师','POST /enterprise/job','title=机器学习算法工程师','127.0.0.1',1,NULL,66),
 (4,'STUDENT','zhaoliu','LOGIN','登录','学生登录系统','POST /auth/login','role=STUDENT','127.0.0.1',1,NULL,31),
 (9,'STUDENT','disabled_stu','LOGIN','登录','停用学生登录失败','POST /auth/login','role=STUDENT','127.0.0.1',0,'账号已被禁用，请联系管理员',29),
-(1,'ADMIN','admin','ERROR','导出','导出岗位数据异常示例','GET /admin/export/job','{}','127.0.0.1',0,'演示异常日志',103);
+;
 
 -- 让展示统计与明细保持一致
 UPDATE `job_post` jp SET `apply_count` = (SELECT COUNT(*) FROM `job_apply` ja WHERE ja.`job_id` = jp.`id` AND ja.`deleted` = 0);
@@ -1343,7 +1371,7 @@ UPDATE `forum_post` fp SET `comment_count` = (SELECT COUNT(*) FROM `forum_commen
 UPDATE `campus_talk` ct SET `sign_count` = GREATEST(ct.`sign_count`, (SELECT COUNT(*) FROM `activity_sign` s WHERE s.`activity_type` = 1 AND s.`activity_id` = ct.`id` AND s.`deleted` = 0 AND s.`sign_status` <> 3));
 UPDATE `job_fair` jf SET `sign_count` = GREATEST(jf.`sign_count`, (SELECT COUNT(*) FROM `activity_sign` s WHERE s.`activity_type` = 2 AND s.`activity_id` = jf.`id` AND s.`deleted` = 0 AND s.`sign_status` <> 3));
 
--- 演示头像与企业 Logo
+-- 样例头像与企业 Logo
 UPDATE `admin_user` SET `avatar` = '/upload/image/seed/admin-admin.png' WHERE `id` = 1;
 UPDATE `admin_user` SET `avatar` = '/upload/image/seed/admin-jiuyeban.png' WHERE `id` = 2;
 UPDATE `admin_user` SET `avatar` = '/upload/image/seed/admin-auditor.png' WHERE `id` = 3;
@@ -1369,7 +1397,7 @@ UPDATE `enterprise` SET `logo` = '/upload/image/seed/enterprise-fintech-logo-v2.
 UPDATE `enterprise` SET `logo` = '/upload/image/seed/enterprise-greenmaker-logo-v2.png' WHERE `id` = 8;
 UPDATE `enterprise` SET `logo` = '/upload/image/seed/enterprise-oldcorp-logo-v2.png' WHERE `id` = 9;
 
--- 首页补充演示数据：用于宽屏门户展示，保留原有待审核/驳回/停用样例不变
+-- 首页补充样例数据：用于宽屏门户展示，保留原有待审核/驳回/停用样例不变
 INSERT INTO `enterprise` (`id`,`username`,`password`,`company_name`,`credit_code`,`industry`,`scale`,`nature`,`address`,`city`,`logo`,`intro`,`welfare`,`contact_name`,`contact_phone`,`email`,`website`,`audit_status`,`status`) VALUES
 (10,'sparkai','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','星火人工智能科技有限公司','916101001234567900','人工智能','100-499人','民营企业','西安市高新区科技二路','西安','/upload/image/seed/enterprise-newcorp-logo-v2.png','专注大模型应用、智能客服和行业知识库产品研发。','五险一金,年终奖,弹性工作,补充医疗','周经理','029-66668888','campus@sparkai.com','https://www.sparkai.com',2,1),
 (11,'cloudway','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','云途物流科技有限公司','914401001234567901','互联网','500-999人','民营企业','广州市天河区软件园','广州','/upload/image/seed/enterprise-greenmaker-logo-v2.png','面向智慧物流、供应链协同和跨境电商提供数字化平台。','五险一金,绩效奖金,带薪年假,免费班车','吴HR','020-88990011','hr@cloudway.com','https://www.cloudway.com',2,1),
@@ -1424,16 +1452,16 @@ SELECT * FROM (
 ) AS src
 WHERE NOT EXISTS (SELECT 1 FROM `enterprise` e WHERE e.`id` = src.`id`);
 
-INSERT INTO `student` (`id`,`username`,`password`,`real_name`,`student_no`,`gender`,`college`,`major`,`grade`,`education`,`phone`,`email`,`status`)
+INSERT INTO `student` (`id`,`username`,`password`,`real_name`,`school`,`student_no`,`gender`,`college`,`major`,`grade`,`education`,`phone`,`email`,`status`)
 SELECT * FROM (
-  SELECT 10 AS `id`,'chenjie' AS `username`,'$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO' AS `password`,'陈洁' AS `real_name`,'2021007001' AS `student_no`,2 AS `gender`,'软件学院' AS `college`,'软件工程' AS `major`,'2021级' AS `grade`,'本科' AS `education`,'13900000010' AS `phone`,'chenjie@stu.com' AS `email`,1 AS `status`
-  UNION ALL SELECT 11,'dengyi','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','邓一','2021008001',1,'人工智能学院','人工智能','2021级','本科','13900000011','dengyi@stu.com',1
-  UNION ALL SELECT 12,'linyue','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','林悦','2021009001',2,'艺术设计学院','视觉传达设计','2021级','本科','13900000012','linyue@stu.com',1
-  UNION ALL SELECT 13,'xuhao','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','许昊','2022001002',1,'电子信息学院','电子信息工程','2022级','本科','13900000013','xuhao@stu.com',1
-  UNION ALL SELECT 14,'hanqing','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','韩晴','2020006001',2,'经济管理学院','工商管理','2020级','本科','13900000014','hanqing@stu.com',1
-  UNION ALL SELECT 15,'yuchen','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','于晨','2021002002',1,'经济管理学院','市场营销','2021级','本科','13900000015','yuchen@stu.com',1
-  UNION ALL SELECT 16,'wangjue','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','王觉','2021006002',1,'计算机学院','网络工程','2021级','本科','13900000016','wangjue@stu.com',1
-  UNION ALL SELECT 17,'zhouxin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','周欣','2021003003',2,'经济管理学院','信息管理与信息系统','2021级','本科','13900000017','zhouxin@stu.com',1
+  SELECT 10 AS `id`,'chenjie' AS `username`,'$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO' AS `password`,'陈洁' AS `real_name`,'江南应用科技大学' AS `school`,'2021007001' AS `student_no`,2 AS `gender`,'软件学院' AS `college`,'软件工程' AS `major`,'2021级' AS `grade`,'本科' AS `education`,'13900000010' AS `phone`,'chenjie@stu.com' AS `email`,1 AS `status`
+  UNION ALL SELECT 11,'dengyi','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','邓一','星海数据学院','2021008001',1,'人工智能学院','人工智能','2021级','本科','13900000011','dengyi@stu.com',1
+  UNION ALL SELECT 12,'linyue','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','林悦','华东数字传媒学院','2021009001',2,'艺术设计学院','视觉传达设计','2021级','本科','13900000012','linyue@stu.com',1
+  UNION ALL SELECT 13,'xuhao','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','许昊','江南应用科技大学','2022001002',1,'电子信息学院','电子信息工程','2022级','本科','13900000013','xuhao@stu.com',1
+  UNION ALL SELECT 14,'hanqing','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','韩晴','南城财经科技大学','2020006001',2,'经济管理学院','工商管理','2020级','本科','13900000014','hanqing@stu.com',1
+  UNION ALL SELECT 15,'yuchen','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','于晨','南城财经科技大学','2021002002',1,'经济管理学院','市场营销','2021级','本科','13900000015','yuchen@stu.com',1
+  UNION ALL SELECT 16,'wangjue','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','王觉','江南应用科技大学','2021006002',1,'计算机学院','网络工程','2021级','本科','13900000016','wangjue@stu.com',1
+  UNION ALL SELECT 17,'zhouxin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','周欣','南城财经科技大学','2021003003',2,'经济管理学院','信息管理与信息系统','2021级','本科','13900000017','zhouxin@stu.com',1
 ) AS src
 WHERE NOT EXISTS (SELECT 1 FROM `student` s WHERE s.`id` = src.`id`);
 
@@ -1552,27 +1580,27 @@ SELECT * FROM (
 ) AS src
 WHERE NOT EXISTS (SELECT 1 FROM `enterprise` e WHERE e.`id` = src.`id`);
 
-INSERT INTO `student` (`id`,`username`,`password`,`real_name`,`student_no`,`gender`,`college`,`major`,`grade`,`education`,`phone`,`email`,`status`)
+INSERT INTO `student` (`id`,`username`,`password`,`real_name`,`school`,`student_no`,`gender`,`college`,`major`,`grade`,`education`,`phone`,`email`,`status`)
 SELECT * FROM (
-  SELECT 18 AS `id`,'liuyang' AS `username`,'$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO' AS `password`,'刘洋' AS `real_name`,'2021007018' AS `student_no`,1 AS `gender`,'计算机学院' AS `college`,'计算机科学与技术' AS `major`,'2021级' AS `grade`,'本科' AS `education`,'13900000018' AS `phone`,'liuyang@stu.com' AS `email`,1 AS `status`
-  UNION ALL SELECT 19,'fangmin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','方敏','2021007019',2,'软件学院','软件工程','2021级','本科','13900000019','fangmin@stu.com',1
-  UNION ALL SELECT 20,'heyu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','何宇','2021007020',1,'人工智能学院','人工智能','2021级','本科','13900000020','heyu@stu.com',1
-  UNION ALL SELECT 21,'songke','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','宋可','2021007021',2,'艺术设计学院','视觉传达设计','2021级','本科','13900000021','songke@stu.com',1
-  UNION ALL SELECT 22,'tangrui','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','唐睿','2021007022',1,'经济管理学院','市场营销','2021级','本科','13900000022','tangrui@stu.com',1
-  UNION ALL SELECT 23,'guojia','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','郭佳','2021007023',2,'电子信息学院','电子信息工程','2021级','本科','13900000023','guojia@stu.com',1
-  UNION ALL SELECT 24,'mazhe','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','马哲','2021007024',1,'计算机学院','网络工程','2021级','本科','13900000024','mazhe@stu.com',1
-  UNION ALL SELECT 25,'xiaoran','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','肖然','2021007025',2,'经济管理学院','信息管理与信息系统','2021级','本科','13900000025','xiaoran@stu.com',1
-  UNION ALL SELECT 26,'lvqing','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','吕晴','2021007026',2,'经济管理学院','工商管理','2021级','本科','13900000026','lvqing@stu.com',1
-  UNION ALL SELECT 27,'penghao','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','彭浩','2021007027',1,'软件学院','软件工程','2021级','本科','13900000027','penghao@stu.com',1
-  UNION ALL SELECT 28,'caixin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','蔡欣','2021007028',2,'艺术设计学院','视觉传达设计','2021级','本科','13900000028','caixin@stu.com',1
-  UNION ALL SELECT 29,'yuanbo','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','袁博','2021007029',1,'人工智能学院','人工智能','2021级','本科','13900000029','yuanbo@stu.com',1
-  UNION ALL SELECT 30,'huzhe','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','胡哲','2021007030',1,'计算机学院','计算机科学与技术','2021级','本科','13900000030','huzhe@stu.com',1
-  UNION ALL SELECT 31,'yinxin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','尹欣','2021007031',2,'经济管理学院','市场营销','2021级','本科','13900000031','yinxin@stu.com',1
-  UNION ALL SELECT 32,'luohan','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','罗瀚','2021007032',1,'电子信息学院','电子信息工程','2021级','本科','13900000032','luohan@stu.com',1
-  UNION ALL SELECT 33,'shenyi','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','沈奕','2021007033',2,'软件学院','软件工程','2021级','本科','13900000033','shenyi@stu.com',1
-  UNION ALL SELECT 34,'zhuoyu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','卓雨','2021007034',2,'经济管理学院','信息管理与信息系统','2021级','本科','13900000034','zhuoyu@stu.com',1
-  UNION ALL SELECT 35,'xiechen','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','谢晨','2021007035',1,'艺术设计学院','视觉传达设计','2021级','本科','13900000035','xiechen@stu.com',1
-  UNION ALL SELECT 36,'duanlei','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','段磊','2021007036',1,'计算机学院','网络工程','2021级','本科','13900000036','duanlei@stu.com',1
+  SELECT 18 AS `id`,'liuyang' AS `username`,'$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO' AS `password`,'刘洋' AS `real_name`,'江南应用科技大学' AS `school`,'2021007018' AS `student_no`,1 AS `gender`,'计算机学院' AS `college`,'计算机科学与技术' AS `major`,'2021级' AS `grade`,'本科' AS `education`,'13900000018' AS `phone`,'liuyang@stu.com' AS `email`,1 AS `status`
+  UNION ALL SELECT 19,'fangmin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','方敏','江南应用科技大学','2021007019',2,'软件学院','软件工程','2021级','本科','13900000019','fangmin@stu.com',1
+  UNION ALL SELECT 20,'heyu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','何宇','星海数据学院','2021007020',1,'人工智能学院','人工智能','2021级','本科','13900000020','heyu@stu.com',1
+  UNION ALL SELECT 21,'songke','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','宋可','华东数字传媒学院','2021007021',2,'艺术设计学院','视觉传达设计','2021级','本科','13900000021','songke@stu.com',1
+  UNION ALL SELECT 22,'tangrui','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','唐睿','南城财经科技大学','2021007022',1,'经济管理学院','市场营销','2021级','本科','13900000022','tangrui@stu.com',1
+  UNION ALL SELECT 23,'guojia','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','郭佳','江南应用科技大学','2021007023',2,'电子信息学院','电子信息工程','2021级','本科','13900000023','guojia@stu.com',1
+  UNION ALL SELECT 24,'mazhe','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','马哲','江南应用科技大学','2021007024',1,'计算机学院','网络工程','2021级','本科','13900000024','mazhe@stu.com',1
+  UNION ALL SELECT 25,'xiaoran','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','肖然','南城财经科技大学','2021007025',2,'经济管理学院','信息管理与信息系统','2021级','本科','13900000025','xiaoran@stu.com',1
+  UNION ALL SELECT 26,'lvqing','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','吕晴','南城财经科技大学','2021007026',2,'经济管理学院','工商管理','2021级','本科','13900000026','lvqing@stu.com',1
+  UNION ALL SELECT 27,'penghao','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','彭浩','江南应用科技大学','2021007027',1,'软件学院','软件工程','2021级','本科','13900000027','penghao@stu.com',1
+  UNION ALL SELECT 28,'caixin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','蔡欣','华东数字传媒学院','2021007028',2,'艺术设计学院','视觉传达设计','2021级','本科','13900000028','caixin@stu.com',1
+  UNION ALL SELECT 29,'yuanbo','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','袁博','星海数据学院','2021007029',1,'人工智能学院','人工智能','2021级','本科','13900000029','yuanbo@stu.com',1
+  UNION ALL SELECT 30,'huzhe','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','胡哲','江南应用科技大学','2021007030',1,'计算机学院','计算机科学与技术','2021级','本科','13900000030','huzhe@stu.com',1
+  UNION ALL SELECT 31,'yinxin','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','尹欣','南城财经科技大学','2021007031',2,'经济管理学院','市场营销','2021级','本科','13900000031','yinxin@stu.com',1
+  UNION ALL SELECT 32,'luohan','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','罗瀚','江南应用科技大学','2021007032',1,'电子信息学院','电子信息工程','2021级','本科','13900000032','luohan@stu.com',1
+  UNION ALL SELECT 33,'shenyi','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','沈奕','江南应用科技大学','2021007033',2,'软件学院','软件工程','2021级','本科','13900000033','shenyi@stu.com',1
+  UNION ALL SELECT 34,'zhuoyu','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','卓雨','南城财经科技大学','2021007034',2,'经济管理学院','信息管理与信息系统','2021级','本科','13900000034','zhuoyu@stu.com',1
+  UNION ALL SELECT 35,'xiechen','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','谢晨','华东数字传媒学院','2021007035',1,'艺术设计学院','视觉传达设计','2021级','本科','13900000035','xiechen@stu.com',1
+  UNION ALL SELECT 36,'duanlei','$2a$10$5cl.E33gmXaCawXN8CQIi.htvEQ0FWNhkr3jv8QiixVQmIqmvITSO','段磊','江南应用科技大学','2021007036',1,'计算机学院','网络工程','2021级','本科','13900000036','duanlei@stu.com',1
 ) AS src
 WHERE NOT EXISTS (SELECT 1 FROM `student` s WHERE s.`id` = src.`id`);
 

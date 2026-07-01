@@ -46,7 +46,7 @@
         <div class="profile-card page-card">
           <el-avatar :size="76" :src="profile.avatar"><el-icon><User /></el-icon></el-avatar>
           <h3>{{ profile.realName || profile.username }}</h3>
-          <p>{{ profile.college || '未填写学院' }} · {{ profile.major || '未填写专业' }}</p>
+          <p>{{ profile.school || '未填写学校' }} · {{ profile.college || '未填写学院' }} · {{ profile.major || '未填写专业' }}</p>
           <el-divider />
           <div class="resume-rate">
             <span>简历完整度</span>
@@ -162,8 +162,70 @@ onMounted(async () => {
 .recent-card :deep(.el-table__row) {
   height: 3.375rem;
 }
-.stat-card { height: 110px; border-radius: var(--cr-radius); color: #fff; padding: 22px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--cr-shadow-soft); .num { font-size: 28px; font-weight: 750; } .title { margin-top: 8px; opacity: .95; } }
-.section-title { font-size: 16px; font-weight: 700; color: var(--cr-text); margin-bottom: 18px; border-left: 3px solid var(--cr-primary); padding-left: 10px; }
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  height: 110px;
+  border-radius: var(--cr-radius);
+  color: #fff;
+  padding: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--cr-shadow-soft), var(--cr-shadow-line);
+  background-blend-mode: soft-light, normal;
+  .num { position: relative; z-index: 1; font-size: 30px; font-weight: 850; line-height: 1; }
+  .title { position: relative; z-index: 1; margin-top: 8px; opacity: .94; font-weight: 700; }
+  .el-icon { position: relative; z-index: 1; width: 3.25rem; height: 3.25rem; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,.24); border-radius: var(--cr-radius-sm); background: rgba(255,255,255,.14); }
+}
+.stat-card::before {
+  position: absolute;
+  inset: -16% -10% auto auto;
+  width: 76%;
+  height: 82%;
+  content: "";
+  pointer-events: none;
+  border-radius: 999rem;
+  background: linear-gradient(180deg, rgba(255,255,255,.22), transparent 72%);
+  filter: blur(1.35rem);
+  opacity: .42;
+  transform: rotate(-18deg);
+  animation: stat-ray-breathe 15s ease-in-out infinite;
+}
+.stat-card::after {
+  position: absolute;
+  inset: auto -2.5rem -3rem auto;
+  width: 8rem;
+  height: 8rem;
+  content: "";
+  background: rgba(255,255,255,.10);
+  transform: rotate(24deg);
+}
+.section-title {
+  position: relative;
+  margin-bottom: 18px;
+  padding-left: 12px;
+  color: var(--cr-text);
+  font-size: 16px;
+  font-weight: 820;
+  line-height: 1.2;
+}
+
+@keyframes stat-ray-breathe {
+  0%,
+  100% { opacity: .22; }
+  50% { opacity: .48; }
+}
+.section-title::before {
+  position: absolute;
+  top: 0.1rem;
+  bottom: 0.1rem;
+  left: 0;
+  width: 0.25rem;
+  content: "";
+  border-radius: 999rem;
+  background: linear-gradient(180deg, var(--cr-primary), var(--cr-accent));
+}
 .quick-actions { text-align: center; margin-top: 28px; }
 .profile-card { text-align: center; h3 { margin: 12px 0 4px; color: var(--cr-text); } p { color: var(--cr-text-muted); } }
 .resume-rate { text-align: left; span { display: block; color: var(--cr-text-soft); margin-bottom: 10px; } }
