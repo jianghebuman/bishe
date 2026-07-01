@@ -138,6 +138,10 @@ http://localhost:8080
 
 [deploy/本地构建前端-服务器部署流程.md](deploy/本地构建前端-服务器部署流程.md)
 
+一键更新部署流程：
+
+[deploy/一键更新部署说明.md](deploy/一键更新部署说明.md)
+
 已提供：
 
 - `application-prod.yml`：生产环境变量配置
