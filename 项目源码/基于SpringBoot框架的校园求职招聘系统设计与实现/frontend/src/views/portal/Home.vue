@@ -34,6 +34,19 @@
           <el-button type="primary" size="large" class="primary-pill" @click="$router.push('/jobs')">浏览职位</el-button>
           <el-button size="large" class="ghost-pill" @click="goProfileAction">发布或完善信息</el-button>
         </div>
+        <div class="hero-dock cr-mini-dock" aria-label="快捷入口">
+          <button
+            v-for="item in quickActions"
+            :key="item.label"
+            type="button"
+            class="cr-dock-button"
+            @click="$router.push(item.to)"
+          >
+            <el-icon><component :is="item.icon" /></el-icon>
+            <span>{{ item.label }}</span>
+            <small>{{ item.hint }}</small>
+          </button>
+        </div>
       </div>
       <div class="hero-board">
         <div class="board-grid" aria-hidden="true">
@@ -93,6 +106,31 @@
         <strong>{{ item.value }}</strong>
         <span>{{ item.label }}</span>
       </div>
+    </section>
+
+    <section class="magic-bento" aria-label="求职服务组件">
+      <article
+        v-for="card in bentoCards"
+        :key="card.title"
+        class="bento-card cr-magic-surface"
+        :class="card.tone"
+        role="button"
+        tabindex="0"
+        @click="$router.push(card.to)"
+        @keydown.enter="$router.push(card.to)"
+        @keydown.space.prevent="$router.push(card.to)"
+      >
+        <div class="bento-head">
+          <span class="bento-icon"><el-icon><component :is="card.icon" /></el-icon></span>
+          <span class="bento-value">{{ card.value }}</span>
+        </div>
+        <h3>{{ card.title }}</h3>
+        <p>{{ card.desc }}</p>
+        <div class="bento-foot">
+          <span>{{ card.meta }}</span>
+          <el-icon><Right /></el-icon>
+        </div>
+      </article>
     </section>
 
     <section class="activity-marquee section" aria-label="校园招聘动态">
@@ -213,7 +251,7 @@
 <script setup>
 import { computed, ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search, OfficeBuilding } from '@element-plus/icons-vue'
+import { Calendar, ChatLineRound, Compass, OfficeBuilding, Right, Search, Tickets } from '@element-plus/icons-vue'
 import { publicApi } from '@/api'
 import { useUserStore } from '@/store/user'
 import BackgroundPaths3d from '@/components/BackgroundPaths3d.vue'
@@ -225,6 +263,12 @@ const kw = ref('')
 const city = ref('')
 const cities = ref([])
 
+const quickActions = [
+  { label: '职位雷达', hint: '按技能筛选', to: '/jobs', icon: Compass },
+  { label: '企业星图', hint: '看认证企业', to: '/enterprises', icon: OfficeBuilding },
+  { label: '宣讲日历', hint: '近期活动', to: '/talks', icon: Calendar },
+  { label: '在线沟通', hint: '消息入口', to: '/chat', icon: ChatLineRound }
+]
 const heroMeteors = [
   { top: '-8%', left: '58%', '--meteor-travel': '-34rem', animationDelay: '.2s', animationDuration: '8s' },
   { top: '2%', left: '74%', '--meteor-travel': '-30rem', animationDelay: '1.8s', animationDuration: '9.5s' },
@@ -258,6 +302,44 @@ const stats = computed(() => [
   { value: `${home.recommendEnterprises?.length || 0}+`, label: '认证企业' },
   { value: `${(home.talks?.length || 0) + (home.fairs?.length || 0)}+`, label: '招聘活动' },
   { value: `${home.announcements?.length || 0}+`, label: '就业资讯' }
+])
+const bentoCards = computed(() => [
+  {
+    title: '求职雷达',
+    desc: '把城市、薪资和学历条件收束到一页，减少来回翻找。',
+    value: `${home.hotJobs?.length || 0}+`,
+    meta: '热门岗位',
+    to: '/jobs',
+    icon: Compass,
+    tone: 'is-primary'
+  },
+  {
+    title: '企业信号',
+    desc: '认证企业、行业和规模直接对照，先判断是否值得投递。',
+    value: `${home.recommendEnterprises?.length || 0}+`,
+    meta: '认证企业',
+    to: '/enterprises',
+    icon: OfficeBuilding,
+    tone: 'is-accent'
+  },
+  {
+    title: '活动脉冲',
+    desc: '宣讲会和招聘会聚在同一条时间线上，错过概率更低。',
+    value: `${(home.talks?.length || 0) + (home.fairs?.length || 0)}+`,
+    meta: '招聘活动',
+    to: '/talks',
+    icon: Calendar,
+    tone: 'is-blue'
+  },
+  {
+    title: '投递闭环',
+    desc: '从浏览、收藏、投递到在线沟通，后续动作保持连续。',
+    value: '3步',
+    meta: '求职流程',
+    to: '/jobs',
+    icon: Tickets,
+    tone: 'is-rose'
+  }
 ])
 const fallbackMarqueeItems = [
   { type: '热招岗位', title: '前端开发工程师', meta: '杭州 · 18-28K', to: '/jobs' },
@@ -597,6 +679,14 @@ onMounted(async () => {
   gap: .75rem;
 }
 
+.hero-dock {
+  margin-top: 1rem;
+}
+
+.hero-dock .cr-dock-button {
+  min-width: clamp(7.25rem, 8.8vw, 9.5rem);
+}
+
 .primary-pill {
   min-width: 8.5rem;
   background: var(--cr-primary);
@@ -865,6 +955,107 @@ onMounted(async () => {
   color: var(--cr-text-muted);
   font-size: .875rem;
   font-weight: 700;
+}
+
+.magic-bento {
+  display: grid;
+  grid-template-columns: 1.1fr .9fr .9fr 1.1fr;
+  gap: clamp(.875rem, 1.6vw, 1.25rem);
+}
+
+.bento-card {
+  --bento-color: var(--cr-primary);
+  min-height: clamp(12.5rem, 16vw, 16rem);
+  padding: clamp(1rem, 1.8vw, 1.375rem);
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.bento-card.is-accent {
+  --bento-color: var(--cr-accent);
+  --cr-magic-x: 72%;
+}
+
+.bento-card.is-blue {
+  --bento-color: #0ea5e9;
+  --cr-magic-x: 50%;
+  --cr-magic-y: 100%;
+}
+
+.bento-card.is-rose {
+  --bento-color: var(--cr-danger);
+  --cr-magic-x: 88%;
+}
+
+.bento-head,
+.bento-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.bento-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: .875rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .32), transparent 48%),
+    color-mix(in srgb, var(--bento-color) 12%, white);
+  color: var(--bento-color);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .86);
+}
+
+.bento-icon .el-icon {
+  font-size: 1.35rem;
+}
+
+.bento-value {
+  color: var(--bento-color);
+  font-size: clamp(1.5rem, 2.4vw, 2.5rem);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.bento-card h3 {
+  margin-top: auto;
+  color: var(--cr-text);
+  font-size: clamp(1.15rem, 1.45vw, 1.5rem);
+  line-height: 1.2;
+  font-weight: 900;
+}
+
+.bento-card p {
+  margin-top: .625rem;
+  color: var(--cr-text-soft);
+  font-size: .9375rem;
+  line-height: 1.65;
+}
+
+.bento-foot {
+  margin-top: 1.25rem;
+  padding-top: .875rem;
+  border-top: .0625rem dashed rgba(148, 163, 184, .34);
+  color: var(--cr-text-muted);
+  font-size: .8125rem;
+  font-weight: 800;
+}
+
+.bento-foot .el-icon {
+  width: 1.875rem;
+  height: 1.875rem;
+  border-radius: 999rem;
+  background: color-mix(in srgb, var(--bento-color) 10%, white);
+  color: var(--bento-color);
+  transition: transform .18s ease;
+}
+
+.bento-card:hover .bento-foot .el-icon {
+  transform: translateX(.125rem);
 }
 
 .activity-marquee {
@@ -1486,9 +1677,14 @@ onMounted(async () => {
   }
 
   .stats-strip,
+  .magic-bento,
   .activity-marquee,
   .info-grid {
     grid-template-columns: 1fr;
+  }
+
+  .bento-card {
+    min-height: 11rem;
   }
 
   .activity-marquee {
@@ -1521,6 +1717,11 @@ onMounted(async () => {
 @media (max-width: 30rem) {
   .hero-actions :deep(.el-button) {
     flex: 1 1 100%;
+  }
+
+  .hero-dock,
+  .hero-dock .cr-dock-button {
+    width: 100%;
   }
 }
 

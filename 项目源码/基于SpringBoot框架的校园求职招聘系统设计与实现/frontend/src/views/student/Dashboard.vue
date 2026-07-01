@@ -1,5 +1,24 @@
 <template>
   <div class="page-container student-dashboard-page">
+    <section class="career-command cr-magic-surface">
+      <div class="command-copy">
+        <span class="command-kicker">求职指挥台</span>
+        <h2>{{ commandTitle }}</h2>
+        <p>{{ nextTask.desc }}</p>
+      </div>
+      <div class="command-chips">
+        <span v-for="chip in commandChips" :key="chip.label">
+          <small>{{ chip.label }}</small>
+          <b>{{ chip.value }}</b>
+        </span>
+      </div>
+      <button class="command-action" type="button" @click="$router.push(nextTask.to)">
+        <el-icon><component :is="nextTask.icon" /></el-icon>
+        <span>{{ nextTask.button }}</span>
+        <el-icon><Right /></el-icon>
+      </button>
+    </section>
+
     <el-row :gutter="16" class="dashboard-stats">
       <el-col :span="6" v-for="card in cards" :key="card.title">
         <div class="stat-card" :style="{ background: card.bg }">
@@ -81,7 +100,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
-import { User, Document, Tickets, ChatLineRound, Medal } from '@element-plus/icons-vue'
+import { ChatLineRound, Compass, Document, Medal, Right, Tickets, User } from '@element-plus/icons-vue'
 import { noticeApi, studentApi } from '@/api'
 
 const profile = reactive({})
@@ -97,6 +116,27 @@ const applyText = (s) => statusText[s] || '未知'
 const applyType = (s) => s === 4 ? 'success' : s === 5 ? 'danger' : s === 2 ? 'warning' : 'info'
 const noticeType = (t) => ({ APPLY: 'success', INTERVIEW: 'warning', OFFER: 'danger', AUDIT: 'primary', CHAT: 'warning' }[t] || 'info')
 const stepActive = computed(() => resume.value ? (offerCount.value > 0 ? 5 : interviewCount.value > 0 ? 4 : applyCount.value > 0 ? 3 : 2) : 1)
+const nextTask = computed(() => {
+  if (!profile.realName || !profile.school) {
+    return { button: '完善资料', desc: '先把姓名、学校、专业和联系方式补齐，让企业快速判断匹配度。', to: '/student/profile', icon: User }
+  }
+  if (!resume.value) {
+    return { button: '建立简历', desc: '把教育经历、项目经验和附件简历放进同一个简历档案。', to: '/student/resume', icon: Document }
+  }
+  if (!applyCount.value) {
+    return { button: '寻找岗位', desc: '用岗位雷达筛选城市、薪资和学历要求，开始第一轮投递。', to: '/jobs', icon: Compass }
+  }
+  if (!interviewCount.value) {
+    return { button: '查看投递', desc: '持续关注投递状态，及时处理企业查看、邀约和沟通消息。', to: '/student/apply', icon: Tickets }
+  }
+  return { button: '查看面试', desc: '面试安排已经产生，优先确认时间、地点和沟通记录。', to: '/student/interview', icon: ChatLineRound }
+})
+const commandTitle = computed(() => `${profile.realName || profile.username || '同学'}，下一步是${nextTask.value.button}`)
+const commandChips = computed(() => [
+  { label: '完整度', value: `${resume.value?.completeRate || 0}%` },
+  { label: '投递', value: applyCount.value },
+  { label: '面试', value: interviewCount.value }
+])
 const cards = computed(() => [
   { title: '简历完整度', value: (resume.value?.completeRate || 0) + '%', icon: Document, bg: 'linear-gradient(135deg,#2563eb,#0891b2)' },
   { title: '投递记录', value: applyCount.value, icon: Tickets, bg: 'linear-gradient(135deg,#0f766e,#2563eb)' },
@@ -122,9 +162,125 @@ onMounted(async () => {
   min-height: calc(100dvh - 70px - clamp(1.5rem, 3vw, 2.5rem));
   padding: clamp(.75rem, 1.2vw, 1.25rem);
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: clamp(.9rem, 1.2vw, 1.25rem);
 }
+
+.career-command {
+  --cr-magic-x: 86%;
+  --cr-magic-y: -22%;
+  min-height: 8.25rem;
+  padding: clamp(1rem, 1.8vw, 1.375rem);
+  display: grid;
+  grid-template-columns: minmax(18rem, 1fr) auto minmax(12rem, auto);
+  gap: clamp(1rem, 2vw, 1.5rem);
+  align-items: center;
+}
+
+.command-copy {
+  min-width: 0;
+}
+
+.command-kicker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.625rem;
+  padding: 0 .625rem;
+  border-radius: 999rem;
+  background: rgba(36, 84, 214, .09);
+  color: var(--cr-primary);
+  font-size: .75rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.command-copy h2 {
+  margin-top: .75rem;
+  color: var(--cr-text);
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  line-height: 1.18;
+  font-weight: 900;
+}
+
+.command-copy p {
+  margin-top: .5rem;
+  max-width: 48rem;
+  color: var(--cr-text-soft);
+  font-size: .9375rem;
+  line-height: 1.7;
+}
+
+.command-chips {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(4.75rem, 1fr));
+  gap: .5rem;
+}
+
+.command-chips span {
+  min-width: 0;
+  padding: .75rem .875rem;
+  border: .0625rem solid rgba(203, 216, 231, .72);
+  border-radius: var(--cr-radius-sm);
+  background: rgba(255, 255, 255, .66);
+  box-shadow: inset 0 .0625rem 0 rgba(255, 255, 255, .84);
+}
+
+.command-chips small,
+.command-chips b {
+  display: block;
+  line-height: 1.1;
+}
+
+.command-chips small {
+  color: var(--cr-text-muted);
+  font-size: .75rem;
+  font-weight: 800;
+}
+
+.command-chips b {
+  margin-top: .375rem;
+  color: var(--cr-text);
+  font-size: clamp(1.125rem, 1.5vw, 1.5rem);
+  font-weight: 950;
+}
+
+.command-action {
+  min-width: 12rem;
+  min-height: 3.25rem;
+  padding: 0 .875rem 0 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .625rem;
+  border: 0;
+  border-radius: .875rem;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.18), transparent 42%),
+    linear-gradient(135deg, var(--cr-primary), var(--cr-accent));
+  color: #fff;
+  cursor: pointer;
+  font-weight: 900;
+  box-shadow: 0 .75rem 1.5rem rgba(36, 84, 214, .24);
+  transition: transform .16s ease, box-shadow .18s ease, filter .18s ease;
+}
+
+.command-action:hover {
+  filter: saturate(1.05) brightness(1.02);
+  box-shadow: 0 .875rem 1.75rem rgba(36, 84, 214, .28);
+  transform: translateY(-.0625rem);
+}
+
+.command-action:active {
+  transform: translateY(.0625rem);
+}
+
+.command-action .el-icon:first-child {
+  width: 2rem;
+  height: 2rem;
+  border-radius: .625rem;
+  background: rgba(255, 255, 255, .18);
+}
+
 .dashboard-stats,
 .dashboard-workspace {
   min-width: 0;
@@ -253,6 +409,15 @@ onMounted(async () => {
     min-height: 0;
     display: block;
   }
+  .career-command {
+    grid-template-columns: 1fr;
+  }
+  .command-chips {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .command-action {
+    width: 100%;
+  }
   :deep(.el-col) {
     max-width: 100%;
     flex: 0 0 100%;
@@ -266,6 +431,12 @@ onMounted(async () => {
   .recent-card,
   .reminder-card {
     min-height: 22rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .command-chips {
+    grid-template-columns: 1fr;
   }
 }
 </style>
