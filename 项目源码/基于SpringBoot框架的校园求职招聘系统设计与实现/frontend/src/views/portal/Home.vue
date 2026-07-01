@@ -51,25 +51,37 @@
           <p>{{ nextTalk?.title || '校企宣讲与招聘会同步更新' }}</p>
         </div>
         <div class="board-card board-card-mini">
+          <div class="mini-card-topline">
+            <span class="mini-card-kicker">匹配流程</span>
+            <strong>3 步完成</strong>
+          </div>
+          <div class="mini-card-summary">
+            从岗位筛选到在线沟通，流程清晰直达。
+          </div>
           <div class="meteor-layer mini-meteors" aria-hidden="true">
             <span v-for="meteor in miniMeteors" :key="`${meteor.top}-${meteor.left}`" :style="meteor"></span>
           </div>
-          <div class="flow-card-head">
-            <span>匹配流程</span>
-            <strong>3 步完成</strong>
-          </div>
           <div class="flow-steps">
             <div class="flow-step">
-              <i>01</i>
-              <b>岗位筛选</b>
+              <span class="step-index">01</span>
+              <div class="step-copy">
+                <b>岗位筛选</b>
+                <small>聚焦匹配岗位</small>
+              </div>
             </div>
             <div class="flow-step">
-              <i>02</i>
-              <b>简历投递</b>
+              <span class="step-index">02</span>
+              <div class="step-copy">
+                <b>简历投递</b>
+                <small>一键提交申请</small>
+              </div>
             </div>
             <div class="flow-step">
-              <i>03</i>
-              <b>在线沟通</b>
+              <span class="step-index">03</span>
+              <div class="step-copy">
+                <b>在线沟通</b>
+                <small>快速接收反馈</small>
+              </div>
             </div>
           </div>
         </div>
@@ -648,16 +660,51 @@ onMounted(async () => {
 .board-card-mini {
   right: 2.5rem;
   bottom: 0;
-  width: 15.5rem;
-  padding: 1.125rem;
+  width: 16.75rem;
+  padding: 1.15rem 1.15rem 1.05rem;
   display: grid;
-  gap: 1rem;
+  gap: .85rem;
   background:
     radial-gradient(circle at 86% 100%, rgba(34, 211, 238, .16), transparent 38%),
     radial-gradient(circle at 0% 0%, rgba(36, 84, 214, .28), transparent 42%),
-    linear-gradient(180deg, #16263d, var(--cr-sidebar-2));
+    linear-gradient(180deg, #172a46, var(--cr-sidebar-2));
   color: #fff;
   overflow: hidden;
+}
+
+.mini-card-topline {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.mini-card-kicker {
+  display: inline-flex;
+  align-items: center;
+  color: rgba(226, 237, 248, .82);
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.board-card-mini .mini-card-topline strong {
+  color: #fff;
+  font-size: 1.45rem;
+  line-height: 1.05;
+  font-weight: 900;
+  text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .18);
+}
+
+.mini-card-summary {
+  position: relative;
+  z-index: 1;
+  max-width: 12rem;
+  color: rgba(226, 237, 248, .72);
+  font-size: .8125rem;
+  line-height: 1.5;
 }
 
 .mini-meteors {
@@ -686,27 +733,6 @@ onMounted(async () => {
   font-weight: 700;
 }
 
-.flow-card-head {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: .75rem;
-}
-
-.flow-card-head span {
-  color: rgba(226, 237, 248, .74);
-  font-size: .75rem;
-  font-weight: 800;
-}
-
-.flow-card-head strong {
-  color: #fff;
-  font-size: 1.125rem;
-  line-height: 1;
-}
-
 .board-card strong {
   display: block;
   color: var(--cr-text);
@@ -731,56 +757,68 @@ onMounted(async () => {
   position: relative;
   z-index: 1;
   display: grid;
-  gap: .625rem;
+  gap: .55rem;
 }
 
 .flow-steps::before {
   position: absolute;
-  top: 1.1rem;
-  bottom: 1.1rem;
-  left: 1rem;
+  top: 1rem;
+  bottom: 1rem;
+  left: 1.25rem;
   width: .0625rem;
   content: "";
-  background: linear-gradient(180deg, rgba(125,211,252,.7), rgba(255,255,255,.12));
+  background: linear-gradient(180deg, rgba(125,211,252,.78), rgba(255,255,255,.12));
 }
 
 .flow-step {
   position: relative;
   display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr);
+  grid-template-columns: 2.5rem minmax(0, 1fr);
   align-items: center;
   gap: .75rem;
-  min-height: 2.75rem;
-  padding: .625rem .75rem .625rem .625rem;
+  min-height: 3rem;
+  padding: .7rem .8rem .7rem .45rem;
   border-radius: var(--cr-radius-sm);
   border: 1px solid rgba(255,255,255,.08);
   background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.07));
   box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
 
-.flow-step i {
+.step-index {
   position: relative;
   z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.35rem;
+  height: 2.35rem;
   border-radius: 999rem;
-  background: linear-gradient(135deg, rgba(125,211,252,.95), rgba(36,84,214,.95));
+  background: linear-gradient(135deg, rgba(125,211,252,.98), rgba(36,84,214,.98));
   color: #fff;
-  font-size: .6875rem;
-  font-style: normal;
+  font-size: .7rem;
   font-weight: 900;
+  letter-spacing: 0;
   box-shadow: 0 .5rem 1rem rgba(8, 145, 178, .22);
 }
 
-.flow-step b {
+.step-copy {
   position: relative;
   z-index: 1;
+  display: grid;
+  gap: .125rem;
+  min-width: 0;
+}
+
+.step-copy b {
   color: #fff;
-  font-size: .9375rem;
-  line-height: 1.1;
+  font-size: .9625rem;
+  line-height: 1.15;
+}
+
+.step-copy small {
+  color: rgba(226, 237, 248, .68);
+  font-size: .75rem;
+  line-height: 1.2;
 }
 
 .stats-strip,
@@ -1414,25 +1452,37 @@ onMounted(async () => {
 
   .board-card-mini {
     right: .5rem;
-    width: 12.5rem;
+    width: 13.75rem;
     padding: .875rem;
-    gap: .75rem;
+    gap: .7rem;
   }
 
-  .flow-card-head strong {
-    font-size: .9375rem;
+  .board-card-mini .mini-card-topline strong {
+    font-size: 1.15rem;
+  }
+
+  .mini-card-summary {
+    font-size: .75rem;
   }
 
   .flow-step {
-    grid-template-columns: 1.75rem minmax(0, 1fr);
-    min-height: 2.4rem;
-    gap: .5rem;
-    padding: .5rem;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    min-height: 2.55rem;
+    gap: .55rem;
+    padding: .55rem .6rem .55rem .35rem;
   }
 
-  .flow-step i {
-    width: 1.75rem;
-    height: 1.75rem;
+  .step-index {
+    width: 1.95rem;
+    height: 1.95rem;
+  }
+
+  .step-copy b {
+    font-size: .875rem;
+  }
+
+  .step-copy small {
+    font-size: .6875rem;
   }
 
   .stats-strip,

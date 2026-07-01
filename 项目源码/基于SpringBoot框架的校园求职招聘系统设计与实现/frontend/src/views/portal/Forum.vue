@@ -10,13 +10,13 @@
 
     <div class="toolbar page-card mt-20">
       <el-radio-group v-model="query.category" @change="reload">
-        <el-radio-button label="">全部</el-radio-button>
-        <el-radio-button label="求职交流">求职交流</el-radio-button>
-        <el-radio-button label="经验分享">经验分享</el-radio-button>
-        <el-radio-button label="offer捷报">Offer捷报</el-radio-button>
+        <el-radio-button :value="''">全部</el-radio-button>
+        <el-radio-button value="求职交流">求职交流</el-radio-button>
+        <el-radio-button value="经验分享">经验分享</el-radio-button>
+        <el-radio-button value="offer捷报">Offer捷报</el-radio-button>
       </el-radio-group>
       <el-input v-model="query.keyword" placeholder="搜索帖子标题" clearable class="toolbar-search" @keyup.enter="reload">
-        <template #append><el-button @click="reload"><el-icon><Search /></el-icon></el-button></template>
+        <template #append><el-button aria-label="搜索帖子" title="搜索帖子" @click="reload"><el-icon><Search /></el-icon></el-button></template>
       </el-input>
     </div>
 

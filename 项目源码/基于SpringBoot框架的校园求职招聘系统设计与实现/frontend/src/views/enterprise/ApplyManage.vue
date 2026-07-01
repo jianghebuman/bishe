@@ -7,8 +7,8 @@
       </div>
       <el-divider />
       <el-radio-group v-model="query.status" @change="reload" class="mb-20">
-        <el-radio-button :label="''">全部</el-radio-button>
-        <el-radio-button v-for="(t, i) in statusTexts" :key="i" :label="i">{{ t }}</el-radio-button>
+        <el-radio-button :value="''">全部</el-radio-button>
+        <el-radio-button v-for="(t, i) in statusTexts" :key="i" :value="i">{{ t }}</el-radio-button>
       </el-radio-group>
       <el-table :data="list" stripe v-loading="loading">
         <el-table-column prop="id" label="投递ID" width="90" />
@@ -138,8 +138,8 @@
         </el-form-item>
         <el-form-item label="面试方式">
           <el-radio-group v-model="interview.interviewType">
-            <el-radio :label="1">现场</el-radio>
-            <el-radio :label="2">线上</el-radio>
+            <el-radio :value="1">现场</el-radio>
+            <el-radio :value="2">线上</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="地点/链接"><el-input v-model="interview.location" /></el-form-item>

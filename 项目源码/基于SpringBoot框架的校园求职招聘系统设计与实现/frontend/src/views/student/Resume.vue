@@ -19,7 +19,7 @@
           <el-form :model="resume" label-width="100px">
             <el-row :gutter="16">
               <el-col :span="12"><el-form-item label="姓名"><el-input v-model="resume.name" /></el-form-item></el-col>
-              <el-col :span="12"><el-form-item label="性别"><el-radio-group v-model="resume.gender"><el-radio :label="1">男</el-radio><el-radio :label="2">女</el-radio><el-radio :label="0">保密</el-radio></el-radio-group></el-form-item></el-col>
+              <el-col :span="12"><el-form-item label="性别"><el-radio-group v-model="resume.gender"><el-radio :value="1">男</el-radio><el-radio :value="2">女</el-radio><el-radio :value="0">保密</el-radio></el-radio-group></el-form-item></el-col>
               <el-col :span="12"><el-form-item label="出生年月"><el-input v-model="resume.birth" placeholder="如 2003-05" /></el-form-item></el-col>
               <el-col :span="12"><el-form-item label="电话"><el-input v-model="resume.phone" /></el-form-item></el-col>
               <el-col :span="12"><el-form-item label="邮箱"><el-input v-model="resume.email" /></el-form-item></el-col>

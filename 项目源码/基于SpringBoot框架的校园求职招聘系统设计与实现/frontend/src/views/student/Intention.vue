@@ -11,7 +11,7 @@
           <el-form-item label="期望岗位"><el-input v-model="form.expectPost" placeholder="如 Java开发工程师 / 产品经理" /></el-form-item>
           <el-form-item label="期望城市"><el-select v-model="form.expectCity" filterable allow-create default-first-option style="width:100%"><el-option v-for="c in cities" :key="c.dictValue" :label="c.dictLabel" :value="c.dictValue" /></el-select></el-form-item>
           <el-form-item label="期望薪资"><el-input v-model="form.expectSalary" placeholder="如 12-18K / 面议" /></el-form-item>
-          <el-form-item label="求职类型"><el-radio-group v-model="form.jobType"><el-radio :label="1">全职</el-radio><el-radio :label="2">实习</el-radio></el-radio-group></el-form-item>
+          <el-form-item label="求职类型"><el-radio-group v-model="form.jobType"><el-radio :value="1">全职</el-radio><el-radio :value="2">实习</el-radio></el-radio-group></el-form-item>
           <el-form-item label="到岗时间"><el-select v-model="form.arrivalTime" style="width:100%"><el-option label="随时到岗" value="随时到岗"/><el-option label="一周内" value="一周内"/><el-option label="一个月内" value="一个月内"/><el-option label="毕业后到岗" value="毕业后到岗"/></el-select></el-form-item>
           <el-form-item class="form-actions">
             <el-button type="primary" :loading="saving" @click="save">保存意向</el-button>

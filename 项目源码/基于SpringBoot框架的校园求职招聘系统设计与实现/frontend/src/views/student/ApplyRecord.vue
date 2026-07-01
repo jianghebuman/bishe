@@ -4,7 +4,7 @@
       <div class="header"><div><h2>投递记录</h2><p>跟踪每份简历从投递到录用的处理进度。</p></div><el-button type="primary" @click="$router.push('/jobs')">继续投递</el-button></div>
       <el-divider />
       <el-radio-group v-model="query.status" @change="reload" class="mb-20">
-        <el-radio-button :label="''">全部</el-radio-button><el-radio-button v-for="(t,i) in statusTexts" :key="i" :label="i">{{ t }}</el-radio-button>
+        <el-radio-button :value="''">全部</el-radio-button><el-radio-button v-for="(t,i) in statusTexts" :key="i" :value="i">{{ t }}</el-radio-button>
       </el-radio-group>
       <el-table :data="list" stripe v-loading="loading">
         <el-table-column label="岗位" min-width="180"><template #default="{row}"><b>{{ row.job?.title || '-' }}</b><div class="sub">{{ row.job?.city }} · {{ row.job?.education }}</div></template></el-table-column>

@@ -222,8 +222,8 @@
           </el-form-item>
           <el-form-item label="权限">
             <el-radio-group v-model="hrForm.hrRole">
-              <el-radio label="SUPERVISOR">主管 HR</el-radio>
-              <el-radio label="STAFF">普通 HR</el-radio>
+              <el-radio value="SUPERVISOR">主管 HR</el-radio>
+              <el-radio value="STAFF">普通 HR</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
