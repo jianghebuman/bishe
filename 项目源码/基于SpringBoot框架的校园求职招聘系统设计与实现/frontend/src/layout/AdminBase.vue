@@ -3,9 +3,9 @@
     <el-aside :width="asideWidth" class="aside">
       <div class="logo">
         <el-icon size="22"><School /></el-icon>
-        <span v-if="!effectiveCollapse">{{ title }}</span>
+        <span v-if="!menuCollapsed">{{ title }}</span>
       </div>
-      <el-menu :default-active="$route.path" router :collapse="effectiveCollapse" text-color="#c9d1d9" active-text-color="#fff" class="menu">
+      <el-menu :default-active="$route.path" router :mode="isCompact ? 'horizontal' : 'vertical'" :collapse="menuCollapsed" text-color="#c9d1d9" active-text-color="#fff" class="menu">
         <template v-for="m in menus" :key="m.path">
           <el-menu-item :index="m.path">
             <el-icon><component :is="m.icon" /></el-icon>
@@ -23,7 +23,7 @@
       <el-header class="topbar flex-between">
         <div class="flex" style="align-items: center; gap: 12px;">
           <el-icon size="20" class="collapse-trigger" @click="collapse = !collapse">
-            <Fold v-if="!effectiveCollapse" /><Expand v-else />
+            <Fold v-if="!menuCollapsed" /><Expand v-else />
           </el-icon>
           <el-breadcrumb separator="/">
             <el-breadcrumb-item :to="{ path: menus[0]?.path }">{{ title }}</el-breadcrumb-item>
@@ -94,9 +94,9 @@ defineProps({
 const collapse = ref(false)
 const windowWidth = ref(window.innerWidth)
 const mainRef = ref()
-const isCompact = computed(() => windowWidth.value < 768)
-const effectiveCollapse = computed(() => collapse.value || isCompact.value)
-const asideWidth = computed(() => (effectiveCollapse.value ? '64px' : 'clamp(196px, 15vw, 232px)'))
+const isCompact = computed(() => windowWidth.value < 900)
+const menuCollapsed = computed(() => !isCompact.value && collapse.value)
+const asideWidth = computed(() => (isCompact.value ? '100%' : menuCollapsed.value ? '64px' : 'clamp(196px, 15vw, 232px)'))
 const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
@@ -169,6 +169,8 @@ watch(() => route.fullPath, async () => {
   min-height: 100dvh;
   height: 100dvh;
   min-width: 0;
+  width: 100%;
+  overflow: hidden;
   background:
     linear-gradient(135deg, rgba(15, 118, 110, 0.08), transparent 32%),
     linear-gradient(315deg, rgba(36, 84, 214, 0.10), transparent 42%),
@@ -291,13 +293,90 @@ watch(() => route.fullPath, async () => {
 .main { min-width: 0; background: transparent; padding: clamp(12px, 1.5vw, 20px); overflow-y: auto; overflow-x: hidden; }
 
 .is-compact {
+  > .el-container {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .aside {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 40;
+    width: 100% !important;
+    height: calc(4.5rem + env(safe-area-inset-bottom));
+    padding: 0.375rem 0.5rem calc(0.375rem + env(safe-area-inset-bottom));
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-right: 0;
+    box-shadow: 0 -1rem 2.25rem rgba(16, 24, 39, 0.18);
+    scrollbar-width: none;
+  }
+
+  .aside::-webkit-scrollbar {
+    display: none;
+  }
+
   .logo {
+    display: none;
+  }
+
+  .menu {
+    min-width: max-content;
+    height: 100%;
+    border-bottom: 0;
+    overflow: visible;
+  }
+
+  :deep(.el-menu--horizontal) {
+    height: 100%;
+    border-bottom: 0;
+  }
+
+  :deep(.el-menu-item) {
+    width: auto;
+    min-width: 4.75rem;
+    height: 3.75rem;
+    margin: 0 0.125rem;
+    padding: 0.375rem 0.625rem !important;
+    display: inline-flex;
+    flex-direction: column;
     justify-content: center;
-    padding: 0;
+    gap: 0.25rem;
+    line-height: 1 !important;
+    text-align: center;
+  }
+
+  :deep(.el-menu-item .el-icon) {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0;
+    font-size: 1rem;
+  }
+
+  .menu-title {
+    max-width: 4.25rem;
+    display: inline-flex;
+    justify-content: center;
+    font-size: 0.72rem;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .menu-unread {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.5rem;
   }
 
   .topbar {
-    padding: 0 12px;
+    height: 3.875rem;
+    padding: 0 0.625rem;
+  }
+
+  .collapse-trigger {
+    display: none;
   }
 
   .topbar :deep(.el-breadcrumb__inner) {
@@ -308,8 +387,24 @@ watch(() => route.fullPath, async () => {
     max-width: 86px;
   }
 
+  :deep(.top-user-entry) {
+    width: 3rem;
+    min-width: 3rem;
+    max-width: 3rem;
+    min-height: 3rem;
+    padding: 0.25rem;
+    justify-content: center;
+    gap: 0;
+  }
+
+  :deep(.top-user-copy),
+  :deep(.top-user-arrow) {
+    display: none;
+  }
+
   .main {
-    padding: 12px;
+    padding: 0.625rem;
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
   }
 }
 

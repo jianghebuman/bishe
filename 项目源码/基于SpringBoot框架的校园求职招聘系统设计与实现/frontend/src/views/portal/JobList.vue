@@ -282,7 +282,7 @@ watch(() => route.query, (nv) => {
 
 <style scoped lang="scss">
 .search-bar { display: flex; align-items: center; gap: clamp(.5rem, 1.2vw, .875rem); }
-.search-input { flex: 1 1 44rem; max-width: 76rem; min-width: 0; }
+.search-input { flex: 1 1 auto; max-width: 76rem; min-width: 0; }
 .search-bar :deep(.el-button) { flex-shrink: 0; }
 .favorite-entry { margin-left: 0; }
 .portal-list-card { --portal-list-card-min-height: calc(100dvh - 25.625rem); }

@@ -477,6 +477,78 @@ onMounted(load)
 :deep(.preview-item:last-child){border-bottom:0;}
 :deep(.preview-item-title){font-weight:650;color:var(--cr-text);margin-bottom:.25rem;}
 :deep(.preview-item-time),:deep(.preview-empty){color:var(--cr-text-muted);font-size:.8125rem;}
-@media (max-width:48rem){.header{align-items:flex-start;flex-direction:column}.header-actions{justify-content:flex-start}.header-actions :deep(.el-button){margin-left:0;}.resume-main-card{min-height:0;}.resume-tips{position:static;min-height:0;}}
+@media (max-width:48rem){
+  .resume-page {
+    width: calc(100% - 1rem);
+    padding: 0;
+  }
+
+  .resume-layout {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .resume-main-col,
+  .resume-side-col {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .header-actions :deep(.el-button) {
+    flex: 1 1 10rem;
+    margin-left: 0;
+  }
+
+  .header-actions :deep(.el-progress) {
+    margin-left: auto;
+  }
+
+  .resume-main-card {
+    min-height: 0;
+    padding: 1rem;
+  }
+
+  .resume-main-card :deep(.el-form-item__label) {
+    height: auto;
+    font-size: 0.9375rem;
+  }
+
+  .resume-main-card :deep(.el-radio-group) {
+    align-items: center;
+  }
+
+  .resume-main-card :deep(.el-radio) {
+    height: auto;
+    min-height: 2.25rem;
+  }
+
+  .resume-tips {
+    position: static;
+    min-height: 0;
+    margin-top: 1rem;
+    padding: 1rem;
+  }
+
+  :deep(.section-item) {
+    flex-direction: column;
+  }
+
+  :deep(.section-item > div:last-child) {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
 </style>
 

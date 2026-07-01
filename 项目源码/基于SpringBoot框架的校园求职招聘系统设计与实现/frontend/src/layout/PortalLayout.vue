@@ -406,11 +406,38 @@ watch(() => route.fullPath, () => {
 }
 
 @media (max-width: 40rem) {
-  .logo span { max-width: 52vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .header-inner { gap: 0.5rem 0.75rem; }
+  .portal-layout.is-fit-screen {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .portal-main.is-fit-screen {
+    overflow: visible;
+  }
+
+  .portal-header { min-height: 3.75rem; padding: 0.375rem 0 0.5rem; }
+  .logo { gap: 0.5rem; font-size: 0.98rem; min-width: 0; }
+  .logo .el-icon { width: 2rem; height: 2rem; }
+  .logo span { max-width: 46vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .header-inner { min-height: 3rem; gap: 0.5rem 0.625rem; }
   .nav { margin-inline: -0.75rem; padding-inline: 0.75rem; scroll-padding-inline: 0.75rem; }
   .nav :deep(.el-menu) { min-width: max-content; }
-  .user-area :deep(.el-button) { padding: 0.5rem 0.625rem; }
+  .user-area { gap: 0.375rem; }
+  .user-area :deep(.el-button) { min-height: 2.25rem; padding: 0.45rem 0.625rem; }
+  .user-area :deep(.top-user-entry) {
+    width: 3rem;
+    min-width: 3rem;
+    max-width: 3rem;
+    min-height: 3rem;
+    padding: 0.25rem;
+    justify-content: center;
+    gap: 0;
+  }
+  .user-area :deep(.top-user-copy),
+  .user-area :deep(.top-user-arrow) {
+    display: none;
+  }
   .user-area :deep(.top-user-name) { max-width: 6.25rem; }
 }
 </style>

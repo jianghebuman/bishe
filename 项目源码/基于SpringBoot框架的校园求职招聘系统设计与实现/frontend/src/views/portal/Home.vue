@@ -595,7 +595,7 @@ onMounted(async () => {
   isolation: isolate;
   overflow: hidden;
   display: grid;
-  grid-template-columns: minmax(7rem, .25fr) minmax(13rem, 1fr) auto;
+  grid-template-columns: minmax(7.75rem, .25fr) minmax(13rem, 1fr) auto;
   gap: .75rem;
   padding: .625rem;
   border: 1px solid rgba(188, 203, 221, .9);
@@ -2068,7 +2068,10 @@ onMounted(async () => {
 
   .marquee-viewport {
     margin-inline: -.25rem;
+    max-width: calc(100vw - 2rem);
     overflow-x: auto;
+    overflow-y: hidden;
+    contain: layout paint;
     -webkit-mask-image: none;
     mask-image: none;
     scrollbar-width: none;
@@ -2080,6 +2083,7 @@ onMounted(async () => {
 
   .marquee-track {
     width: max-content;
+    max-width: none;
   }
 
   .marquee-group {
